@@ -34,7 +34,6 @@ frame.SetScript("OnUpdate", () => {
         const player = GetUnitName("player", false);
 
         libdraw.setColorRaw(0, 1, 0, 1);
-        // LibDraw.SetWidth(1);
 
         for (const partyMember of party) {
           const arena1 = GetUnitName(partyMember, false);
