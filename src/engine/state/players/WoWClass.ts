@@ -1,0 +1,15 @@
+export enum WoWClass {
+  Warrior = "Warrior",
+  Paladin = "Paladin",
+  Hunter = "Hunter",
+  Warlock = "Warlock",
+  Rogue = "Rogue",
+  Priest = "Priest",
+  DeathKnight = "Death Knight",
+  Shaman = "Shaman",
+  Mage = "Mage",
+  Monk = "Monk",
+  Druid = "Druid",
+  DemonHunter = "Demon Hunter",
+  NPC = "",
+}

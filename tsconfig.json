@@ -1,0 +1,24 @@
+{
+    "tstl": {
+        "luaBundle": "C:\\Program Files (x86)\\World of Warcraft\\_retail_\\Interface\\AddOns\\beepboop\\beepboop.lua",
+        "luaBundleEntry": "src/index.ts",
+        "noHeader": true,
+        "luaTarget": "5.1",
+        "sourceMapTraceback": false,
+        "noImplicitSelf": true,
+    },
+    "compilerOptions": {
+        "downlevelIteration": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "noErrorTruncation": true,
+        "typeRoots": [
+            "./node_modules/@types",
+            "./node_modules/@wartoshika/wow-declarations",
+            "wow/declarations",
+        ],
+        "types": ["lua-types/5.1"],
+        "rootDir": "./",
+        "lib": ["ESNEXT", "DOM"]
+    }
+  }
