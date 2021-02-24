@@ -1,5 +1,7 @@
 import { Libdraw } from "../wow/libdraw";
 import { Driver } from "./engine/driver";
+import { Blink } from "./engine/mage/spells/blink";
+import { GetGroundZCoord } from "./engine/wowutils/wow_utils";
 
 export let ewtLoaded = false;
 
@@ -17,13 +19,13 @@ frame.SetScript("OnUpdate", () => {
     ewtLoaded = true;
     if (printOnce) {
       printOnce = false;
-      console.log("here");
+      console.log("started benz. this a baby benz -- a class");
 
       const driver = new Driver();
       driver.start();
 
       const party: WoWAPI.UnitId[] = ["party1", "party2", "party2", "party3", "party4"];
-      const losFlags = bit.bor(0x10, 0x100, 0x1);
+      const losFlags = bit.bor(0x10, 0x100, 0x1, 0x2, 0x20, 0x100000);
 
       const libdraw = new Libdraw();
       libdraw.sync(() => {
@@ -32,6 +34,31 @@ frame.SetScript("OnUpdate", () => {
         if (!playerX || !playerY || !playerZ) {
           return;
         }
+
+        // for (let i = 0; i < math.pi * 2; i += (math.pi * 2) / 48) {
+        //   const x = 20 * math.cos(i) + playerX;
+        //   const y = 20 * math.sin(i) + playerY;
+        //   const z = GetGroundZCoord(x, y);
+
+        //   const [blinkHit, collisionX, collisionY, collisionZ] = TraceLine(
+        //     x,
+        //     y,
+        //     z,
+        //     playerX,
+        //     playerY,
+        //     playerZ + 2,
+        //     losFlags
+        //   );
+
+        //   if (math.abs(playerZ - z) <= 4) {
+        //     libdraw.setColorRaw(1, 1, 1, 1);
+        //     if (blinkHit === 1) {
+        //       libdraw.circle(collisionX, collisionY, collisionZ, 1);
+        //     } else {
+        //       libdraw.circle(x, y, z, 1);
+        //     }
+        //   }
+        // }
 
         const player = GetUnitName("player", false);
 

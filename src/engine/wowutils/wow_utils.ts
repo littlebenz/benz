@@ -66,7 +66,6 @@ export class MemoizedLua {
   IsUnitInOfLineOfSight = memoizeOne(this.isUnitInOfLineOfSight);
   TargetHasAuraFromSource = memoizeOne(this.targetHasAuraFromSource);
   IsPositionLineOfSight = memoizeOne(this.isPositionLineOfSight);
-  CanPlayerBlinkToXYZ = memoizeOne(this.canPlayerBlinkToXYZ);
   DistanceFromUnit = memoizeOne(this.distanceFromUnit);
   IsUnitInOfLineOfSightNoMemoize = memoizeOne(this.isUnitInOfLineOfSight, 0);
 
@@ -397,25 +396,14 @@ export class MemoizedLua {
     return hit === 0;
   }
 
-  private canPlayerBlinkToXYZ(x: number, y: number, z: number): boolean {
-    const [playerX, playerY, playerZ] = GetUnitPosition("player");
-
-    if (!playerX || !playerY || !playerZ) {
-      return false;
-    }
-
-    const losFlags = bit.bor(0x10, 0x100, 0x1);
-    const [hit] = TraceLine(playerX, playerY, playerZ + 2.25, x, y, z + 2.25, losFlags);
-    return hit === 0;
-  }
-
   private distanceFromUnit(unita: string, unitb: string): number {
     const [ax, ay, az] = GetUnitPosition(unita);
     const [bx, by, bz] = GetUnitPosition(unitb);
 
     if (!ax || !ay || !az || !bx || !by || !bz) {
-      return 9999999;
+      return 0;
     }
+
     return DistanceFromPoints(ax, ay, az, bx, by, bz);
   }
 }
@@ -581,7 +569,7 @@ export function DistanceFromPoints(
   y2: number,
   z2: number
 ) {
-  return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2));
+  return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2) + math.pow(z2 - z1, 2));
 }
 
 export function GetSpellChargesTyped(spell: string | number) {
@@ -671,4 +659,13 @@ export function UnitHealthPercentage(unit: UnitId) {
 export function GetSpellInfoTyped(spell: string | number) {
   const [name, rank, icon, castTime, minRange, maxRange, spellId] = GetSpellInfo(spell);
   return { name, icon, castTime, minRange, maxRange, spellId };
+}
+
+export function GetGroundZCoord(x: number, y: number) {
+  const [hit, gx, gy, gz] = TraceLine(x, y, 10000, x, y, -10000, 0x111);
+  if (hit === 1) {
+    return gz;
+  }
+
+  return 0;
 }

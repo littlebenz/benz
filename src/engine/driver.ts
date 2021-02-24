@@ -31,16 +31,20 @@ export class Driver {
 
       const castingInfo = WoWLua.UnitCastingInfoTyped("player");
       if (castingInfo) {
+        if (castingInfo.spell === MageSpell.Polymorph && this.lastTargetGuid) {
+          this.mage.blinkPolyPosition(this.lastTargetGuid);
+        }
         this.waitUntilForNextAction = castingInfo.endTimeMS;
         if (
           castingInfo.spell === MageSpell.Polymorph &&
-          castingInfo.castTimeRemaining <= 0.2 &&
+          castingInfo.castTimeRemaining <= 0.3 &&
           this.lastTargetGuid &&
-          (!WoWLua.IsUnitInOfLineOfSightNoMemoize("player", SetMouseOver(this.lastTargetGuid)) ||
+          ((IsGuid(this.lastTargetGuid) &&
+            !WoWLua.IsUnitInOfLineOfSight("player", SetMouseOver(this.lastTargetGuid))) ||
             WoWLua.DistanceFromUnit("player", SetMouseOver(this.lastTargetGuid)) > 30)
         ) {
           const blink = this.mage.blinkPolyPosition(this.lastTargetGuid);
-          if (blink) {
+          if (blink && blink.canCastSpell()) {
             blink.cast();
           }
         } else if (castingInfo.castTimeRemaining <= 0.4 && this.lastTargetGuid) {

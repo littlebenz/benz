@@ -61,13 +61,13 @@ export abstract class PlayerState {
     }
 
     // todo -- don't sheep if they're kicked
-    const remainingCCList = this.remainingCC().sort((x) => x.remaining);
+    const remainingCCList = this.remainingCC().sort((a, b) => a.remaining - b.remaining);
     const remainingCC = remainingCCList[remainingCCList.length - 1];
     if (remainingCC && remainingCC.remaining >= 1.9) {
       return false;
     }
 
-    return true;
+    return this.incapacitateDr().drCount < 3;
   }
 
   isDefensive(): Defensive {

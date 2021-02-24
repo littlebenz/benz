@@ -28,11 +28,12 @@ export enum PumpingStatus {
 }
 
 export class Pump implements Car {
-  pumpingState = PumpingStatus.Dumped;
+  pumpingState;
   private getEnemies: () => PlayerState[];
 
   constructor(getEnemies: () => PlayerState[]) {
     this.getEnemies = () => getEnemies();
+    this.pumpingState = PumpingStatus.Dumped;
   }
 
   getNextSpell(): Spell | null {
@@ -137,7 +138,11 @@ export class Pump implements Car {
     const hotStreak = GetPlayerAura(MageAura.HotStreak);
     if (hotStreak) {
       return new Pyroblast();
-    } else if (WoWLua.IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
+    } else if (
+      WoWLua.IsSpellUsable(MageSpell.Combustion) &&
+      !PlayerHasAura(MageAura.Combustion) &&
+      PlayerHasAura(MageAura.HotStreak)
+    ) {
       return new Combustion();
     }
 

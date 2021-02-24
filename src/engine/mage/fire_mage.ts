@@ -9,7 +9,7 @@ import { Spellstealer } from "./cars/spellstealer";
 import { Block } from "./cars/block";
 import { Waiting } from "./cars/waiting";
 import { Car } from "./cars/car";
-import { GetPlayerAura, WoWLua } from "../wowutils/wow_utils";
+import { DistanceFromPoints, GetGroundZCoord, GetPlayerAura, WoWLua } from "../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../state/utils/mage_utils";
 import { Meteor } from "./spells/meteor";
 import { PlayerState } from "../state/players/player_state";
@@ -18,9 +18,8 @@ import { WowEventListener } from "../wow_event_listener";
 import { Spell } from "./spells/ispell";
 import { Stomper } from "./cars/stomper";
 import { Blink } from "./spells/blink";
-import { UnitReaction } from "../wowutils/unlocked_functions";
 import { ClickClickBoom } from "./cars/clickclickboom";
-import { RingOfFrost } from "./spells/ring_of_frost";
+import { UnitReaction } from "../wowutils/unlocked_functions";
 
 export class Mage {
   pump: Pump;
@@ -155,35 +154,71 @@ export class Mage {
     if (!playerX || !playerZ || !playerZ || !targetX || !targetY || !targetZ) {
       return null;
     }
-    // very simple check to see if we can blink poly 365 degrees
     const losFlags = bit.bor(0x10, 0x100, 0x1);
 
+    let blinkPositions = [];
     for (let i = 0; i < math.pi * 2; i += (math.pi * 2) / 48) {
       const x = 20 * math.cos(i) + playerX;
       const y = 20 * math.sin(i) + playerY;
+      const z = GetGroundZCoord(x, y);
 
-      const distance = math.sqrt(math.pow(playerX - x, 2) + math.pow(playerY - y, 2));
-      if (distance <= 40) {
-        const [blinkHit] = TraceLine(
-          playerX,
-          playerY,
-          playerZ + 2.25,
+      const distance = DistanceFromPoints(targetX, targetY, targetZ, x, y, playerZ);
+      if (distance <= 28) {
+        const [blinkHit, collisionX, collisionY, collisionZ] = TraceLine(
           x,
           y,
-          playerZ + 2.25,
+          z,
+          playerX,
+          playerY,
+          playerZ + 2,
           losFlags
         );
 
         if (blinkHit === 0) {
-          const [hit] = TraceLine(x, y, playerZ + 2.25, targetX, targetY, targetZ + 2.25, losFlags);
+          const [hit] = TraceLine(targetX, targetY, targetZ + 2.25, x, y, playerZ + 2.25, losFlags);
           if (hit === 0) {
-            FaceDirection(i);
-            UpdateMovement();
-            FaceDirection(i);
-            return new Blink();
+            blinkPositions.push({
+              i,
+              x,
+              y,
+              z: playerZ,
+              distance,
+            });
+          }
+        } else if (blinkHit === 1) {
+          const [hit] = TraceLine(
+            targetX,
+            targetY,
+            targetZ + 2.25,
+            collisionX,
+            collisionY,
+            collisionZ + 2.25,
+            losFlags
+          );
+          if (hit === 0) {
+            blinkPositions.push({
+              i,
+              x: collisionX,
+              y: collisionY,
+              z: collisionZ,
+              distance,
+            });
           }
         }
       }
+    }
+
+    console.log(blinkPositions.length);
+    blinkPositions = blinkPositions
+      .filter((x) => math.abs(playerZ - x.z) <= 2)
+      .sort((a, b) => math.abs(20 - b.distance - a.distance));
+    console.log(blinkPositions.length);
+
+    if (blinkPositions.length > 0) {
+      // is this sort inplace? whatever, just reassign it anyways
+
+      // todo find a blink position that is still in LOS of healer
+      return new Blink(blinkPositions[0].i);
     }
 
     return null;

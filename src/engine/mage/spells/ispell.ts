@@ -17,7 +17,6 @@ export abstract class Spell {
   }
 
   cast() {
-    FaceUnit(this.targetGuid);
     CastSpellByName(this.spellName, this.targetGuid);
 
     this.afterCast();

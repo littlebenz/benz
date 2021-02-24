@@ -46,7 +46,7 @@ export class CC implements Car {
         IsGuid(UnitGUID(x.unitId)) &&
         !IsUnitDead(x.unitId) &&
         WoWLua.IsUnitInOfLineOfSight("player", x.unitId) &&
-        WoWLua.DistanceFromUnit("player", x.unitId) <= 40
+        WoWLua.DistanceFromUnit("player", x.unitId) <= 30
     );
 
     for (const player of validPlayers) {
