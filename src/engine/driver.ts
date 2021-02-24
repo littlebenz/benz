@@ -1,16 +1,12 @@
 import { UnitId } from "@wartoshika/wow-declarations";
 import { Mage } from "./mage/fire_mage";
+import { Blink } from "./mage/spells/blink";
 import { MageSpell } from "./state/utils/mage_utils";
-import {
-  DistanceFromUnit,
-  FaceUnit,
-  GetCurrentEventLogInfo,
-  GetObjects,
-  GetPlayerAuras,
-  IsUnitInOfLineOfSight,
-  UnitCastingInfoTyped,
-} from "./wowutils/wow_utils";
+import { FaceUnit, WoWLua } from "./wowutils/wow_utils";
 import { WowEventListener } from "./wow_event_listener";
+
+declare let benzFrameNumber: number;
+benzFrameNumber = 0;
 
 export class Driver {
   private mage: Mage;
@@ -29,25 +25,26 @@ export class Driver {
       if (!benz_rotation_enabled) {
         return;
       }
+      benzFrameNumber++;
+
       this.mage.updateArenaUnitsIfChanged();
 
-      const castingInfo = UnitCastingInfoTyped("player");
+      const castingInfo = WoWLua.UnitCastingInfoTyped("player");
       if (castingInfo) {
         this.waitUntilForNextAction = castingInfo.endTimeMS;
         if (
           castingInfo.spell === MageSpell.Polymorph &&
-          castingInfo.castTimeRemaining <= 0.1 &&
+          castingInfo.castTimeRemaining <= 0.2 &&
           this.lastTargetGuid &&
-          (!IsUnitInOfLineOfSight("player", SetMouseOver(this.lastTargetGuid)) ||
-            DistanceFromUnit("player", SetMouseOver(this.lastTargetGuid)) > 40)
+          (!WoWLua.IsUnitInOfLineOfSightNoMemoize("player", SetMouseOver(this.lastTargetGuid)) ||
+            WoWLua.DistanceFromUnit("player", SetMouseOver(this.lastTargetGuid)) > 30)
         ) {
           const blink = this.mage.blinkPolyPosition(this.lastTargetGuid);
           if (blink) {
             blink.cast();
-            FaceUnit(this.lastTargetGuid);
           }
         } else if (castingInfo.castTimeRemaining <= 0.4 && this.lastTargetGuid) {
-          FaceUnit(this.lastTargetGuid);
+          // FaceUnit(this.lastTargetGuid);
         }
       } else if (GetTime() * 1000 <= this.waitUntilForNextAction) {
         this.waitUntilForNextAction = 0;
@@ -69,7 +66,7 @@ export class Driver {
     const combatLogFrame = CreateFrame("Frame");
     combatLogFrame.RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
     combatLogFrame.SetScript("OnEvent", () => {
-      const eventObject = GetCurrentEventLogInfo();
+      const eventObject = WoWLua.GetCurrentEventLogInfo();
 
       this.wowEventListener.parse(eventObject);
     });

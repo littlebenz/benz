@@ -1,6 +1,6 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
-import { GetUnitAuras, UnitHasAura } from "../../wowutils/wow_utils";
+import { UnitHasAura } from "../../wowutils/wow_utils";
 import { WarriorAura } from "../utils/warrior_utils";
 import { WoWClass } from "./WoWClass";
 import { SpellstealPriority } from "./SpellstealPriority";

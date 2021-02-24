@@ -1,5 +1,5 @@
-import { IsSpellUsable } from "../../wowutils/wow_utils";
 import { MageSpell } from "../../state/utils/mage_utils";
+import { WoWLua } from "../../wowutils/wow_utils";
 import { Spell } from "./ispell";
 
 export class Blink extends Spell {
@@ -8,6 +8,6 @@ export class Blink extends Spell {
   isSelfCast = true;
 
   canCastSpell(): boolean {
-    return IsSpellUsable(this.spellName);
+    return WoWLua.IsSpellUsable(this.spellName);
   }
 }

@@ -1,7 +1,7 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
 import { DeathKnightAura } from "../utils/death_knight_utils";
-import { GetAuraRemainingTime, GetUnitAura, UnitHasAura } from "../../wowutils/wow_utils";
+import { GetUnitAura, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { WoWClass } from "./WoWClass";
 
 export class DeathKnight extends PlayerState {
@@ -10,7 +10,9 @@ export class DeathKnight extends PlayerState {
     return false;
   }
   canBeIncapacitated(): boolean {
-    if (GetAuraRemainingTime(GetUnitAura(DeathKnightAura.AntiMagicShell, this.unitId)) >= 1.5) {
+    if (
+      WoWLua.GetAuraRemainingTime(GetUnitAura(DeathKnightAura.AntiMagicShell, this.unitId)) >= 1.5
+    ) {
       return false;
     }
 

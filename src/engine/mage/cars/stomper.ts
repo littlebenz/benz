@@ -1,7 +1,7 @@
 import { PlayerState } from "../../state/players/player_state";
 import { MageSpell } from "../../state/utils/mage_utils";
 import { UnitReaction } from "../../wowutils/unlocked_functions";
-import { GetObjects, IsSpellUsable, StopCast } from "../../wowutils/wow_utils";
+import { WoWLua, StopCast } from "../../wowutils/wow_utils";
 import { FireBlast } from "../spells/fire_blast";
 import { PhoenixFlames } from "../spells/phoenix_flames";
 import { Scorch } from "../spells/scorch";
@@ -21,7 +21,7 @@ export class Stomper implements Car {
       }
     }
 
-    const objects = GetObjects().map((x) => ({ guid: x, name: ObjectName(x) }));
+    const objects = WoWLua.GetObjects().map((x) => ({ guid: x, name: ObjectName(x) }));
     const maybeSpiritLinkTotem = objects.find((x) => x.name === "Spirit Link Totem");
     if (maybeSpiritLinkTotem) {
       const reaction = UnitReaction("player", maybeSpiritLinkTotem.guid);
@@ -59,7 +59,7 @@ export class Stomper implements Car {
   }
 
   private getSpellToCastAt(unit: string) {
-    if (IsSpellUsable(MageSpell.FireBlast)) {
+    if (WoWLua.IsSpellUsable(MageSpell.FireBlast)) {
       return new FireBlast(true, unit as any);
     }
 

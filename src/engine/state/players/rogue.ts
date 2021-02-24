@@ -1,13 +1,13 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
-import { GetAuraRemainingTime, GetUnitAura, UnitHasAura } from "../../wowutils/wow_utils";
+import { GetUnitAura, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { RogueAura } from "../utils/rogue_utils";
 import { WoWClass } from "./WoWClass";
 
 export class Rogue extends PlayerState {
   class = WoWClass.Rogue;
   canBeIncapacitated(): boolean {
-    if (GetAuraRemainingTime(GetUnitAura(RogueAura.CloakOfShadows, this.unitId)) >= 1.5) {
+    if (WoWLua.GetAuraRemainingTime(GetUnitAura(RogueAura.CloakOfShadows, this.unitId)) >= 1.5) {
       return false;
     }
 

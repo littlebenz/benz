@@ -1,4 +1,3 @@
-import { Kite } from "./cars/kite";
 import { Pump, PumpingStatus } from "./cars/pump";
 import { AlterTime } from "./cars/alter_time";
 import { Barrier } from "./cars/barrier";
@@ -10,12 +9,7 @@ import { Spellstealer } from "./cars/spellstealer";
 import { Block } from "./cars/block";
 import { Waiting } from "./cars/waiting";
 import { Car } from "./cars/car";
-import {
-  GetAuraRemainingTime,
-  GetPlayerAura,
-  IsSpellUsable,
-  IsUnitInOfLineOfSight,
-} from "../wowutils/wow_utils";
+import { GetPlayerAura, WoWLua } from "../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../state/utils/mage_utils";
 import { Meteor } from "./spells/meteor";
 import { PlayerState } from "../state/players/player_state";
@@ -32,7 +26,6 @@ export class Mage {
   pump: Pump;
   alterTime: AlterTime;
   shield: Barrier;
-  kite: Kite;
   spellsteal: Spellstealer;
   interrupt: Interrupt;
   fakeCast: FakeCast;
@@ -62,7 +55,6 @@ export class Mage {
     this.fakeCast = new FakeCast();
     this.interrupt = new Interrupt(() => this.getEnemies());
     this.spellsteal = new Spellstealer(() => this.getEnemies(false));
-    this.kite = new Kite(() => this.getEnemies());
     this.block = new Block();
     this.waiting = new Waiting();
     this.stomper = new Stomper(() => this.getEnemies());
@@ -72,7 +64,7 @@ export class Mage {
   }
 
   getNextAction() {
-    if (GetAuraRemainingTime(GetPlayerAura(MageAura.Invisibility)) !== 0) {
+    if (WoWLua.GetAuraRemainingTime(GetPlayerAura(MageAura.Invisibility)) !== 0) {
       return null;
     }
 
@@ -117,10 +109,6 @@ export class Mage {
     }
 
     const cc = this.cc.getNextSpell();
-    if (cc && cc.spellName === MageSpell.RingOfFrost) {
-      console.log("return cc?");
-      console.log(cc.canCastSpell());
-    }
     if (this.shouldReturnSpell(cc)) {
       return cc;
     }
@@ -170,7 +158,7 @@ export class Mage {
     // very simple check to see if we can blink poly 365 degrees
     const losFlags = bit.bor(0x10, 0x100, 0x1);
 
-    for (let i = 0; i <= 360; i++) {
+    for (let i = 0; i < math.pi * 2; i += (math.pi * 2) / 48) {
       const x = 20 * math.cos(i) + playerX;
       const y = 20 * math.sin(i) + playerY;
 
@@ -189,6 +177,8 @@ export class Mage {
         if (blinkHit === 0) {
           const [hit] = TraceLine(x, y, playerZ + 2.25, targetX, targetY, targetZ + 2.25, losFlags);
           if (hit === 0) {
+            FaceDirection(i);
+            UpdateMovement();
             FaceDirection(i);
             return new Blink();
           }
@@ -209,7 +199,7 @@ export class Mage {
         x !== null &&
         !UnitIsDead(x.unitId) &&
         UnitIsPlayer(x.unitId) &&
-        (los ? IsUnitInOfLineOfSight("player", x.unitId) : true)
+        (los ? WoWLua.IsUnitInOfLineOfSight("player", x.unitId) : true)
     ) as PlayerState[];
   }
 }

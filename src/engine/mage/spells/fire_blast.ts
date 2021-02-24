@@ -1,4 +1,4 @@
-import { GetPlayerAura, IsSpellUsable, PlayerHasAura } from "../../wowutils/wow_utils";
+import { GetPlayerAura, PlayerHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
 import { Spell } from "./ispell";
 import { UnitId } from "@wartoshika/wow-declarations";
@@ -33,7 +33,7 @@ export class FireBlast extends Spell {
       }
     }
 
-    return IsSpellUsable(this.spellName);
+    return WoWLua.IsSpellUsable(this.spellName);
   }
 
   cast() {

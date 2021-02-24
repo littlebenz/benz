@@ -18,17 +18,12 @@ import { PlayerState } from "../../state/players/player_state";
 import { Car } from "./car";
 import { Polymorph } from "../spells/polymorph";
 import {
-  DistanceFromUnit,
-  GetUnitAuras,
-  IsSpellCastable,
-  IsSpellUsable,
   IsUnitDead,
-  IsUnitInOfLineOfSight,
   PlayerHasAura,
   StopCast,
-  UnitCastingInfoTyped,
   UnitCastOrChannel,
   UnitHealthPercentage,
+  WoWLua,
 } from "../../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
 import { UnitId } from "@wartoshika/wow-declarations";
@@ -50,8 +45,8 @@ export class CC implements Car {
       (x) =>
         IsGuid(UnitGUID(x.unitId)) &&
         !IsUnitDead(x.unitId) &&
-        IsUnitInOfLineOfSight("player", x.unitId) &&
-        DistanceFromUnit("player", x.unitId) <= 40
+        WoWLua.IsUnitInOfLineOfSight("player", x.unitId) &&
+        WoWLua.DistanceFromUnit("player", x.unitId) <= 40
     );
 
     for (const player of validPlayers) {
@@ -74,14 +69,7 @@ export class CC implements Car {
           const poly = new Polymorph(player.unitId);
           const casting = UnitCastOrChannel("player");
           if (poly.canCastSpell() && casting && casting.spell !== MageSpell.Polymorph) {
-            const percentRemaining =
-              ((GetTime() * 1000 - casting.startTimeMS) /
-                (casting.endTimeMS - casting.startTimeMS)) *
-              100;
-
-            if (percentRemaining <= 10 && casting.spell !== NightFaeSpell.ShiftingPower) {
-              StopCast();
-            }
+            this.stopCastIfNeeded();
           }
           return poly;
         }
@@ -92,13 +80,24 @@ export class CC implements Car {
   }
 
   private stopCastIfNeeded() {
-    const playerCast = UnitCastingInfoTyped("player");
+    const playerCast = UnitCastOrChannel("player");
+    if (!playerCast) {
+      return;
+    }
+
+    const percentRemaining =
+      ((GetTime() * 1000 - playerCast.startTimeMS) /
+        (playerCast.endTimeMS - playerCast.startTimeMS)) *
+      100;
     if (
       playerCast &&
       playerCast.spell !== MageSpell.Polymorph &&
-      playerCast.spell !== MageSpell.RingOfFrost
+      playerCast.spell !== MageSpell.RingOfFrost &&
+      playerCast.spell !== NightFaeSpell.ShiftingPower &&
+      percentRemaining <= 10
     ) {
-      StopCast();
+      // dont stop cast right now, weird bugs need to work it out
+      // StopCast();
     }
   }
 
@@ -127,7 +126,7 @@ export class CC implements Car {
         return true;
       }
 
-      if (!IsSpellUsable(MageSpell.Polymorph) && cc.remaining >= 1.8) {
+      if (!WoWLua.IsSpellUsable(MageSpell.Polymorph) && cc.remaining >= 1.8) {
         this.stopCastIfNeeded();
         return true;
       }
@@ -159,7 +158,7 @@ export class CC implements Car {
 
     // if combust CD is less than 25 do not poly.
 
-    const combustCastable = IsSpellCastable(MageSpell.Combustion);
+    const combustCastable = WoWLua.IsSpellCastable(MageSpell.Combustion);
 
     if (combustCastable.usableIn < 25) {
       return false;
@@ -229,7 +228,7 @@ export class CC implements Car {
 
   private haveWePolymorphedAnythingElse(playerState: PlayerState): boolean {
     for (const player of this.getEnemies().filter((x) => x.unitId !== playerState.unitId)) {
-      const auras = GetUnitAuras(player.unitId);
+      const auras = WoWLua.GetUnitAuras(player.unitId);
       if (
         auras.findIndex(
           (x) => x.name === MageSpell.Polymorph && UnitGUID(x.source) === UnitGUID("player")

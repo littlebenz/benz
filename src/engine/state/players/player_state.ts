@@ -1,12 +1,11 @@
 import { UnitReaction } from "../../wowutils/unlocked_functions";
 import {
-  GetUnitAuras,
   GetSpecializationInfoByIDObject,
   UnitCastOrChannel,
   UnitHasAura,
-  GetAuraRemainingTime,
   GetUnitAura,
   PlayerAura,
+  WoWLua,
 } from "../../wowutils/wow_utils";
 import { WowEventListener } from "../../wow_event_listener";
 import { DRTracker, DRType, SpellNameToDiminishingReturnSchool } from "../dr_tracker";
@@ -49,15 +48,15 @@ export abstract class PlayerState {
       return false;
     }
 
-    if (GetAuraRemainingTime(GetUnitAura(MageAura.MeteorBurn, this.unitId)) >= 1.5) {
+    if (WoWLua.GetAuraRemainingTime(GetUnitAura(MageAura.MeteorBurn, this.unitId)) >= 1.5) {
       return false;
     }
 
-    if (GetAuraRemainingTime(GetUnitAura(WarriorAura.WarBanner, this.unitId)) >= 1.5) {
+    if (WoWLua.GetAuraRemainingTime(GetUnitAura(WarriorAura.WarBanner, this.unitId)) >= 1.5) {
       return false;
     }
 
-    if (GetAuraRemainingTime(GetUnitAura(NecrolordAura.UltimateForm, this.unitId)) >= 1.5) {
+    if (WoWLua.GetAuraRemainingTime(GetUnitAura(NecrolordAura.UltimateForm, this.unitId)) >= 1.5) {
       return false;
     }
 
@@ -101,8 +100,8 @@ export abstract class PlayerState {
   abstract class: WoWClass;
 
   shouldSpellsteal(): SpellstealPriority {
-    const auras = GetUnitAuras(this.unitId).filter((x) =>
-      x.name === MageAura.Combustion ? GetAuraRemainingTime(x) >= 6 : true
+    const auras = WoWLua.GetUnitAuras(this.unitId).filter((x) =>
+      x.name === MageAura.Combustion ? WoWLua.GetAuraRemainingTime(x) >= 6 : true
     );
     const highestPriority = auras
       .filter((x) => SpellstealPriorityMap.has(x.name as PlayerAura))
@@ -137,7 +136,7 @@ export abstract class PlayerState {
   }
 
   remainingCC() {
-    const playerAuras = GetUnitAuras(this.unitId);
+    const playerAuras = WoWLua.GetUnitAuras(this.unitId);
 
     // this doesn't work exactly, but it's probably good enough?
     const ccList = new Set(SpellNameToDiminishingReturnSchool.keys());
@@ -145,7 +144,7 @@ export abstract class PlayerState {
     const existingCC = [];
     for (const aura of playerAuras) {
       if (ccList.has(aura.name)) {
-        const remainingTime = GetAuraRemainingTime(aura);
+        const remainingTime = WoWLua.GetAuraRemainingTime(aura);
         existingCC.push({
           type: SpellNameToDiminishingReturnSchool.get(aura.name)!,
           remaining: remainingTime,

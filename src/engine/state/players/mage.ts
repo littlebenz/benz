@@ -1,9 +1,4 @@
-import {
-  GetAuraRemainingTime,
-  GetUnitAura,
-  UnitCastOrChannel,
-  UnitHasAura,
-} from "../../wowutils/wow_utils";
+import { GetUnitAura, UnitCastOrChannel, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
 import { MageAura, MageSpell } from "../utils/mage_utils";
@@ -12,7 +7,7 @@ import { WoWClass } from "./WoWClass";
 export class Mage extends PlayerState {
   class = WoWClass.Mage;
   canBeIncapacitated(): boolean {
-    if (GetAuraRemainingTime(GetUnitAura(MageAura.IceBlock, this.unitId)) >= 1.5) {
+    if (WoWLua.GetAuraRemainingTime(GetUnitAura(MageAura.IceBlock, this.unitId)) >= 1.5) {
       return false;
     }
 

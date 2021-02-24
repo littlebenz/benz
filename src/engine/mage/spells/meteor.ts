@@ -1,4 +1,4 @@
-import { ClickAtTarget, IsSpellUsable, IsUnitInOfLineOfSight } from "../../wowutils/wow_utils";
+import { ClickAtTarget } from "../../wowutils/wow_utils";
 import { MageSpell } from "../../state/utils/mage_utils";
 import { Spell } from "./ispell";
 import { CastSpellByName, TargetUnit } from "../../wowutils/unlocked_functions";

@@ -1,10 +1,5 @@
 import { DRTracker, SpellNameToDiminishingReturnSchool } from "./state/dr_tracker";
-import {
-  CombatEvent,
-  GetAuraRemainingTime,
-  GetCurrentSpellEventLogInfo,
-  GetUnitAuras,
-} from "./wowutils/wow_utils";
+import { CombatEvent, WoWLua } from "./wowutils/wow_utils";
 
 export class WowEventListener {
   private playerName: string;
@@ -26,21 +21,21 @@ export class WowEventListener {
   }
 
   private parseSpellCastStart() {
-    const event = GetCurrentSpellEventLogInfo();
+    // const event = WoWLua.GetCurrentSpellEventLogInfo();
   }
 
   private parseSpellAuraApplied() {
-    const event = GetCurrentSpellEventLogInfo();
+    const event = WoWLua.GetCurrentSpellEventLogInfo();
     if (SpellNameToDiminishingReturnSchool.has(event.spellName)) {
       const drTracker = this.addOrGetDrTracker(event.destGUID);
       if (event.destName && IsGuid(event.destGUID)) {
-        const targetAuras = GetUnitAuras(SetMouseOver(event.destGUID) as any);
+        const targetAuras = WoWLua.GetUnitAuras(SetMouseOver(event.destGUID) as any);
         const maybeAura = targetAuras.find(
           (x) => x.spellId === event.spellId
           // && UnitGUID(x.source) === event.sourceGUID
         );
 
-        const drTime = GetAuraRemainingTime(maybeAura);
+        const drTime = WoWLua.GetAuraRemainingTime(maybeAura);
 
         console.log(
           `spell success of: ${event.spellName} from ${event.sourceName} to ${event.destName} for duration: ${drTime}`
@@ -54,7 +49,7 @@ export class WowEventListener {
   }
 
   private parseSpellCastFailed() {
-    const event = GetCurrentSpellEventLogInfo();
+    // const event = GetCurrentSpellEventLogInfo();
   }
 
   addOrGetDrTracker(unitGuid: string) {

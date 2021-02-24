@@ -1,11 +1,6 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
-import {
-  GetUnitAura,
-  GetUnitAuras,
-  UnitCastOrChannel,
-  UnitHasAura,
-} from "../../wowutils/wow_utils";
+import { UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { DruidAura, DruidSpell } from "../utils/druid_utils";
 import { WoWClass } from "./WoWClass";
 
@@ -22,7 +17,7 @@ export class Druid extends PlayerState {
   ];
   canBeIncapacitated(): boolean {
     // only if out CC'd out of form
-    const auras = GetUnitAuras(this.unitId);
+    const auras = WoWLua.GetUnitAuras(this.unitId);
 
     for (const aura of auras) {
       for (const beastBuffId of this.beastBuffIds) {

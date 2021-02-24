@@ -1,6 +1,6 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
-import { GetObjects, UnitCastOrChannel, UnitHasAura } from "../../wowutils/wow_utils";
+import { WoWLua, UnitCastOrChannel, UnitHasAura } from "../../wowutils/wow_utils";
 import { ShamanAura, ShamanSpell } from "../utils/shaman_utils";
 import { WoWClass } from "./WoWClass";
 
@@ -13,7 +13,7 @@ export class Shaman extends PlayerState {
     return false;
   }
   isPumping(): boolean {
-    const objects = GetObjects().map((x) => ({ guid: x, name: ObjectName(x) }));
+    const objects = WoWLua.GetObjects().map((x) => ({ guid: x, name: ObjectName(x) }));
     const feralSpirit = objects.find((x) => x.name === "Feral Spirit");
     const fireEle = objects.find((x) => x.name === "Greater Fire Elemental");
     const stormEle = objects.find((x) => x.name === "Greater Storm Elemental");

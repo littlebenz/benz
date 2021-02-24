@@ -1,5 +1,5 @@
-import { IsSpellUsable } from "../../wowutils/wow_utils";
 import { MageSpell } from "../../state/utils/mage_utils";
+import { WoWLua } from "../../wowutils/wow_utils";
 import { Spell } from "./ispell";
 
 export class Counterspell extends Spell {
@@ -8,6 +8,6 @@ export class Counterspell extends Spell {
   isSelfCast = false;
 
   canCastSpell(): boolean {
-    return IsSpellUsable(this.spellName);
+    return WoWLua.IsSpellUsable(this.spellName);
   }
 }

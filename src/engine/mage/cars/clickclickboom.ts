@@ -3,9 +3,9 @@ import { PlayerState } from "../../state/players/player_state";
 import { WoWClass } from "../../state/players/WoWClass";
 import { TalentSpec } from "../../state/players/TalentSpec";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
-import { GCDRemaining, IsSpellCastable, PlayerHasAura } from "../../wowutils/wow_utils";
 import { Meteor } from "../spells/meteor";
 import { Car } from "./car";
+import { WoWLua } from "../../wowutils/wow_utils";
 
 export class ClickClickBoom implements Car {
   private getEnemies: () => PlayerState[];
@@ -15,7 +15,7 @@ export class ClickClickBoom implements Car {
   }
 
   getNextSpell() {
-    const combustCD = IsSpellCastable(MageSpell.Combustion);
+    const combustCD = WoWLua.IsSpellCastable(MageSpell.Combustion);
     if (combustCD.usableIn <= 45 && combustCD.usableIn !== 0) {
       return null;
     }

@@ -1,11 +1,6 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
-import {
-  GetAuraRemainingTime,
-  GetUnitAura,
-  UnitCastOrChannel,
-  UnitHasAura,
-} from "../../wowutils/wow_utils";
+import { GetUnitAura, UnitCastOrChannel, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { HunterAura } from "../utils/hunter_utils";
 import { WoWClass } from "./WoWClass";
 
@@ -13,10 +8,12 @@ export class Hunter extends PlayerState {
   class = WoWClass.Hunter;
 
   canBeIncapacitated(): boolean {
-    if (GetAuraRemainingTime(GetUnitAura(HunterAura.Deterrence, this.unitId)) >= 1.5) {
+    if (WoWLua.GetAuraRemainingTime(GetUnitAura(HunterAura.Deterrence, this.unitId)) >= 1.5) {
       return false;
     }
-    if (GetAuraRemainingTime(GetUnitAura(HunterAura.AspectOfTheTurtle, this.unitId)) >= 1.5) {
+    if (
+      WoWLua.GetAuraRemainingTime(GetUnitAura(HunterAura.AspectOfTheTurtle, this.unitId)) >= 1.5
+    ) {
       return false;
     }
 

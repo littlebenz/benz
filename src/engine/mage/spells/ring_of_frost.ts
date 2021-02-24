@@ -1,15 +1,4 @@
-import {
-  ClickAtTarget,
-  DistanceFromPoints,
-  DistanceFromUnit,
-  GetUnitAura,
-  GetUnitAuras,
-  IsPositionLineOfSight,
-  IsSpellUsable,
-  IsUnitInOfLineOfSight,
-  UnitIsMoving,
-  UnitMovingDirection,
-} from "../../wowutils/wow_utils";
+import { ClickAtTarget, DistanceFromPoints, WoWLua } from "../../wowutils/wow_utils";
 import { MageSpell } from "../../state/utils/mage_utils";
 import { Spell } from "./ispell";
 import { CastSpellByName, TargetUnit } from "../../wowutils/unlocked_functions";
@@ -24,7 +13,7 @@ export class RingOfFrost extends Spell {
   private getCoords() {
     let [x, y, z] = GetUnitPosition(this.targetGuid);
     const [px, py, pz] = GetUnitPosition("player");
-    const unitMovingDirection = UnitMovingDirection(this.targetGuid);
+    const unitMovingDirection = WoWLua.UnitMovingDirection(this.targetGuid);
     if (!unitMovingDirection) {
       return null;
     }
@@ -33,12 +22,12 @@ export class RingOfFrost extends Spell {
     // const movingDirectionRight = (movingDirection + math.pi) % (math.pi * 0.5);
 
     const getDirection = () => {
-      if (UnitIsMoving(this.targetGuid)) {
+      if (WoWLua.UnitIsMoving(this.targetGuid)) {
         const directions = [];
         for (let i = 0; i < math.pi * 2; i += (math.pi * 2) / 12) {
           if (
             DistanceFromPoints(x - 5 * math.cos(i), y - 5 * math.sin(i), z, px, py, pz) < 30 &&
-            IsPositionLineOfSight(x - 5 * math.cos(i), y - 5 * math.sin(i), z, px, py, pz)
+            WoWLua.IsPositionLineOfSight(x - 5 * math.cos(i), y - 5 * math.sin(i), z, px, py, pz)
           ) {
             directions.push(i);
           }
@@ -50,7 +39,7 @@ export class RingOfFrost extends Spell {
         for (let i = 0; i < math.pi * 2; i++) {
           if (
             DistanceFromPoints(x - 5 * math.cos(i), y - 5 * math.sin(i), z, px, py, pz) < 30 &&
-            IsPositionLineOfSight(x - 5 * math.cos(i), y - 5 * math.sin(i), z, px, py, pz)
+            WoWLua.IsPositionLineOfSight(x - 5 * math.cos(i), y - 5 * math.sin(i), z, px, py, pz)
           ) {
             return i;
           }
@@ -61,14 +50,14 @@ export class RingOfFrost extends Spell {
     };
 
     const direction = getDirection();
-    const dir = UnitMovingDirection(this.targetGuid);
+    const dir = WoWLua.UnitMovingDirection(this.targetGuid);
 
     if (direction && dir) {
       x = x - 5 * math.cos(direction);
       y = y - 5 * math.sin(direction);
 
       const [speed] = GetUnitSpeed(this.targetGuid);
-      const auras = GetUnitAuras(SetMouseOver(this.targetGuid) as any);
+      const auras = WoWLua.GetUnitAuras(SetMouseOver(this.targetGuid) as any);
       const dist =
         speed * +(1.8 / 4) + 0.25 ||
         ((auras.find((x) => x.name === WarlockAura.Fear) ||
@@ -84,7 +73,7 @@ export class RingOfFrost extends Spell {
   }
   cast() {
     const coords = this.getCoords();
-    if (coords && !UnitIsMoving("player")) {
+    if (coords && !WoWLua.UnitIsMoving("player")) {
       CastSpellByName(MageSpell.RingOfFrost, this.targetGuid);
 
       ClickPosition(coords.x, coords.y, coords.z);
@@ -92,7 +81,7 @@ export class RingOfFrost extends Spell {
   }
 
   canCastSpell() {
-    if (UnitIsMoving("player")) {
+    if (WoWLua.UnitIsMoving("player")) {
       return false;
     }
 

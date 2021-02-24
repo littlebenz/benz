@@ -1,11 +1,6 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
-import {
-  GetAuraRemainingTime,
-  GetUnitAura,
-  UnitCastOrChannel,
-  UnitHasAura,
-} from "../../wowutils/wow_utils";
+import { GetUnitAura, UnitCastOrChannel, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { PaladinAura, PaladinSpell } from "../utils/paladin_utils";
 import { WoWClass } from "./WoWClass";
 import { TalentSpec } from "./TalentSpec";
@@ -14,7 +9,7 @@ export class Paladin extends PlayerState {
   class = WoWClass.Paladin;
 
   canBeIncapacitated(): boolean {
-    if (GetAuraRemainingTime(GetUnitAura(PaladinAura.DivineShield, this.unitId)) >= 1.5) {
+    if (WoWLua.GetAuraRemainingTime(GetUnitAura(PaladinAura.DivineShield, this.unitId)) >= 1.5) {
       return false;
     }
 

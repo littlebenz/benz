@@ -2,7 +2,7 @@ import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
 import { TalentSpec } from "./TalentSpec";
 import { WoWClass } from "./WoWClass";
-import { GetObjects, UnitHasAura } from "../../wowutils/wow_utils";
+import { UnitHasAura } from "../../wowutils/wow_utils";
 import { MonkAura } from "../utils/monk_utils";
 
 export class Monk extends PlayerState {

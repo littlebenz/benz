@@ -1,11 +1,4 @@
-import {
-  AreWeOffGCD,
-  DistanceFromUnit,
-  FaceUnit,
-  IsSpellUsable,
-  IsUnitInOfLineOfSight,
-  UnitCastOrChannel,
-} from "../../wowutils/wow_utils";
+import { FaceUnit, UnitCastOrChannel, WoWLua } from "../../wowutils/wow_utils";
 import { MageSpell } from "../../state/utils/mage_utils";
 import { CastSpellByName, TargetUnit } from "../../wowutils/unlocked_functions";
 import { UnitId } from "@wartoshika/wow-declarations";
@@ -24,6 +17,7 @@ export abstract class Spell {
   }
 
   cast() {
+    FaceUnit(this.targetGuid);
     CastSpellByName(this.spellName, this.targetGuid);
 
     this.afterCast();
@@ -31,7 +25,7 @@ export abstract class Spell {
 
   canCastSpell() {
     if (!this.isSelfCast) {
-      if (!IsUnitInOfLineOfSight("player", SetMouseOver(this.targetGuid))) {
+      if (!WoWLua.IsUnitInOfLineOfSight("player", SetMouseOver(this.targetGuid))) {
         return false;
       }
 
@@ -40,7 +34,7 @@ export abstract class Spell {
       }
     }
 
-    const spellUsable = IsSpellUsable(this.spellName);
+    const spellUsable = WoWLua.IsSpellUsable(this.spellName);
 
     return spellUsable;
   }

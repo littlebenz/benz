@@ -23,9 +23,11 @@ frame.SetScript("OnUpdate", () => {
       driver.start();
 
       const party: WoWAPI.UnitId[] = ["party1", "party2", "party2", "party3", "party4"];
+      const losFlags = bit.bor(0x10, 0x100, 0x1);
 
       const libdraw = new Libdraw();
       libdraw.sync(() => {
+        libdraw.clearCanvas();
         const [playerX, playerY, playerZ] = GetUnitPosition("player");
         if (!playerX || !playerY || !playerZ) {
           return;

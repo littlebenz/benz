@@ -1,13 +1,9 @@
 import {
-  GetAuraRemainingTime,
   GetPlayerAura,
   GetSpellChargesTyped,
-  IsPlayerMoving,
-  IsSpellCastable,
-  IsSpellUsable,
-  IsUnitInOfLineOfSight,
   PlayerHasAura,
   SpellCooldownRemainingSeconds,
+  WoWLua,
 } from "../../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
 import { Combustion } from "../spells/combustion";
@@ -48,13 +44,16 @@ export class Pump implements Car {
 
     if (PlayerHasAura(MageAura.Combustion)) {
       this.pumpingState = PumpingStatus.Pumping;
-    } else if (IsSpellUsable(MageSpell.Combustion) && this.pumpingState === PumpingStatus.Dumped) {
+    } else if (
+      WoWLua.IsSpellUsable(MageSpell.Combustion) &&
+      this.pumpingState === PumpingStatus.Dumped
+    ) {
       this.pumpingState = PumpingStatus.WarmingUp;
-    } else if (!IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
+    } else if (!WoWLua.IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
       this.pumpingState = PumpingStatus.Dumped;
     }
 
-    if (IsUnitInOfLineOfSight("player", "target")) {
+    if (WoWLua.IsUnitInOfLineOfSight("player", "target")) {
       if (this.pumpingState === PumpingStatus.WarmingUp) {
         return this.warmUp();
       }
@@ -79,8 +78,8 @@ export class Pump implements Car {
 
     if (hotStreak) {
       if (
-        GetAuraRemainingTime(hotStreak) >= 7 ||
-        GetAuraRemainingTime(hotStreak) === 0
+        WoWLua.GetAuraRemainingTime(hotStreak) >= 7 ||
+        WoWLua.GetAuraRemainingTime(hotStreak) === 0
         // fireBlastCharges.currentCharges !== fireBlastCharges.maxCharges
       ) {
         // cast frostbolt, it's actually decent damage plus it's in a spell book
@@ -98,7 +97,7 @@ export class Pump implements Car {
     }
 
     // we have nothing, let's get heating up
-    if (!IsPlayerMoving()) {
+    if (!WoWLua.IsPlayerMoving()) {
       return new Fireball();
     }
 
@@ -138,7 +137,7 @@ export class Pump implements Car {
     const hotStreak = GetPlayerAura(MageAura.HotStreak);
     if (hotStreak) {
       return new Pyroblast();
-    } else if (IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
+    } else if (WoWLua.IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
       return new Combustion();
     }
 
@@ -148,11 +147,11 @@ export class Pump implements Car {
     //     return new Pyroblast();
     // }
 
-    if (IsSpellUsable(MageSpell.FireBlast) && !PlayerHasAura(MageAura.HotStreak)) {
+    if (WoWLua.IsSpellUsable(MageSpell.FireBlast) && !PlayerHasAura(MageAura.HotStreak)) {
       return new FireBlast(true);
     }
 
-    if (IsSpellUsable(MageSpell.PhoenixFlames)) {
+    if (WoWLua.IsSpellUsable(MageSpell.PhoenixFlames)) {
       return new PhoenixFlames();
     }
     // }
@@ -166,7 +165,7 @@ export class Pump implements Car {
   }
 
   kite() {
-    if (!IsUnitInOfLineOfSight("player", "target")) {
+    if (!WoWLua.IsUnitInOfLineOfSight("player", "target")) {
       return null;
     }
 
@@ -185,7 +184,7 @@ export class Pump implements Car {
 
     const heatingUp = GetPlayerAura(MageAura.HeatingUp);
     if (heatingUp) {
-      const combustion = IsSpellCastable(MageSpell.Combustion);
+      const combustion = WoWLua.IsSpellCastable(MageSpell.Combustion);
       // 9 seconds per 3 = 27
       if (combustion.duration !== 0 && SpellCooldownRemainingSeconds(combustion) >= 27) {
         const fireBlastCharges = GetSpellChargesTyped(MageSpell.FireBlast);
@@ -200,7 +199,7 @@ export class Pump implements Car {
       return new Pyroblast();
     }
 
-    if (IsPlayerMoving()) {
+    if (WoWLua.IsPlayerMoving()) {
       // return new Scorch();
     }
 

@@ -3,7 +3,7 @@
  */
 import { PlayerState } from "../../state/players/player_state";
 import { MageSpell } from "../../state/utils/mage_utils";
-import { IsSpellUsable } from "../../wowutils/wow_utils";
+import { WoWLua } from "../../wowutils/wow_utils";
 import { Counterspell } from "../spells/counterspell";
 import { Car } from "./car";
 
@@ -15,7 +15,7 @@ export class Interrupt implements Car {
   }
 
   getNextSpell() {
-    if (!IsSpellUsable(MageSpell.Counterspell)) {
+    if (!WoWLua.IsSpellUsable(MageSpell.Counterspell)) {
       return null;
     }
 
