@@ -69,9 +69,8 @@ export class CC implements Car {
           const poly = new Polymorph(player.unitId);
           const casting = UnitCastOrChannel("player");
           if (poly.canCastSpell() && casting && casting.spell !== MageSpell.Polymorph) {
-            this.stopCastIfNeeded();
+            this.stopCastIfNeeded(player, 1.5);
           }
-          // console.log("trying to poly?: " + player.incapacitateDr().drCount);
           return poly;
         }
       }
@@ -80,25 +79,29 @@ export class CC implements Car {
     return null;
   }
 
-  private stopCastIfNeeded() {
+  private stopCastIfNeeded(player: PlayerState, castDuration: number) {
     const playerCast = UnitCastOrChannel("player");
     if (!playerCast) {
       return;
     }
 
-    const percentRemaining =
-      ((GetTime() * 1000 - playerCast.startTimeMS) /
-        (playerCast.endTimeMS - playerCast.startTimeMS)) *
-      100;
+    const playerRemaingCC = player.remainingCC();
+    const nonRootCCForChainLength = playerRemaingCC
+      .filter((x) => x.type !== DRType.Root)
+      .sort((a, b) => b.remaining - a.remaining);
+    let shouldStopCastBecauseWeWantToPoly = false;
+    if (nonRootCCForChainLength.length > 0) {
+      shouldStopCastBecauseWeWantToPoly = nonRootCCForChainLength[0].remaining < castDuration;
+    }
+
     if (
       playerCast &&
       playerCast.spell !== MageSpell.Polymorph &&
       playerCast.spell !== MageSpell.RingOfFrost &&
       playerCast.spell !== NightFaeSpell.ShiftingPower &&
-      percentRemaining <= 10
+      shouldStopCastBecauseWeWantToPoly
     ) {
-      // dont stop cast right now, weird bugs need to work it out
-      // StopCast();
+      StopCast();
     }
   }
 
@@ -114,7 +117,7 @@ export class CC implements Car {
     const remainingCCs = playerState.remainingCC().filter((x) => x.type !== DRType.Silence);
     for (const cc of remainingCCs) {
       if (cc.aura.name === MageAura.DB && cc.remaining >= 1.8) {
-        this.stopCastIfNeeded();
+        this.stopCastIfNeeded(playerState, 1.8);
         return true;
       }
 
@@ -123,12 +126,12 @@ export class CC implements Car {
         playerState.class === WoWClass.Druid &&
         !playerState.canBeIncapacitated()
       ) {
-        this.stopCastIfNeeded();
+        this.stopCastIfNeeded(playerState, 1.8);
         return true;
       }
 
       if (!WoWLua.IsSpellUsable(MageSpell.Polymorph) && cc.remaining >= 1.8) {
-        this.stopCastIfNeeded();
+        this.stopCastIfNeeded(playerState, 1.8);
         return true;
       }
     }

@@ -6,6 +6,7 @@ import {
   GetUnitAura,
   PlayerAura,
   WoWLua,
+  PlayerSpell,
 } from "../../wowutils/wow_utils";
 import { WowEventListener } from "../../wow_event_listener";
 import { DRTracker, DRType, SpellNameToDiminishingReturnSchool } from "../dr_tracker";
@@ -18,9 +19,7 @@ import { WoWClass } from "./WoWClass";
 import { TalentSpec } from "./TalentSpec";
 import { SpellstealPriority } from "./SpellstealPriority";
 import { SpellstealPriorityMap } from "../utils/spellsteal_utils";
-import { NightFaeAura } from "../utils/night_fae_utils";
 import { NecrolordAura } from "../utils/necrolord_utils";
-import { DemonHunter } from "./demon_hunter";
 import { DemonHunterAura } from "../utils/demon_hunter_utils";
 import { DeathKnightAura } from "../utils/death_knight_utils";
 
@@ -41,6 +40,7 @@ export abstract class PlayerState {
     return false;
   }
 
+  spellUsedAt: Map<PlayerSpell, number> = new Map();
   abstract canPump(): boolean;
   abstract isPumping(): boolean;
   canBeIncapacitated(): boolean {

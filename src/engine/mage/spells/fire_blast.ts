@@ -1,4 +1,4 @@
-import { GetPlayerAura, PlayerHasAura, WoWLua } from "../../wowutils/wow_utils";
+import { FaceUnit, GetPlayerAura, PlayerHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
 import { Spell } from "./ispell";
 import { UnitId } from "@wartoshika/wow-declarations";
@@ -37,6 +37,10 @@ export class FireBlast extends Spell {
   }
 
   cast() {
+    UpdateMovement();
+    FaceUnit(this.targetGuid);
+    UpdateMovement();
+
     lastFireBlast = GetTime();
     super.cast();
   }
