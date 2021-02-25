@@ -1,0 +1,2621 @@
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/account.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/account.d.ts
+index 11545dd..26dfeef 100644
+--- a/node_modules/@wartoshika/wow-declarations/declarations/account.d.ts
++++ b/node_modules/@wartoshika/wow-declarations/declarations/account.d.ts
+@@ -1,7 +1,6 @@
+ /** @noSelfInFile */
+ 
+ /// <reference path="global.d.ts" />
+-/// <reference path="enums.d.ts" />
+ 
+ /**
+  * Returns the highest expansion id the current account has been flagged for.
+@@ -17,53 +16,5 @@ declare function GetBillingTimeRested(): number;
+ 
+ /**
+  * Returns whether the player is using a trial (free-to-play) account
+- * @see https://wow.gamepedia.com/API_IsTrialAccount
+  */
+ declare function IsTrialAccount(): boolean;
+-
+-/**
+- * Returns the cap on trial character level, money and profession skill for Starter Edition accounts
+- * @returns
+- * 1. rLevel number - character level cap, currently 20
+- * 2. rMoney number - max amount of money in copper, currently 10000000
+- * 3. profCap number - profession level cap, currently 0
+- * @see https://wow.gamepedia.com/API_GetRestrictedAccountData
+- */
+-declare function GetRestrictedAccountData(): [number, number, number];
+-
+-/**
+- * unknown
+- */
+-declare function GetSecondsUntilParentalControlsKick(): WoWAPI.Unknown;
+-
+-/**
+- * Returns if the account has been secured with Blizzard Mobile Authenticator
+- * @returns accountSecured
+- * @since 7.3.5 (2018-01-16)
+- */
+-declare function IsAccountSecured(): boolean;
+-
+-/**
+- * Returns if the account has trial account restrictions
+- */
+-declare function IsRestrictedAccount(): WoWAPI.Unknown;
+-
+-/**
+- * unknown behaviour
+- * @since 6.1.0 (2015-02-24)
+- * @see https://wow.gamepedia.com/API_IsVeteranTrialAccount
+- */
+-declare function IsVeteranTrialAccount(): boolean;
+-
+-/**
+- * Indicates the player's account has reached a daily curfew of 90 minutes, imposed on children and any non-confirmed adults in China to comply with local law
+- * @returns 1 if the account is "unhealthy", nil if not. See details below for clarification. Always returns nil outside China.
+- * @see https://wow.gamepedia.com/API_NoPlayTime
+- */
+-declare function NoPlayTime(): WoWAPI.Flag;
+-
+-/**
+- * unknown behaviour
+- * @since 9.0.1 (2020-10-13)
+- */
+-declare function SendSubscriptionInterstitialResponse(): Enum.SubscriptionInterstitialResponseType;
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/achievement.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/achievement.d.ts
+index 9b7134d..014169c 100644
+--- a/node_modules/@wartoshika/wow-declarations/declarations/achievement.d.ts
++++ b/node_modules/@wartoshika/wow-declarations/declarations/achievement.d.ts
+@@ -33,17 +33,6 @@ declare function AreAccountAchievementsHidden(): boolean;
+  */
+ declare function CanShowAchievementUI(): boolean;
+ 
+-/**
+- * Remove the unit being compared
+- * @see https://wow.gamepedia.com/API_ClearAchievementComparisonUnit
+- */
+-declare function ClearAchievementComparisonUnit(): void;
+-
+-/**
+- * @see https://wow.gamepedia.com/API_ClearAchievementSearchString
+- */
+-declare function ClearAchievementSearchString(): WoWAPI.Unknown;
+-
+ /**
+  * Returns the category number the requested achievement belongs to
+  *
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/atlas.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/atlas.d.ts
+deleted file mode 100644
+index 58f874b..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/atlas.d.ts
++++ /dev/null
+@@ -1,4 +0,0 @@
+-declare namespace WoWAPI {
+-
+-    type AtlasID = string;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/battlefield.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/battlefield.d.ts
+index 9a47423..2ae3b3f 100644
+--- a/node_modules/@wartoshika/wow-declarations/declarations/battlefield.d.ts
++++ b/node_modules/@wartoshika/wow-declarations/declarations/battlefield.d.ts
+@@ -81,24 +81,6 @@ declare function GetBattlefieldInstanceRunTime(): number;
+  */
+ declare function GetBattlefieldPortExpiration(index: number): number;
+ 
+-/**
+- * Returns information about a player's score in battlegrounds
+- * @param playerIndex The characters index in battlegrounds, going from 1 to GetNumBattlefieldScores().
+- * @see https://wow.gamepedia.com/API_GetBattlefieldScore
+- * @tupleReturn
+- */
+-declare function GetBattlefieldScore(playerIndex: number): [string, number, number, number, number, number, string, string, string, number, number, string];
+-
+-/**
+- * Get data from the custom battlefield scoreboard columns
+- * @param playerIndex Player you want to grab the data for
+- * @param columnIndex Column you want to grab the data from
+- * @description Used to retrieve data from battleground specific scoreboard columns like flag captures in Warsong Gulch.
+- * If you want to make sure you have the most recent data you will have to call RequestBattlefieldScoreData and then wait for UPDATE_BATTLEFIELD_SCORE
+- * @see https://wow.gamepedia.com/API_GetBattlefieldStatData
+- */
+-declare function GetBattlefieldStatData(playerIndex: number, columnIndex: number): WoWAPI.Unknown;
+-
+ /**
+  * Get list of battleground specific columns on the scoreboard
+  * @param columnIndex Column to get data for
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/class.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/class.d.ts
+index 7cebf1b..6dbe6e1 100644
+--- a/node_modules/@wartoshika/wow-declarations/declarations/class.d.ts
++++ b/node_modules/@wartoshika/wow-declarations/declarations/class.d.ts
+@@ -1,22 +1,6 @@
+ declare namespace WoWAPI {
+     type CLASSES = "WARRIOR" | "DEATHKNIGHT" | "PALADIN" | "MONK" | "PRIEST" | "SHAMAN" | "DRUID" |
+         "ROGUE" | "MAGE" | "WARLOCK" | "HUNTER" | "DEMONHUNTER";
+-
+-    type CLASS_WARRIOR = 1;
+-    type CLASS_PALADIN = 2;
+-    type CLASS_HUNTER = 3;
+-    type CLASS_ROGUE = 4;
+-    type CLASS_PRIEST = 5;
+-    type CLASS_DEATH_KNIGHT = 6;
+-    type CLASS_SHAMAN = 7;
+-    type CLASS_MAGE = 8;
+-    type CLASS_WARLOCK = 9;
+-    type CLASS_MONK = 10;
+-    type CLASS_DRUID = 11;
+-    type CLASS_DEMON_HUNTER = 12;
+-
+-    type CLASS_ID = CLASS_WARRIOR | CLASS_PALADIN | CLASS_HUNTER | CLASS_ROGUE | CLASS_PRIEST | CLASS_DEATH_KNIGHT | CLASS_SHAMAN |
+-        CLASS_MAGE | CLASS_WARLOCK | CLASS_MONK | CLASS_DRUID | CLASS_DEMON_HUNTER;
+ }
+ 
+ /**
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_AchivementInfo.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_AchivementInfo.d.ts
+deleted file mode 100644
+index 7d0640c..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_AchivementInfo.d.ts
++++ /dev/null
+@@ -1,37 +0,0 @@
+-declare namespace C_AchivementInfo {
+-
+-    /**
+-     * Returns any reward item for an achievement
+-     * @param achivementId
+-     * @returns rewardItemID
+-     * @see https://wow.gamepedia.com/API_C_AchievementInfo.GetRewardItemID
+-     * @since 8.1.0 (2018-12-11)
+-     */
+-    function GetRewardItemID(achivementId: number): number | null;
+-
+-    /**
+-     * Returns the next achievement in a series
+-     * @param achivementId
+-     * @returns supercedingAchievements Only returns the next ID in a series even though it's in a table
+-     * @see https://wow.gamepedia.com/API_C_AchievementInfo.GetSupercedingAchievements
+-     * @since 8.1.0 (2018-12-11)
+-     */
+-    function GetSupercedingAchievements(achivementId: number): number[];
+-
+-    /**
+-     * Needs summary
+-     * @param achivementId
+-     * @returns isValidAchievement
+-     * @see https://wow.gamepedia.com/API_C_AchievementInfo.IsValidAchievement
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsValidAchievement(achivementId: number): boolean;
+-
+-    /**
+-     * Sets a portrait texture for the unit being achievement compared
+-     * @param textureObject
+-     * @see https://wow.gamepedia.com/API_C_AchievementInfo.IsValidAchievement
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function IsValidAchievement(textureObject: WoWAPI.Texture): void;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_AdventureJournal.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_AdventureJournal.d.ts
+deleted file mode 100644
+index b58f75c..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_AdventureJournal.d.ts
++++ /dev/null
+@@ -1,53 +0,0 @@
+-/**
+- * @see https://wow.gamepedia.com/Adventure_Guide
+- */
+-declare namespace C_AdventureJournal {
+-
+-    /**
+-     * @see https://wow.gamepedia.com/API_C_AdventureJournal.ActivateEntry
+-     * @since 6.2.0
+-     */
+-    function ActivateEntry(index: WoWAPI.Unknown): WoWAPI.Unknown;
+-
+-    /**
+-     * @see https://wow.gamepedia.com/API_C_AdventureJournal.CanBeShown
+-     * @since 6.2.0
+-     */
+-    function CanBeShown(...args: WoWAPI.UnknownTable[]): WoWAPI.Unknown;
+-
+-    /**
+-     * @see https://wow.gamepedia.com/API_C_AdventureJournal.GetNumAvailableSuggestions
+-     * @since 6.2.0
+-     */
+-    function GetNumAvailableSuggestions(...args: WoWAPI.UnknownTable[]): WoWAPI.Unknown;
+-
+-    /**
+-     * @see https://wow.gamepedia.com/API_C_AdventureJournal.GetPrimaryOffset
+-     * @since 6.2.0
+-     */
+-    function GetPrimaryOffset(...args: WoWAPI.UnknownTable[]): WoWAPI.Unknown;
+-
+-    /**
+-     * @see https://wow.gamepedia.com/API_C_AdventureJournal.GetReward
+-     * @since 6.2.0
+-     */
+-    function GetReward(...args: WoWAPI.UnknownTable[]): WoWAPI.Unknown;
+-
+-    /**
+-     * @see https://wow.gamepedia.com/API_C_AdventureJournal.GetSuggestions
+-     * @since 6.2.0
+-     */
+-    function GetSuggestions(...args: WoWAPI.UnknownTable[]): WoWAPI.Unknown;
+-
+-    /**
+-     * @see https://wow.gamepedia.com/API_C_AdventureJournal.SetPrimaryOffset
+-     * @since 6.2.0
+-     */
+-    function SetPrimaryOffset(...args: WoWAPI.UnknownTable[]): WoWAPI.Unknown;
+-
+-    /**
+-     * @see https://wow.gamepedia.com/API_C_AdventureJournal.UpdateSuggestions
+-     * @since 6.2.0
+-     */
+-    function UpdateSuggestions(...args: WoWAPI.UnknownTable[]): WoWAPI.Unknown;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_AnimaDiversion.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_AnimaDiversion.d.ts
+deleted file mode 100644
+index 94d859f..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_AnimaDiversion.d.ts
++++ /dev/null
+@@ -1,85 +0,0 @@
+-declare namespace WoWAPI {
+-
+-    interface AnimaDiversionNodeInfo {
+-        talentId: number;
+-        name: string;
+-        description: string;
+-        costs: AnimaDiversionCostInfo[];
+-        currencyId: number;
+-        icon: number;
+-        normalizedPosition: WoWAPI.Vector2D;
+-        state: Enum.AnimaDiversionNodeState;
+-    }
+-
+-    interface AnimaDiversionCostInfo {
+-        currencyId: number;
+-        quantity: number;
+-    }
+-}
+-
+-declare namespace C_AnimaDiversion {
+-
+-    /**
+-     * Closes the AnimaDiversionFrame
+-     * @see https://wow.gamepedia.com/API_C_AnimaDiversion.CloseUI
+-     * @fires ANIMA_DIVERSION_CLOSE
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function CloseUI(): void;
+-
+-    /**
+-     * Returns all Anima Conductor nodes for the player's Covenant
+-     * Requires interacting with an Anima Conductor at least once since logging on; otherwise, returns nil.
+-     * Subsequent calls to C_UI.Reload() will not interrupt this function
+-     * @see https://wow.gamepedia.com/API_C_AnimaDiversion.GetAnimaDiversionNodes
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetAnimaDiversionNodes(): WoWAPI.AnimaDiversionNodeInfo[];
+-
+-    /**
+-     * Locates an Anima Conductor
+-     * @returns An Anima Conductor's location on the continent map only while interacting with it; otherwise nil
+-     * @see https://wow.gamepedia.com/API_C_AnimaDiversion.GetOriginPosition
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetOriginPosition(): WoWAPI.Vector2D | null;
+-
+-    /**
+-     * Needs summary
+-     * @returns progress
+-     * @see https://wow.gamepedia.com/API_C_AnimaDiversion.GetReinforceProgress
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetReinforceProgress(): number;
+-
+-    /**
+-     * Names the texture kit applied to the AnimaDiversionFrame
+-     * @returns Name of a texture kit if the player has interacted with an Anima Conductor at least once since logging on; otherwise, returns nil
+-     * @see https://wow.gamepedia.com/API_C_AnimaDiversion.GetTextureKit
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetTextureKit(): string | null;
+-
+-    /**
+-     * Attempts to open the AnimaDiversionFrame
+-     * - Triggers ANIMA_DIVERSION_OPEN only after interacting with an Anima Conductor at least once since logging on, regardless of subsequent
+-     *   calls to C_UI.Reload(); otherwise, this function silently fails
+-     * - Despite its name, this function is not used by the native UI when interacting with an Anima Conductor
+-     * - Calling this function after walking away from the Anima Conductor results in an incomplete UI because C_AnimaDiversion.GetOriginPosition() returns nil
+-     * - However, it is possible to close and reopen the frame with full functionality if the player has remained within range
+-     *   of the Anima Conductor since interacting with it
+-     * @see https://wow.gamepedia.com/API_C_AnimaDiversion.OpenAnimaDiversionUI
+-     * @fires ANIMA_DIVERSION_OPEN
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function OpenAnimaDiversionUI(): void;
+-
+-    /**
+-     * Needs summary
+-     * @param talentId
+-     * @param temporary
+-     * @see https://wow.gamepedia.com/API_C_AnimaDiversion.SelectAnimaNode
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function SelectAnimaNode(talentId: number, temporary: boolean): void;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_ArdenwealdGardening.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_ArdenwealdGardening.d.ts
+deleted file mode 100644
+index 5ae503d..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_ArdenwealdGardening.d.ts
++++ /dev/null
+@@ -1,24 +0,0 @@
+-declare namespace WoWAPI {
+-    interface ArdenwealdGardenData {
+-        active: number;
+-        ready: number;
+-        remainingSeconds: number;
+-    }
+-}
+-
+-declare namespace C_ArdenwealdGardening {
+-
+-    /**
+-     * unknown behaviour
+-     * @see https://wow.gamepedia.com/API_C_ArdenwealdGardening.GetGardenData
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetGardenData(): WoWAPI.ArdenwealdGardenData;
+-
+-    /**
+-     * unknown behaviour
+-     * @see https://wow.gamepedia.com/API_C_ArdenwealdGardening.IsGardenAccessible
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function IsGardenAccessible(): boolean;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_CovenantCallings.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_CovenantCallings.d.ts
+deleted file mode 100644
+index 428f84a..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_CovenantCallings.d.ts
++++ /dev/null
+@@ -1,18 +0,0 @@
+-declare namespace C_CovenantCallings {
+-
+-    /**
+-     * Needs summary.
+-     * @returns unlocked
+-     * @see https://wow.gamepedia.com/API_C_CovenantCallings.AreCallingsUnlocked
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function AreCallingsUnlocked(): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantCallings.RequestCallings
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function RequestCallings(): void;
+-
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_CovenantPreview.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_CovenantPreview.d.ts
+deleted file mode 100644
+index 8c8b540..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_CovenantPreview.d.ts
++++ /dev/null
+@@ -1,35 +0,0 @@
+-declare namespace WoWAPI {
+-
+-    interface CovenantPreviewInfo {
+-
+-        textureKit: string;
+-        transmogSetID: number;
+-        mountID: number;
+-        covenantName: string;
+-        covenantZone: string;
+-        description: string;
+-        covenantCrest: string;
+-        covenantAbilities: CovenantAbilityInfo[];
+-        fromPlayerChoice: boolean;
+-        covenantSoulbinds: CovenantSoulbindInfo[];
+-        featureInfo: CovenantFeatureInfo;
+-    }
+-}
+-
+-declare namespace C_CovenantPreview {
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantPreview.CloseFromUI
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function CloseFromUI(): void;
+-
+-    /**
+-     * Needs summary
+-     * @param playerChoiceResponseID
+-     * @see https://wow.gamepedia.com/API_C_CovenantPreview.GetCovenantInfoForPlayerChoiceResponseID
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetCovenantInfoForPlayerChoiceResponseID(playerChoiceResponseID: number): WoWAPI.CovenantPreviewInfo;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_CovenantSanctumUI.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_CovenantSanctumUI.d.ts
+deleted file mode 100644
+index 8922000..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_CovenantSanctumUI.d.ts
++++ /dev/null
+@@ -1,123 +0,0 @@
+-declare namespace WoWAPI {
+-
+-    interface CovenantSanctumFeatureInfo {
+-
+-        garrTalentTreeID: number;
+-        featureType: number;
+-        uiOrder: number;
+-    }
+-
+-    interface CovenantSanctumRenownLevelInfo {
+-
+-        level: number;
+-        locked: boolean;
+-        isMilestone: boolean;
+-        isCapstone: boolean;
+-    }
+-
+-    interface CovenantSanctumRenownRewardInfo {
+-        uiOrder: number;
+-        itemID: number | null;
+-        spellID: number | null;
+-        mountID: number | null;
+-        transmogID: number | null;
+-        transmogSetID: number | null;
+-        titleMaskID: number | null;
+-        garrFollowerID: number | null;
+-        transmogIllusionSourceID: number | null;
+-        icon: number | null;
+-        name: string | null;
+-        description: string | null;
+-        toastDescription: string | null;
+-    }
+-}
+-
+-declare namespace C_CovenantSanctumUI {
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.CanAccessReservoir
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function CanAccessReservoir(): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.CanDepositAnima
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function CanDepositAnima(): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.DepositAnima
+-     * @protected
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function DepositAnima(): boolean;
+-
+-    /**
+-     * Needs summary.
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.EndInteraction
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function EndInteraction(): void;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.GetAnimaInfo
+-     * @returns currencyId, maxDisplayableValue
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetAnimaInfo(): [number, number];
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.GetCurrentTalentTreeID
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetCurrentTalentTreeID(): number | null;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.GetFeatures
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetFeatures(): WoWAPI.CovenantSanctumFeatureInfo[];
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.GetRenownLevel
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRenownLevel(): number;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.GetRenownLevels
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetRenownLevels(covenantId: Enum.CovenantType): WoWAPI.CovenantSanctumRenownLevelInfo[];
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.GetRenownRewardsForLevel
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRenownRewardsForLevel(covenantId: Enum.CovenantType, renownLevel: number): WoWAPI.CovenantSanctumRenownRewardInfo[];
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.GetSanctumType
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetSanctumType(): Enum.GarrTalentFeatureSubtype;
+-
+-    /**
+-     * Needs summary
+-     * @returns currencyIds
+-     * @see https://wow.gamepedia.com/API_C_CovenantSanctumUI.GetSoulCurrencies
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetSoulCurrencies(): number[];
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Covenants.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Covenants.d.ts
+deleted file mode 100644
+index 76ecc1d..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Covenants.d.ts
++++ /dev/null
+@@ -1,71 +0,0 @@
+-declare namespace WoWAPI {
+-
+-    interface CovenantData {
+-
+-        ID: number;
+-        textureKit: string;
+-        celebrationSoundKit: number;
+-        animaChannelSelectSoundKit: number;
+-        animaChannelActiveSoundKit: number;
+-        animaGemsFullSoundKit: number;
+-        animaNewGemSoundKit: number;
+-        animaReinforceSelectSoundKit: number;
+-        upgradeTabSelectSoundKitID: number;
+-        reservoirFullSoundKitID: number;
+-        beginResearchSoundKitID: number;
+-        renownFanfareSoundKitID: number;
+-        name: string;
+-        soulbindIDs: number[];
+-    }
+-
+-    interface CovenantAbilityInfo {
+-
+-        spellId: number;
+-        type: Enum.CovenantAbilityType;
+-    }
+-
+-    interface CovenantSoulbindInfo {
+-
+-        spellID: number;
+-        uiTextureKit: string;
+-        name: string;
+-        description: string;
+-        sortOrder: number;
+-    }
+-
+-    interface CovenantFeatureInfo {
+-
+-        name: string;
+-        description: string;
+-        texture: number;
+-    }
+-
+-}
+-
+-declare namespace C_Covenants {
+-
+-    /**
+-     * Returns the CovenantID of the chosen covenant
+-     * - Only applies to joining a Covenant at maximum level or during N [50] The Threads of Fate
+-     * - Returns 0 while loading addons until info is available, before PLAYER_LOGIN and immediately after /reload
+-     * @see https://wow.gamepedia.com/API_C_Covenants.GetActiveCovenantID
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetActiveCovenantID(): Enum.CovenantType;
+-
+-    /**
+-     * Needs summary
+-     * @param covenantId
+-     * @see https://wow.gamepedia.com/API_C_Covenants.GetCovenantData
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetCovenantData(covenantId: Enum.CovenantType): WoWAPI.CovenantData | null;
+-
+-    /**
+-     * Needs summary.
+-     * @see https://wow.gamepedia.com/API_C_Covenants.GetCovenantIDs
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetCovenantIDs(): Enum.CovenantType[];
+-
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_EncounterJournal.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_EncounterJournal.d.ts
+deleted file mode 100644
+index e1e6a8e..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_EncounterJournal.d.ts
++++ /dev/null
+@@ -1,177 +0,0 @@
+-declare namespace WoWAPI {
+-
+-    interface DungeonEntranceMapInfo {
+-
+-        /**
+-         * Possible values listed at wow.tools
+-         */
+-        areaPoiID: number;
+-        position: Vector2D;
+-        name: string;
+-        description: string;
+-        /**
+-         * AtlasID used as Texture:SetAtlas(atlasName)
+-         */
+-        atlasName: string;
+-        /**
+-         * Possible values listed at wow.tools
+-         */
+-        journalInstanceID: number;
+-    }
+-
+-    interface EncounterJournalMapEncounterInfo {
+-
+-        encointerID: number;
+-        mapX: number;
+-        mapY: number;
+-    }
+-
+-    interface EncounterJournalSectionInfo {
+-
+-        spellID: number;
+-        /**
+-         * Section title, e.g. "Stage One: The Final Assault", "Mutated Corruption", "Impale"
+-         */
+-        title: string;
+-        /**
+-         * Description text, e.g. "A Mutated Corruption appears shortly after assaulting a platform"
+-         */
+-        description: string | null;
+-        /**
+-         * Section depth, i.e. the number of ancestors it has before reaching a sibling of the root section for the encounter
+-         * (0 for the root section and its siblings, 1 for their children, 2 for their children's children...).
+-         */
+-        headerType: number;
+-        /**
+-         * Path to a texture to display as an icon next to the section title, or "" if no static icon should be shown.
+-         */
+-        abilityIcon: number;
+-        /**
+-         * Model ID to display as an icon next to the section title, or 0 if no model-based icon should be shown
+-         */
+-        creatureDisplayID: number;
+-        uiModelSceneID: number;
+-        /**
+-         * Section ID of the next section on the same depth as this one, nil if none
+-         */
+-        siblingSectionID: number | null;
+-        /**
+-         * Section ID of the first child section of this section, nil if none
+-         */
+-        firstChildSectionID: number | null;
+-        /**
+-         * true if this section should be hidden because it does not apply to the current DifficultyID}, false otherwise.
+-         */
+-        filteredByDifficulty: boolean;
+-        /**
+-         * hyperlink to this section, e.g. " |cff66bbff|Hjournal:2:4102:4|h[Cataclysm]|h|r"
+-         */
+-        link: Hyperlink;
+-        /**
+-         * True if the section should be expanded by default, false if it should be collapsed by default
+-         */
+-        startsOpen: boolean;
+-    }
+-
+-    type ENCOUNTER_JOURNAL_FLAG_TANK_ALERT = 0;
+-    type ENCOUNTER_JOURNAL_FLAG_DAMAGE_DEALER_ALERT = 1;
+-    type ENCOUNTER_JOURNAL_FLAG_HEALER_ALERT = 2;
+-    type ENCOUNTER_JOURNAL_FLAG_HEROIC_DIFFICULTY = 3;
+-    type ENCOUNTER_JOURNAL_FLAG_DEADLY = 4;
+-    type ENCOUNTER_JOURNAL_FLAG_IMPORTANT = 5;
+-    type ENCOUNTER_JOURNAL_FLAG_INTERUPTIBLE = 6;
+-    type ENCOUNTER_JOURNAL_FLAG_MAGIC_EFFECT = 7;
+-    type ENCOUNTER_JOURNAL_FLAG_CURSE_EFFECT = 8;
+-    type ENCOUNTER_JOURNAL_FLAG_POISON_EFFECT = 9;
+-    type ENCOUNTER_JOURNAL_FLAG_DISEASE_EFFECT = 10;
+-    type ENCOUNTER_JOURNAL_FLAG_ENRAGE = 11;
+-    type ENCOUNTER_JOURNAL_FLAG_MYTHIC_DIFFICULTY = 12;
+-    type ENCOUNTER_JOURNAL_FLAG =
+-        ENCOUNTER_JOURNAL_FLAG_TANK_ALERT
+-        | ENCOUNTER_JOURNAL_FLAG_DAMAGE_DEALER_ALERT
+-        | ENCOUNTER_JOURNAL_FLAG_HEALER_ALERT
+-        |
+-        ENCOUNTER_JOURNAL_FLAG_HEROIC_DIFFICULTY
+-        | ENCOUNTER_JOURNAL_FLAG_DEADLY
+-        | ENCOUNTER_JOURNAL_FLAG_IMPORTANT
+-        | ENCOUNTER_JOURNAL_FLAG_INTERUPTIBLE
+-        |
+-        ENCOUNTER_JOURNAL_FLAG_MAGIC_EFFECT
+-        | ENCOUNTER_JOURNAL_FLAG_CURSE_EFFECT
+-        | ENCOUNTER_JOURNAL_FLAG_POISON_EFFECT
+-        | ENCOUNTER_JOURNAL_FLAG_DISEASE_EFFECT
+-        |
+-        ENCOUNTER_JOURNAL_FLAG_ENRAGE
+-        | ENCOUNTER_JOURNAL_FLAG_MYTHIC_DIFFICULTY;
+-}
+-
+-declare namespace C_EncounterJournal {
+-
+-    /**
+-     * Returns the instance entrances for a map
+-     * @param uiMapId
+-     * @see https://wow.gamepedia.com/API_C_EncounterJournal.GetDungeonEntrancesForMap
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetDungeonEntrancesForMap(uiMapId: number): WoWAPI.DungeonEntranceMapInfo[];
+-
+-    /**
+-     * Returns boss pin locations for an instance map
+-     * @param uiMapId
+-     * @see https://wow.gamepedia.com/API_C_EncounterJournal.GetEncountersOnMap
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetEncountersOnMap(uiMapId: number): WoWAPI.EncounterJournalMapEncounterInfo[];
+-
+-    /**
+-     * Returns the icon flags for a section, such as Magic Effect and Heroic Difficulty
+-     * @param sectionID
+-     * @returns Flag IDs to display for this section.
+-     *  - Refer to the ENCOUNTER_JOURNAL_SECTION_FLAG globals for the flag titles.
+-     *  - For convenience there is EncounterJournal_SetFlagIcon() which sets the texture coords for interface/encounterjournal/ui-ej-icons.blp
+-     * @see https://wow.gamepedia.com/API_C_EncounterJournal.GetSectionIconFlags
+-     * @since 7.3.5 (2018-01-16)
+-     */
+-    function GetSectionIconFlags(sectionID: number): WoWAPI.ENCOUNTER_JOURNAL_FLAG[];
+-
+-    /**
+-     * Returns information about an entry in the Abilities section of the Encounter Journal
+-     * @param sectionId
+-     * @returns encounterJournalSectionInfo
+-     * @see https://wow.gamepedia.com/API_C_EncounterJournal.GetSectionInfo
+-     * @since 7.3.5 (2018-01-16)
+-     */
+-    function GetSectionInfo(sectionId: number): WoWAPI.EncounterJournalSectionInfo;
+-
+-    /**
+-     * Returns whether an instance has a loot table in the journal
+-     * @param instanceId if omitted, uses the currently selected instance per EJ_SelectInstance
+-     * @see https://wow.gamepedia.com/API_C_EncounterJournal.InstanceHasLoot
+-     * @since 8.1.0 (2018-12-11)
+-     */
+-    function InstanceHasLoot(instanceId?: number): boolean;
+-
+-    /**
+-     * Returns if a boss encounter has been completed
+-     * @param journalEncounterID
+-     * @see https://wow.gamepedia.com/API_C_EncounterJournal.IsEncounterComplete
+-     * @since 8.1.5 (2019-03-12)
+-     */
+-    function IsEncounterComplete(journalEncounterID: number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param level
+-     * @see https://wow.gamepedia.com/API_C_EncounterJournal.SetPreviewMythicPlusLevel
+-     * @since 8.2.0 (2019-06-25)
+-     */
+-    function SetPreviewMythicPlusLevel(level: number): void;
+-
+-    /**
+-     * Needs summary
+-     * @param tier
+-     * @see https://wow.gamepedia.com/API_C_EncounterJournal.SetPreviewPvpTier
+-     * @since 8.2.0 (2019-06-25)
+-     */
+-    function SetPreviewPvpTier(tier: number): void;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Item.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Item.d.ts
+deleted file mode 100644
+index 4cff795..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Item.d.ts
++++ /dev/null
+@@ -1,244 +0,0 @@
+-declare namespace C_Item {
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.IsItemConduit
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function IsItemConduit(item: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Item.IsAnimaItemByID
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function IsAnimaItemByID(itemInfo: string): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.CanViewItemPowers
+-     * @since 8.1.0 (2018-12-11)
+-     */
+-    function CanViewItemPowers(item: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.DoesItemExist
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function DoesItemExist(item: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Item.DoesItemExistByID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function DoesItemExistByID(itemInfo: WoWAPI.Hyperlink | string | number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.DoesItemMatchBonusTreeReplacement
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function DoesItemMatchBonusTreeReplacement(item: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.GetCurrentItemLevel
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetCurrentItemLevel(item: ItemLocation.ItemLocationMixin): number | null;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemGUID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemGUID(item: ItemLocation.ItemLocationMixin): string;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemIcon
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemIcon(item: ItemLocation.ItemLocationMixin): number | null;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemIconByID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemIconByID(itemInfo: WoWAPI.Hyperlink | string | number): number | null;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemID(item: ItemLocation.ItemLocationMixin): number;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemInventoryType
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemInventoryType(item: ItemLocation.ItemLocationMixin): Enum.InventoryType | null;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemInventoryTypeByID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemInventoryTypeByID(itemInfo: WoWAPI.Hyperlink | string | number): Enum.InventoryType | null;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemLink
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemLink(item: ItemLocation.ItemLocationMixin): WoWAPI.Hyperlink | null;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemName
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemName(item: ItemLocation.ItemLocationMixin): string | null;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemNameByID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemNameByID(itemInfo: WoWAPI.Hyperlink | string | number): string | null;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemQuality
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemQuality(item: ItemLocation.ItemLocationMixin): Enum.ItemQuality | null;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Item.GetItemQualityByID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetItemQualityByID(itemInfo: WoWAPI.Hyperlink | string | number): Enum.ItemQuality | null;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.GetStackCount
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function GetStackCount(item: ItemLocation.ItemLocationMixin): number;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @returns Whether or not the item is soul- or accountbound
+-     * @see https://wow.gamepedia.com/API_C_Item.IsBound
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function IsBound(item: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.IsItemDataCached
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function IsItemDataCached(item: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Item.IsItemDataCachedByID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function IsItemDataCachedByID(itemInfo: WoWAPI.Hyperlink | string | number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Item.IsItemKeystoneByID
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsItemKeystoneByID(itemInfo: WoWAPI.Hyperlink | string | number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.IsItemDataCached
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function IsLocked(item: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.IsLocked
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function LockItem(item: ItemLocation.ItemLocationMixin): void;
+-
+-    /**
+-     * Needs summary
+-     * @param itemGuid
+-     * @see https://wow.gamepedia.com/API_C_Item.LockItemByGUID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function LockItemByGUID(itemGuid: string): void;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.RequestLoadItemData
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function RequestLoadItemData(item: ItemLocation.ItemLocationMixin): void;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Item.RequestLoadItemDataByID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function RequestLoadItemDataByID(itemInfo: WoWAPI.Hyperlink | string | number): void;
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_Item.UnlockItem
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function UnlockItem(item: ItemLocation.ItemLocationMixin): void;
+-
+-    /**
+-     * Needs summary
+-     * @param itemGuid
+-     * @see https://wow.gamepedia.com/API_C_Item.UnlockItemByGUID
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function UnlockItemByGUID(itemGuid: string): void;
+-
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_ItemInteraction.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_ItemInteraction.d.ts
+deleted file mode 100644
+index d720dea..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_ItemInteraction.d.ts
++++ /dev/null
+@@ -1,78 +0,0 @@
+-declare namespace WoWAPI {
+-
+-    interface ItemInteractionFrameInfo {
+-
+-        textureKit: string;
+-        openSoundKitID: number;
+-        closeSoundKitID: number;
+-        titleText: string;
+-        tutorialText: string;
+-        buttonText: string;
+-        frameType: Enum.ItemInteractionFrameType;
+-        description: string | null;
+-        cost: number | null;
+-        currencyTypeId: number | null;
+-        dropInSlotSoundKitId: number | null;
+-    }
+-}
+-
+-declare namespace C_ItemInteraction {
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_ItemInteraction.ClearPendingItem
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function ClearPendingItem(): void;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_ItemInteraction.CloseUI
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function CloseUI(): void;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_ItemInteraction.GetItemInteractionInfo
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function GetItemInteractionInfo(): WoWAPI.ItemInteractionFrameInfo | null;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_ItemInteraction.GetItemInteractionSpellId
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function GetItemInteractionSpellId(): number;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_ItemInteraction.InitializeFrame
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function InitializeFrame(): void;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_ItemInteraction.PerformItemInteraction
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function PerformItemInteraction(): void;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_ItemInteraction.Reset
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function Reset(): void;
+-
+-    /**
+-     * Needs summary
+-     * @returns success
+-     * @see https://wow.gamepedia.com/API_C_ItemInteraction.SetPendingItem
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function SetPendingItem(item?: ItemLocation.ItemLocationMixin): boolean;
+-
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_ItemUpgrade.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_ItemUpgrade.d.ts
+deleted file mode 100644
+index 7e06f70..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_ItemUpgrade.d.ts
++++ /dev/null
+@@ -1,10 +0,0 @@
+-declare namespace C_ItemUpgrade {
+-
+-    /**
+-     * Returns an itemLink of the anticipated result from applying item upgrading using the ItemUpgradeFrame
+-     * @returns the item hyperlink
+-     * @see https://wow.gamepedia.com/API_C_ItemUpgrade.GetItemHyperlink
+-     * @since 8.2.0 (2019-06-25)
+-     */
+-    function GetItemHyperlink(): WoWAPI.Hyperlink;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_LegendaryCrafting.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_LegendaryCrafting.d.ts
+deleted file mode 100644
+index 4b20c85..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_LegendaryCrafting.d.ts
++++ /dev/null
+@@ -1,199 +0,0 @@
+-declare namespace C_LegendaryCrafting {
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.CloseRuneforgeInteraction
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function CloseRuneforgeInteraction(): void;
+-
+-    /**
+-     * Needs summary
+-     * @param unknown
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.CraftRuneforgeLegendary
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function CraftRuneforgeLegendary(...unknown: WoWAPI.UnknownTable[]): WoWAPI.Unknown;
+-
+-    /**
+-     * Needs summary
+-     * @param baseItem
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgeItemPreviewInfo
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgeItemPreviewInfo(baseItem: ItemLocation.ItemLocationMixin): WoWAPI.Unknown;
+-
+-    /**
+-     * Needs summary
+-     * @param baseItem
+-     * @param runeforgePowerID
+-     * @param modifiers
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgeItemPreviewInfo
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgeItemPreviewInfo(baseItem: ItemLocation.ItemLocationMixin, runeforgePowerID: number, modifiers: number[]): WoWAPI.Unknown;
+-
+-    /**
+-     * Needs summary
+-     * @param baseItem
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgeLegendaryCost
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgeLegendaryCost(baseItem: ItemLocation.ItemLocationMixin): WoWAPI.Unknown;
+-
+-    /**
+-     * Needs summary
+-     * @returns spellId
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgeLegendaryCraftSpellID
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgeLegendaryCraftSpellID(): number;
+-
+-    /**
+-     * Needs summary
+-     * @returns currencies
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgeLegendaryCurrencies
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgeLegendaryCurrencies(): number[];
+-
+-    /**
+-     * Needs summary
+-     * @param runeforgeLegendary
+-     * @param upgradeItem
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgeLegendaryUpgradeCost
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgeLegendaryUpgradeCost(runeforgeLegendary: ItemLocation.ItemLocationMixin, upgradeItem: ItemLocation.ItemLocationMixin): WoWAPI.Unknown;
+-
+-    /**
+-     * Needs summary
+-     * @param baseItem
+-     * @param powerId
+-     * @param addedModifierIndex
+-     * @param modifiers
+-     * @returns name and description
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgeModifierInfo
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgeModifierInfo(
+-        baseItem: ItemLocation.ItemLocationMixin,
+-        powerId: number | null,
+-        addedModifierIndex: number,
+-        modifiers: number[]
+-    ): [string, string];
+-
+-    /**
+-     * Needs summary
+-     * @returns modifiedReagentItemIDs
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgeModifiers
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgeModifiers(): number[];
+-
+-    /**
+-     * Needs summary
+-     * @returns runeforgePowerINfo
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgePowerInfo
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgePowerInfo(runeforgePowerID: number): WoWAPI.Unknown;
+-
+-    /**
+-     * Needs summary
+-     * @returns specRuneforgePowerIDs and otherSpecRuneforgePowerIDs
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgePowers
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgePowers(): [number[], number[]];
+-
+-    /**
+-     * Needs summary
+-     * @param baseItem
+-     * @param filter
+-     * @returns specRuneforgePowerIDs and otherSpecRuneforgePowerIDs
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgePowers
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgePowers(baseItem: ItemLocation.ItemLocationMixin, filter: Enum.RuneforgePowerFilter): [number[], number[]];
+-
+-    /**
+-     * Needs summary
+-     * @returns runeforgePowerIDs
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgePowersByClassAndSpec
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgePowersByClassAndSpec(): number[];
+-
+-    /**
+-     * Needs summary
+-     * @param classID
+-     * @param specId
+-     * @param filter
+-     * @returns runeforgePowerIDs
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgePowersByClassAndSpec
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgePowersByClassAndSpec(classID: WoWAPI.CLASS_ID, specId: number, filter: Enum.RuneforgePowerFilter): number[];
+-
+-    /**
+-     * Needs summary
+-     * @param runeforgePowerID
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.GetRuneforgePowerSlots
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetRuneforgePowerSlots(runeforgePowerID: number): string[];
+-
+-    /**
+-     * Needs summary
+-     * @param item
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.IsRuneforgeLegendary
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsRuneforgeLegendary(item: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param runeforgeLegendary
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.IsRuneforgeLegendaryMaxLevel
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsRuneforgeLegendaryMaxLevel(runeforgeLegendary: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param runeforgeLegendary
+-     * @param upgradeItem
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.IsUpgradeItemValidForRuneforgeLegendary
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsUpgradeItemValidForRuneforgeLegendary(runeforgeLegendary: ItemLocation.ItemLocationMixin, upgradeItem: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param baseItem
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.IsValidRuneforgeBaseItem
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsValidRuneforgeBaseItem(baseItem: ItemLocation.ItemLocationMixin): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param baseItem
+-     * @param runeforgePowerId
+-     * @param modifiers
+-     * @returns runeforgeLegendaryCraftDescription
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.MakeRuneforgeCraftDescription
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function MakeRuneforgeCraftDescription(baseItem: ItemLocation.ItemLocationMixin, runeforgePowerId: number, modifiers: number[]): WoWAPI.Unknown;
+-
+-    /**
+-     * Needs summary.
+-     * @param runeforgeLegendary
+-     * @param upgradeItem
+-     * @see https://wow.gamepedia.com/API_C_LegendaryCrafting.UpgradeRuneforgeLegendary
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function UpgradeRuneforgeLegendary(runeforgeLegendary: ItemLocation.ItemLocationMixin, upgradeItem: ItemLocation.ItemLocationMixin): void;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Loot.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Loot.d.ts
+deleted file mode 100644
+index fe39f7c..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Loot.d.ts
++++ /dev/null
+@@ -1,9 +0,0 @@
+-declare namespace C_Loot {
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_Loot.IsLegacyLootModeEnabled
+-     * @since 8.1.0 (2018-12-11)
+-     */
+-    function IsLegacyLootModeEnabled(): boolean;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Map.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Map.d.ts
+deleted file mode 100644
+index 4d2c588..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Map.d.ts
++++ /dev/null
+@@ -1,70 +0,0 @@
+-declare namespace C_Map {
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_Map.CloseWorldMapInteraction
+-     * @since 8.3.0 (2020-01-14)
+-     */
+-    function CloseWorldMapInteraction(): void;
+-
+-    /**
+-     * Returns a map subzone name
+-     * @param areaId areaTableID.
+-     * @returns name
+-     * @see https://wow.gamepedia.com/API_C_Map.GetAreaInfo
+-     * @see https://wow.gamepedia.com/AreaTableID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetAreaInfo(areaId: number): string;
+-
+-    /**
+-     * Returns the current UI map for the given unit. Only works for the player and party members
+-     * @param unitToken unitId
+-     * @returns uiMapID Returns the "lowest" UiMapID the unit is on. For example, if a unit is in
+-     * a microdungeon it will return that instead of the zone or continent map
+-     * @see https://wow.gamepedia.com/API_C_Map.GetBestMapForUnit
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetBestMapForUnit(unitToken: WoWAPI.UnitId): number | null;
+-
+-    /**
+-     * Returns the maps for a bounty
+-     * @param bountySetID from BountySet.db2
+-     * @returns mapIDs
+-     * @see https://wow.gamepedia.com/API_C_Map.GetBountySetMaps
+-     * @see https://wow.tools/dbc/?dbc=bountyset
+-     * @see https://wow.gamepedia.com/UiMapID
+-     * @since 8.1.0 (2018-12-11)
+-     */
+-    function GetBountySetMaps(bountySetID: number): number[];
+-
+-    /**
+-     * Returns the world map id
+-     * @see https://wow.gamepedia.com/API_C_Map.GetFallbackWorldMapID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetFallbackWorldMapID(): number;
+-
+-    /**
+-     * Returns the background atlas for a map
+-     * @see https://wow.gamepedia.com/API_C_Map.GetMapArtBackgroundAtlas
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetFallbackWorldMapID(uiMapID: number): WoWAPI.AtlasID;
+-
+-    /**
+-     * Returns the position for the "Click to Zoom In" hint text on flight maps
+-     * @see https://wow.gamepedia.com/API_C_Map.GetMapArtHelpTextPosition
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetMapArtHelpTextPosition(uiMapID: number): Enum.MapCanvasPosition;
+-
+-    /**
+-     * Returns the art for a (phased) map
+-     * @see https://wow.gamepedia.com/API_C_Map.GetMapArtID
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function GetMapArtID(uiMapID: number): number;
+-
+-    // next todo: GetMapArtLayers
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_NewItems.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_NewItems.d.ts
+deleted file mode 100644
+index 3e1fd99..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_NewItems.d.ts
++++ /dev/null
+@@ -1,28 +0,0 @@
+-declare namespace C_NewItems {
+-
+-    /**
+-     * Clears the new item flag on all items in the player's inventory
+-     * @see https://wow.gamepedia.com/API_C_NewItems.ClearAll
+-     * @since 5.4.0 (2013-09-10)
+-     */
+-    function GetItemHyperlink(): void;
+-
+-    /**
+-     * Returns whether an inventory slot holds a newly-acquired item
+-     * @param bagId BagID of the container
+-     * @param slotIndex ID of the inventory slot within the container
+-     * @returns Returns true if the inventory slot holds a newly-acquired item; otherwise false (empty slot or a non-new item).
+-     * @see https://wow.gamepedia.com/API_C_NewItems.IsNewItem
+-     * @since 5.4.0 (2013-09-10)
+-     */
+-    function IsNewItem(bagId: WoWAPI.CONTAINER_ID, slotIndex: number): boolean;
+-
+-    /**
+-     * Clears the "new item" flag
+-     * @param bagId container slot id
+-     * @param slotIndex slot within the bag to clear the "new item" flag for
+-     * @see https://wow.gamepedia.com/API_C_NewItems.RemoveNewItem
+-     * @since 5.4.0 (2013-09-10)
+-     */
+-    function RemoveNewItem(bagId: WoWAPI.CONTAINER_ID, slotIndex: number): void;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_RaidLocks.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_RaidLocks.d.ts
+deleted file mode 100644
+index 6df1399..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_RaidLocks.d.ts
++++ /dev/null
+@@ -1,12 +0,0 @@
+-declare namespace C_RaidLocks {
+-
+-    /**
+-     * Needs summary
+-     * @param mapId
+-     * @param encounterId
+-     * @param difficultyId
+-     * @see https://wow.gamepedia.com/API_C_RaidLocks.IsEncounterComplete
+-     * @since 8.2.0 (2019-06-25)
+-     */
+-    function IsEncounterComplete(mapId: number, encounterId: number, difficultyId?: number): boolean;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Soulbinds.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Soulbinds.d.ts
+deleted file mode 100644
+index 2a782e8..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Soulbinds.d.ts
++++ /dev/null
+@@ -1,424 +0,0 @@
+-declare namespace WoWAPI {
+-
+-    interface ConduitCollectionData {
+-
+-        conduitID: number;
+-        conduitRank: number;
+-        conduitItemLevel: number;
+-        conduitType: Enum.SoulbindConduitType;
+-        conduitSpecSetID: number;
+-        conduitSpecIDs: number[];
+-        conduitSpecName: string | null;
+-        covenantID: Enum.CovenantType;
+-        conduitItemID: number;
+-    }
+-
+-    interface SoulbindNode {
+-
+-        ID: number;
+-        row: number;
+-        column: number;
+-        icon: number;
+-        spellID: number;
+-        playerConditionReason: string | null;
+-        conduitID: number;
+-        conduitRank: number;
+-        state: Enum.SoulbindNodeState;
+-        conduitType: Enum.SoulbindConduitType;
+-        parentNodeIDs: number[];
+-        failureRenownRequirement: number | null;
+-    }
+-
+-    interface SoulbindData {
+-
+-        ID: number;
+-        covenantID: Enum.CovenantType;
+-        name: string;
+-        description: string;
+-        textureKit: string;
+-        unlocked: boolean;
+-        cvarIndex: number;
+-        tree: SoulbindTree;
+-        modelSceneData: SoulbindModelSceneData;
+-        activationSoundKitID: number;
+-    }
+-
+-    interface SoulbindTree {
+-        editable: boolean;
+-        nodes: SoulbindNode[];
+-    }
+-
+-    interface SoulbindModelSceneData {
+-        creatureDisplayInfoID: number;
+-        modelSceneActorID: number;
+-    }
+-}
+-
+-/**
+- * Relates to Soulbinding and Conduits
+- * @see https://wow.gamepedia.com/Soulbinding
+- */
+-declare namespace C_Soulbinds {
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.ActivateSoulbind
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function ActivateSoulbind(soulbindID: number): void;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @returns result and errorDescription
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.CanActivateSoulbind
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function CanActivateSoulbind(soulbindID: number): [boolean, string?];
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.CanModifySoulbind
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function CanModifySoulbind(): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @returns result and errorDescription
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.CanResetConduitsInSoulbind
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function CanResetConduitsInSoulbind(soulbindID: number): [boolean, string?];
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.CanSwitchActiveSoulbindTreeBranch
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function CanSwitchActiveSoulbindTreeBranch(): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.CloseUI
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function CloseUI(): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.CommitPendingConduitsInSoulbind
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function CommitPendingConduitsInSoulbind(soulbindID: number): void;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @param conduitID
+-     * @returns nodeId
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.FindNodeIDActuallyInstalled
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function FindNodeIDActuallyInstalled(soulbindID: number, conduitID: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @param conduitID
+-     * @returns nodeId
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.FindNodeIDPendingInstall
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function FindNodeIDAppearingInstalled(soulbindID: number, conduitID: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @param conduitID
+-     * @returns nodeId
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.FindNodeIDAppearingInstalled
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function FindNodeIDPendingInstall(soulbindID: number, conduitID: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @param conduitID
+-     * @returns nodeId
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.FindNodeIDPendingUninstall
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function FindNodeIDPendingUninstall(soulbindID: number, conduitID: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @returns soulbindID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetActiveSoulbindID
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetActiveSoulbindID(): number;
+-
+-    /**
+-     * Needs summary
+-     * @returns charges
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitCharges
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetConduitCharges(): number;
+-
+-    /**
+-     * Needs summary
+-     * @returns charges
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitChargesCapacity
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetConduitChargesCapacity(): number;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitCollection
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetConduitCollection(): WoWAPI.ConduitCollectionData[];
+-
+-    /**
+-     * Needs summary
+-     * @returns charges
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitCollectionCount
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetConduitCollectionCount(): number;
+-
+-    /**
+-     * Needs summary
+-     * @param conduitID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitCollectionData
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetConduitCollectionData(conduitID: number): WoWAPI.ConduitCollectionData | null;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitCollectionDataAtCursor
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetConduitCollectionDataAtCursor(): WoWAPI.ConduitCollectionData | null;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitCollectionDataByVirtualID
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetConduitCollectionDataByVirtualID(virtualID: number): WoWAPI.ConduitCollectionData | null;
+-
+-    /**
+-     * Needs summary
+-     * @param nodeId
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitDisplayed
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetConduitDisplayed(nodeId: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param conduitId
+-     * @param rank Returned from C_Soulbinds.GetConduitRankFromCollection()
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitHyperlink
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetConduitHyperlink(conduitId: number, rank: number): WoWAPI.Hyperlink;
+-
+-    /**
+-     * Needs summary
+-     * @param nodeId
+-     * @returns conduitID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitIDPendingInstall
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetConduitIDPendingInstall(nodeId: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param conduitId
+-     * @param rank Returned from C_Soulbinds.GetConduitRankFromCollection()
+-     * @returns itemLevel
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitItemLevel
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetConduitItemLevel(conduitId: number, rank: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param conduitId
+-     * @param rank Returned from C_Soulbinds.GetConduitRankFromCollection()
+-     * @returns itemLevel
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitQuality
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetConduitItemLevel(conduitId: number, rank: number): WoWAPI.ITEM_QUALITY;
+-
+-    /**
+-     * Needs summary
+-     * @param conduitID
+-     * @returns conduitRank
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitRankFromCollection
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetConduitRankFromCollection(conduitID: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param conduitId
+-     * @param rank Returned from C_Soulbinds.GetConduitRankFromCollection()
+-     * @returns spellId
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetConduitSpellID
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetConduitSpellID(conduitId: number, rank: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param nodeId
+-     * @returns conduitID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetInstalledConduitID
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetInstalledConduitID(nodeId: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param nodeId
+-     * @returns conduitID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetNode
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetNode(nodeId: number): WoWAPI.SoulbindNode;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetSoulbindData
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetSoulbindData(soulbindID: number): WoWAPI.SoulbindData;
+-
+-    /**
+-     * Needs summary
+-     * @returns count
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetTotalConduitChargesPending
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetTotalConduitChargesPending(): number;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @returns count
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetTotalConduitChargesPendingInSoulbind
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetTotalConduitChargesPendingInSoulbind(soulbindID: number): number;
+-
+-    /**
+-     * Needs summary
+-     * @param treeId
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.GetTree
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetTree(treeId: number): WoWAPI.SoulbindTree;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.HasAnyInstalledConduitInSoulbind
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function HasAnyInstalledConduitInSoulbind(soulbindID: number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.HasAnyPendingConduits
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function HasAnyPendingConduits(): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.HasPendingConduitsInSoulbind
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function HasPendingConduitsInSoulbind(soulbindID: number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param nodeId
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.IsConduitInstalled
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsConduitInstalled(nodeId: number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @param conduitID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.IsConduitInstalledInSoulbind
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsConduitInstalledInSoulbind(soulbindID: number, conduitID: number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param itemInfo
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.IsItemConduitByItemInfo
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsItemConduitByItemInfo(itemInfo: string): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param nodeId
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.IsNodePendingModify
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function IsNodePendingModify(nodeId: number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param soulbindID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.IsUnselectedConduitPendingInSoulbind
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function IsUnselectedConduitPendingInSoulbind(soulbindID: number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param nodeId
+-     * @param conduitId
+-     * @param type
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.ModifyNode
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function ModifyNode(nodeId: number, conduitId: number, type: Enum.SoulbindConduitTransactionType): WoWAPI.Unknown;
+-
+-    /**
+-     * Needs summary
+-     * @param nodeID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.SelectNode
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function SelectNode(nodeID: number): void;
+-
+-    /**
+-     * Needs summary
+-     * @param nodeID
+-     * @see https://wow.gamepedia.com/API_C_Soulbinds.UnmodifyNode
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function UnmodifyNode(nodeID: number): void;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Spell.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Spell.d.ts
+deleted file mode 100644
+index 17fcb82..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_Spell.d.ts
++++ /dev/null
+@@ -1,38 +0,0 @@
+-/// <reference path="../atlas.d.ts" />
+-
+-declare namespace C_Spell {
+-
+-    /**
+-     * unknown behaviour
+-     * @param spellId
+-     * @returns rarityBorderAtlas
+-     * @see https://wow.gamepedia.com/API_C_Spell.GetMawPowerBorderAtlasBySpellID
+-     * @since 9.0.2 (2020-11-17)
+-     */
+-    function GetMawPowerBorderAtlasBySpellID(spellId: number): AtlasID;
+-
+-    /**
+-     * Needs summary
+-     * @param spellId
+-     * @see https://wow.gamepedia.com/API_C_Spell.DoesSpellExist
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function DoesSpellExist(spellId: number): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param spellId
+-     * @see https://wow.gamepedia.com/API_C_Spell.IsSpellDataCached
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function IsSpellDataCached(spellId: number): boolean;
+-
+-    /**
+-     * Asynchronously downloads spell information to the game client, making the full details available for subsequent calls to GetSpellInfo(spellId).
+-     * @param spellId
+-     * @fires SPELL_DATA_LOAD_RESULT
+-     * @see https://wow.gamepedia.com/API_C_Spell.RequestLoadSpellData
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function RequestLoadSpellData(spellId: number): boolean;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_SpellBook.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/C_SpellBook.d.ts
+deleted file mode 100644
+index 0ad86e2..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/C_SpellBook.d.ts
++++ /dev/null
+@@ -1,25 +0,0 @@
+-declare namespace C_SpellBook {
+-
+-    /**
+-     * Needs summary
+-     * @see https://wow.gamepedia.com/API_C_SpellBook.ContainsAnyDisenchantSpell
+-     * @since 8.2.0 (2019-06-25)
+-     */
+-    function ContainsAnyDisenchantSpell(): boolean;
+-
+-    /**
+-     * Needs summary
+-     * @param skillLineId
+-     * @see https://wow.gamepedia.com/API_C_SpellBook.GetSkillLineIndexByID
+-     * @since 9.0.1 (2020-10-13)
+-     */
+-    function GetSkillLineIndexByID(skillLineId: number): number | undefined;
+-
+-    /**
+-     * Needs summary
+-     * @param spellId
+-     * @see https://wow.gamepedia.com/API_C_SpellBook.IsSpellDisabled
+-     * @since 8.2.5 (2019-09-24)
+-     */
+-    function IsSpellDisabled(spellId: number): boolean;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/classes/index.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/classes/index.d.ts
+deleted file mode 100644
+index a1dc1d0..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/classes/index.d.ts
++++ /dev/null
+@@ -1,20 +0,0 @@
+-import "./C_AchivementInfo";
+-import "./C_AdventureJournal";
+-import "./C_AnimaDiversion";
+-import "./C_ArdenwealdGardening";
+-import "./C_CovenantCallings";
+-import "./C_CovenantPreview";
+-import "./C_Covenants";
+-import "./C_CovenantSanctumUI";
+-import "./C_EncounterJournal";
+-import "./C_Item";
+-import "./C_ItemInteraction";
+-import "./C_ItemUpgrade";
+-import "./C_LegendaryCrafting";
+-import "./C_Loot";
+-import "./C_Map";
+-import "./C_NewItems";
+-import "./C_RaidLocks";
+-import "./C_Soulbinds";
+-import "./C_Spell";
+-import "./C_SpellBook";
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/encounterJournal.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/encounterJournal.d.ts
+deleted file mode 100644
+index 13c9d46..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/encounterJournal.d.ts
++++ /dev/null
+@@ -1,67 +0,0 @@
+-/**
+- * Clears the encounter journal search results
+- * @see https://wow.gamepedia.com/API_EJ_ClearSearch
+- * @since 4.2.0 (2011-06-28)
+- */
+-declare function EJ_ClearSearch(): void;
+-
+-/**
+- * Ends any active encounter journal search and clears any results from EJ_GetSearchResult
+- * @see https://wow.gamepedia.com/API_EJ_EndSearch
+- * @since 7.0.3 (2016-07-19)
+- */
+-declare function EJ_EndSearch(): void;
+-
+-/**
+- * Returns the currently selected content tuning ID for BFA instances per EJ_SelectInstance.
+- * Used in the FrameXML for GameTooltip:SetHyperlink when hovering over inline spell hyperlinks in the overview tab
+- * @see https://wow.gamepedia.com/API_EJ_GetContentTuningID
+- * @since 8.0.1 (2018-07-17)
+- */
+-declare function EJ_GetContentTuningID(): number;
+-
+-/**
+- * Returns encounter boss info
+- * @param index creature index, up to nine for encounters with multiple bosses
+- * @param encounterId if omitted this will default to the currently viewed encounter
+- * @returns id, name, description, displayInfo, iconImage, uiModelSceneID
+- * @see https://wow.gamepedia.com/API_EJ_GetCreatureInfo
+- * @since 4.2.0 (2011-06-28)
+- */
+-declare function EJ_GetCreatureInfo(index: number, encounterId?: number): [number, string, string, number, number, number];
+-
+-/**
+- * Returns the currently active encounter journal tier index
+- * @returns index the current tier index
+- * @see https://wow.gamepedia.com/API_EJ_GetCurrentTier
+- * @since 5.0.4 (2012-08-28)
+- */
+-declare function EJ_GetCurrentTier(): number;
+-
+-/**
+- * Returns the currently viewed difficulty in the journal
+- * @see https://wow.gamepedia.com/API_EJ_GetDifficulty
+- * @since 4.3.0 (2011-11-29)
+- */
+-declare function EJ_GetDifficulty(): number;
+-
+-/**
+- * Returns encounter info from the journal
+- * @param encounterID
+- * @returns name, description, bossId, rootSectionId, link, journalInstanceId, dungeonEncounterId, instanceId
+- * @see https://wow.gamepedia.com/API_EJ_GetEncounterInfo
+- * @since 4.2.0 (2011-06-28)
+- */
+-declare function EJ_GetEncounterInfo(encounterID: number): [string, string, number, number, WoWAPI.Hyperlink, number, number, number];
+-
+-/**
+- * Returns encounter info from the journal
+- * @param index
+- * @param instanceId if omitted, this will default to the currently selected instance per EJ_SelectInstance
+- * @returns name, description, bossId, rootSectionId, link, journalInstanceId, dungeonEncounterId, instanceId
+- * @see https://wow.gamepedia.com/API_EJ_GetEncounterInfoByIndex
+- * @since 4.2.0 (2011-06-28)
+- */
+-declare function EJ_GetEncounterInfoByIndex(index: number, instanceId?: number): [string, string, number, number, string, number, number, number];
+-
+-// next todo: EJ_GetInstanceByIndex
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/enums.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/enums.d.ts
+deleted file mode 100644
+index 3eafe5d..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/enums.d.ts
++++ /dev/null
+@@ -1,119 +0,0 @@
+-declare namespace Enum {
+-
+-    enum SubscriptionInterstitialResponseType {
+-        Clicked = 0,
+-        Closed = 1,
+-        WebRedirect = 2,
+-    }
+-
+-    enum AnimaDiversionNodeState {
+-        Unavailable = 0,
+-        Available = 1,
+-        SelectedTemporary = 2,
+-        SelectedPermanent = 3,
+-        Cooldown = 4,
+-    }
+-
+-    enum CovenantType {
+-        None = 0,
+-        Kyrian = 1,
+-        Venthyr = 2,
+-        NightFae = 3,
+-        Necrolord = 4,
+-    }
+-
+-    enum CovenantAbilityType {
+-        Class = 0,
+-        Signature = 1,
+-        Soulbind = 2,
+-    }
+-
+-    enum GarrTalentFeatureSubtype {
+-        Generic = 0,
+-        Bastion = 1,
+-        Revendreth = 2,
+-        Ardenweald = 3,
+-        Maldraxxus = 4,
+-    }
+-
+-    enum RuneforgePowerFilter {
+-        All = 0,
+-        Available = 1,
+-        Unavailable = 2
+-    }
+-
+-    enum SoulbindConduitType {
+-        Finesse = 0,
+-        Potency = 1,
+-        Endurance = 2,
+-        Flex = 3,
+-    }
+-
+-    enum SoulbindNodeState {
+-        Unavailable = 0,
+-        Unselected = 1,
+-        Selectable = 2,
+-        Selected = 3,
+-    }
+-
+-    enum SoulbindConduitTransactionType {
+-        Install = 0,
+-        Uninstall = 1
+-    }
+-
+-    enum InventoryType {
+-        IndexNonEquipType = 0,
+-        IndexHeadType = 1,
+-        IndexNeckType = 1,
+-        IndexShoulderType = 3,
+-        IndexBodyType = 4,
+-        IndexChestType = 5,
+-        IndexWaistType = 6,
+-        IndexLegsType = 7,
+-        IndexFeetType = 8,
+-        IndexWristType = 9,
+-        IndexHandType = 10,
+-        IndexFingerType = 11,
+-        IndexTrinketType = 12,
+-        IndexWeaponType = 13,
+-        IndexShieldType = 14,
+-        IndexRangedType = 15,
+-        IndexCloakType = 16,
+-        Index2HWeaponType = 17,
+-        IndexBagType = 18,
+-        IndexTabardType = 19,
+-        IndexRobeType = 20,
+-        IndexWeaponmainhandType = 21,
+-        IndexWeaponoffhandType = 22,
+-        IndexHoldableType = 23,
+-        IndexAmmoType = 24,
+-        IndexThrownType = 25,
+-        IndexRangedrightType = 26,
+-        IndexQuiverType = 27,
+-        IndexRelicType = 28,
+-    }
+-
+-    enum ItemQuality {
+-        Poor = 0,
+-        Common = 1,
+-        Uncommon = 2,
+-        Rare = 3,
+-        Epic = 4,
+-        Legendary = 5,
+-        Artifact06,
+-        Heirloom = 7,
+-        WoWToken = 8,
+-    }
+-
+-    enum ItemInteractionFrameType {
+-        CleanseCorruption = 0
+-    }
+-
+-    enum MapCanvasPosition {
+-        None = 0,
+-        BottomLeft = 1,
+-        BottomRight = 2,
+-        TopLeft = 3,
+-        TopRight = 4
+-    }
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/global.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/global.d.ts
+index cd4368b..0784c39 100644
+--- a/node_modules/@wartoshika/wow-declarations/declarations/global.d.ts
++++ b/node_modules/@wartoshika/wow-declarations/declarations/global.d.ts
+@@ -13,7 +13,6 @@ declare namespace WoWAPI {
+     type Unknown = any;
+     type UnknownStringKeyTable = { [anyKey: string]: any };
+     type UnknownNumberKeyTable = { [anyKey: number]: any };
+-    type UnknownTable = UnknownStringKeyTable | UnknownNumberKeyTable;
+ 
+     type Flag = 0 | 1;
+ 
+@@ -69,8 +68,8 @@ declare type SlotActionBarPage4 = 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 4
+ declare type SlotActionBarPage5 = 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59 | 60;
+ declare type SlotActionBarPage6 = 61 | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72;
+ declare type SlotActionBarMisc = 73 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88 | 89 | 90 |
+-    91 | 92 | 93 | 94 | 95 | 96 | 97 | 98 | 99 | 100 | 101 | 102 | 103 | 104 | 105 | 106 | 107 | 108 | 109 | 110 | 111 |
+-    112 | 113 | 114 | 115 | 116 | 117 | 118 | 119 | 120;
++                                 91 | 92 | 93 | 94 | 95 | 96 | 97 | 98 | 99 | 100 | 101 | 102 | 103 | 104 | 105 | 106 | 107 | 108 | 109 | 110 | 111 |
++                                 112 | 113 | 114 | 115 | 116 | 117 | 118 | 119 | 120;
+ declare type SlotActionBarPossess = 121 | 122 | 123 | 124 | 125 | 126 | 127 | 128 | 129 | 130 | 131 | 132;
+ declare type ActionBarSlotId = SlotActionBarPage1 | SlotActionBarPage2 | SlotActionBarPage3 | SlotActionBarPage4 |
+-    SlotActionBarPage5 | SlotActionBarPage6 | SlotActionBarMisc | SlotActionBarPossess;
++                               SlotActionBarPage5 | SlotActionBarPage6 | SlotActionBarMisc | SlotActionBarPossess;
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/index.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/index.d.ts
+index 3926f08..3a395f8 100644
+--- a/node_modules/@wartoshika/wow-declarations/declarations/index.d.ts
++++ b/node_modules/@wartoshika/wow-declarations/declarations/index.d.ts
+@@ -10,7 +10,6 @@ import "./activity";
+ import "./addon";
+ import "./archaeology";
+ import "./arena";
+-import "./atlas";
+ // B
+ import "./bank";
+ import "./barber";
+@@ -35,32 +34,23 @@ import "./cursor";
+ // D
+ import "./debug";
+ // E
+-import "./encounterJournal";
+-import "./enums";
+ import "./event";
++import './ewt'
+ // G
+ import "./gossip";
+ import "./groups";
+ // I
+ import "./inventory";
+-import "./item";
+-import "./itemLocation";
+ // Q
+ import "./quest";
+ // S
+ import "./security";
+ import "./spell";
+ import "./system";
+-// U
+ import "./ui/tooltip";
++// U
+ import "./ui/ui";
+ import "./unit";
+ 
+-// V
+-import "./vector";
+-
+-// C_* classes
+-import "./classes";
+-
+ export = WoWAPI;
+ export as namespace WoWAPI;
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/itemLocation.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/itemLocation.d.ts
+deleted file mode 100644
+index 9ad60da..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/itemLocation.d.ts
++++ /dev/null
+@@ -1,125 +0,0 @@
+-declare namespace ItemLocation {
+-
+-    /**
+-     * ItemLocationMixin objects can only be created for items in your equipment or inventory
+-     * @see https://wow.gamepedia.com/ItemLocationMixin
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    interface ItemLocationMixin {
+-
+-        /**
+-         * clears the slot into
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:Clear
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        Clear(): void;
+-
+-        /**
+-         * updates bag and slot id with new values
+-         * @param bagId bag there the item is located in
+-         * @param slotIndex slot index where the item is located
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:SetBagAndSlot
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        SetBagAndSlot(bagId: WoWAPI.CONTAINER_ID_BAG, slotIndex: number): void;
+-
+-        /**
+-         * gets bag and slot id
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:GetBagAndSlot
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        GetBagAndSlot(): [WoWAPI.CONTAINER_ID_BAG, number];
+-
+-        /**
+-         * updates slot indexes by given equpiment slot index
+-         * @param equipmentSlotIndex equipment slot index where the item is located in
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:SetEquipmentSlot
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        SetEquipmentSlot(equipmentSlotIndex: WoWAPI.INVENTORY_SLOT_ID): void;
+-
+-        /**
+-         * gets the equipment slot representation of the bag and slot index
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:GetEquipmentSlot
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        GetEquipmentSlot(): WoWAPI.INVENTORY_SLOT_ID;
+-
+-        /**
+-         * tests if the contents of this item location is an equipment slot
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:IsEquipmentSlot
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        IsEquipmentSlot(): boolean;
+-
+-        /**
+-         * tests if the contents of this item location is bagId and slotIndex
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:IsBagAndSlot
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        IsBagAndSlot(): boolean;
+-
+-        /**
+-         * tests if the contents are not empty
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:HasAnyLocation
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        HasAnyLocation(): boolean;
+-
+-        /**
+-         * unknown
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:IsValid
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        IsValid(): boolean;
+-
+-        /**
+-         * tests if the contents are equal to the given bagId and slotIndex
+-         * @param badId
+-         * @param slotIndex
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:IsEqualToBagAndSlot
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        IsEqualToBagAndSlot(badId: WoWAPI.CONTAINER_ID_BAG, slotIndex: number): boolean;
+-
+-        /**
+-         * tests if the contents are equal to the given equipment slot
+-         * @param equipmentSlot
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:IsEqualToEquipmentSlot
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        IsEqualToEquipmentSlot(equipmentSlot: WoWAPI.INVENTORY_SLOT_ID): boolean;
+-
+-        /**
+-         * tests if this item location is equal to the given other item location
+-         * @param other
+-         * @see https://www.townlong-yak.com/framexml/live/go/ItemLocationMixin:IsEqualTo
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        IsEqualTo(other: ItemLocationMixin): boolean;
+-    }
+-
+-    /**
+-     * Creates an empty object
+-     * @see https://www.townlong-yak.com/framexml/9.0.1/ObjectAPI/ItemLocation.lua#4
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function CreateEmpty(): ItemLocationMixin;
+-
+-    /**
+-     * Creates an object from a bagID and slotIndex
+-     * @param bagId bag there the item is located in
+-     * @param slotIndex slot index where the item is located
+-     * @see https://www.townlong-yak.com/framexml/9.0.1/ObjectAPI/ItemLocation.lua#9
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function CreateFromBagAndSlot(bagId: WoWAPI.CONTAINER_ID_BAG, slotIndex: number): ItemLocationMixin;
+-
+-    /**
+-     * Creates an object from an inventorySlotId
+-     * @param equipmentSlotIndex equipment slot index where the item is located in
+-     * @see https://www.townlong-yak.com/framexml/9.0.1/ObjectAPI/ItemLocation.lua#15
+-     * @since 8.0.1 (2018-07-17)
+-     */
+-    function CreateFromEquipmentSlot(equipmentSlotIndex: WoWAPI.INVENTORY_SLOT_ID): ItemLocationMixin;
+-}
+diff --git a/node_modules/@wartoshika/wow-declarations/declarations/vector.d.ts b/node_modules/@wartoshika/wow-declarations/declarations/vector.d.ts
+deleted file mode 100644
+index ddb6442..0000000
+--- a/node_modules/@wartoshika/wow-declarations/declarations/vector.d.ts
++++ /dev/null
+@@ -1,133 +0,0 @@
+-declare namespace WoWAPI {
+-
+-    /**
+-     * @see https://wow.gamepedia.com/Vector2DMixin
+-     */
+-    interface Vector2D {
+-
+-        /**
+-         * compares to vectors for equalness
+-         * @param other
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:IsEqualTo
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        IsEqualTo(other: Vector2D): boolean;
+-
+-        /**
+-         * returns x and y coordinate from the vector
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:GetXY
+-         * @returns x and y
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        GetXY(): [number, number];
+-
+-        /**
+-         * sets x and y coordinate
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:SetXY
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        SetXY(x: number, y: number): void;
+-
+-        /**
+-         * multiplies x and y by the given scale number
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:ScaleBy
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        ScaleBy(scale: number): void;
+-
+-        /**
+-         * divides x and y by the given number
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:DivideBy
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        DivideBy(scale: number): void;
+-
+-        /**
+-         * adds another vector to the current
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:Add
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        Add(other: Vector2D): void;
+-
+-        /**
+-         * subtracts another vector from the current
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:Subtract
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        Subtract(other: Vector2D): void;
+-
+-        /**
+-         * cross products the given vector into the current one
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:Cross
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        Cross(other: Vector2D): void;
+-
+-        /**
+-         * dot products the given vector into the current one
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:Dot
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        Dot(other: Vector2D): void;
+-
+-        /**
+-         * tests if the current vector is zero
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:IsZero
+-         * @since 9.0.1 (2020-10-13)
+-         */
+-        IsZero(): boolean;
+-
+-        /**
+-         * get the squared magnitude (length) of the vector
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:GetLengthSquared
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        GetLengthSquared(): number;
+-
+-        /**
+-         * get the magnitude (length) of the vector
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:GetLength
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        GetLength(): number;
+-
+-        /**
+-         * normalizes the current vector
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:Normalize
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        Normalize(): void;
+-
+-        /**
+-         * rotates the vector by the given amount of radians
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:RotateDirection
+-         * @since 8.0.1 (2018-07-17)
+-         */
+-        RotateDirection(rotationRadians: number): void;
+-
+-        /**
+-         * Clones this vector into a new instance
+-         * @see https://www.townlong-yak.com/framexml/live/go/Vector2DMixin:Clone
+-         * @since 7.2.0 (2017-03-28)
+-         */
+-        Clone(): Vector2D;
+-    }
+-}
+-
+-/**
+- * creates a new two dimensional vector from the given x and y coordinates
+- * @param x x value
+- * @param y y value
+- * @see https://www.townlong-yak.com/framexml/live/go/CreateVector2D
+- * @since 7.2.0 (2017-03-28)
+- */
+-declare function CreateVector2D(x: number, y: number): WoWAPI.Vector2D;
+-
+-/**
+- * checks if the two given vectors are considered equal
+- * @param first the first vector
+- * @param second the second vector
+- * @see https://www.townlong-yak.com/framexml/live/go/AreVector2DEqual
+- * @since 7.2.0 (2017-03-28)
+- */
+-declare function AreVector2DEqual(first: WoWAPI.Vector2D, second: WoWAPI.Vector2D): boolean;
+diff --git a/node_modules/@wartoshika/wow-declarations/readme.md b/node_modules/@wartoshika/wow-declarations/readme.md
+index 0a7bbd5..79b7274 100644
+--- a/node_modules/@wartoshika/wow-declarations/readme.md
++++ b/node_modules/@wartoshika/wow-declarations/readme.md
+@@ -1,15 +1,12 @@
+ [![npm version](https://badge.fury.io/js/%40wartoshika%2Fwow-declarations.svg)](https://badge.fury.io/js/%40wartoshika%2Fwow-declarations)
+ [![Build Status](https://travis-ci.org/wartoshika/wow-declarations.svg?branch=master)](https://travis-ci.org/wartoshika/wow-declarations)
+ 
++> I am currently working on a program able to generate the WoW declaration files. This should resolve the problem of missing functions and out of date versions. I will update the declaration files for retail and classic as soon as the program works as expected. In addition PTR and BETA documentation could be available. **This will also include declaration updates for Shadowland (Version 9.0.x)**
++
+ # Typescript declarations for the current live World of Warcraft LUA API
+ 
+ > WoW Classic developers should use the [wow-classic-declarations](https://github.com/wartoshika/wow-classic-declarations) repository.
+ 
+-## Shadowland
+-
+-Updates for the Shadowland expansion are currently in development. You can find a partial implementation on the master branch.
+-Once every function has been documented i will release it into a dedicated version.
+-
+ **Supported transpilers for LUA targets**:
+ - qhun-transpiler ([GitHub-Page](https://github.com/wartoshika/qhun-transpiler))
+ - TypescriptToLua ([GitHub-Page](https://github.com/TypeScriptToLua/TypeScriptToLua)) - *Thanks to tstirrat*

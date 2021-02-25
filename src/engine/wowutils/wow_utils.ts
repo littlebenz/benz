@@ -51,7 +51,7 @@ export class MemoizedLua {
   GetUnitAuras = memoizeOne(this.getUnitAuras);
   GetUnitAurasCacheBusted = memoizeOne(this.getUnitAuras, 0);
   GetObjects = memoizeOne(this.getObjects, 30);
-  GetObjectByName = memoizeOne(this.getObjectByName);
+  GetObjectByName = memoizeOne(this.getObjectByName, 30);
   UnitMovingDirection = memoizeOne(this.unitMovingDirection);
   GetAuraRemainingTime = memoizeOne(this.getAuraRemainingTime);
   GetAuraRemainingTimeCacheBusted = memoizeOne(this.getAuraRemainingTime, 0);
@@ -668,4 +668,63 @@ export function GetGroundZCoord(x: number, y: number) {
   }
 
   return 0;
+}
+
+export function GetBattlefieldScoreTyped(index: number) {
+  const [
+    name,
+    killingBlows,
+    honorableKills,
+    deaths,
+    honorGained,
+    faction,
+    race,
+    playerClass,
+    classToken,
+    damageDone,
+    healingDone,
+    bgRating,
+    ratingChange,
+    preMatchMMR,
+    mmrChange,
+    talentSpec,
+  ] = GetBattlefieldScore(index);
+  return {
+    name,
+    killingBlows,
+    honorableKills,
+    deaths,
+    honorGained,
+    faction,
+    race,
+    class: playerClass,
+    classToken,
+    damageDone,
+    healingDone,
+    bgRating,
+    ratingChange,
+    preMatchMMR,
+    mmrChange,
+    talentSpec,
+    guid: UnitGUID(SetMouseOver(name) as UnitId),
+  };
+}
+
+export enum PlayerFaction {
+  Neutral = -1,
+  Horde = 0,
+  Alliance = 1,
+}
+
+export function GetBattlegroundPlayers(faction: PlayerFaction) {
+  const battlefieldScores = GetNumBattlefieldScores();
+  const players = [];
+  for (let i = 1; i <= battlefieldScores; i++) {
+    const player = GetBattlefieldScoreTyped(i);
+    if (player.faction === faction) {
+      players.push(player);
+    }
+  }
+
+  return players;
 }

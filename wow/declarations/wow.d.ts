@@ -180,3 +180,10 @@ declare function GetSpellInfo(
 declare function UnitIsVisible(unit: string): boolean;
 
 declare function IsSpellInRange(spell: string | number, unit: string): number;
+/**
+ * Returns information about a player's score in battlegrounds
+ * @param playerIndex The characters index in battlegrounds, going from 1 to GetNumBattlefieldScores().
+ * @see https://wow.gamepedia.com/API_GetBattlefieldScore
+ * @tupleReturn
+ */
+declare function GetBattlefieldScore(playerIndex: number): [string, number, number, number, number, number,string, string, string, number, number, number, number, number, number, string];

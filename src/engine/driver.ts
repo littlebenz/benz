@@ -13,10 +13,12 @@ export class Driver {
   private wowEventListener: WowEventListener;
   private lastTargetGuid: string | null = null;
   private waitUntilForNextAction: number = 0;
+  private frameRate: number;
 
   constructor() {
     this.wowEventListener = new WowEventListener();
     this.mage = new Mage(this.wowEventListener);
+    this.frameRate = GetFramerate();
   }
 
   start() {
@@ -27,7 +29,9 @@ export class Driver {
       }
       benzFrameNumber++;
 
-      this.mage.updateArenaUnitsIfChanged();
+      if (benzFrameNumber % math.ceil(this.frameRate / 2) === 0) {
+        this.mage.updateArenaUnitsIfChanged();
+      }
 
       const castingInfo = WoWLua.UnitCastingInfoTyped("player");
       if (castingInfo) {

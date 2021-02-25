@@ -37,9 +37,11 @@ export class FireBlast extends Spell {
   }
 
   cast() {
-    UpdateMovement();
-    FaceUnit(this.targetGuid);
-    UpdateMovement();
+    if (IsSpellInRange(this.spellName, SetMouseOver(this.targetGuid)) === 0) {
+      UpdateMovement();
+      FaceUnit(this.targetGuid);
+      UpdateMovement();
+    }
 
     lastFireBlast = GetTime();
     super.cast();

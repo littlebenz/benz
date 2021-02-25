@@ -9,7 +9,14 @@ import { Spellstealer } from "./cars/spellstealer";
 import { Block } from "./cars/block";
 import { Waiting } from "./cars/waiting";
 import { Car } from "./cars/car";
-import { DistanceFromPoints, GetGroundZCoord, GetPlayerAura, WoWLua } from "../wowutils/wow_utils";
+import {
+  DistanceFromPoints,
+  GetGroundZCoord,
+  GetPlayerAura,
+  PlayerFaction,
+  WoWLua,
+  GetBattlegroundPlayers,
+} from "../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../state/utils/mage_utils";
 import { Meteor } from "./spells/meteor";
 import { PlayerState } from "../state/players/player_state";
@@ -20,6 +27,7 @@ import { Stomper } from "./cars/stomper";
 import { Blink } from "./spells/blink";
 import { ClickClickBoom } from "./cars/clickclickboom";
 import { UnitReaction } from "../wowutils/unlocked_functions";
+import { UnitId } from "@wartoshika/wow-declarations";
 
 export class Mage {
   pump: Pump;
@@ -37,15 +45,9 @@ export class Mage {
 
   private wowEventListener: WowEventListener;
 
-  arena1: PlayerState | null;
-  arena2: PlayerState | null;
-  arena3: PlayerState | null;
+  private playerMap = new Map<string, PlayerState>();
 
   constructor(wowEventListener: WowEventListener) {
-    this.arena1 = PlayerStateFactory.create("arena1", wowEventListener);
-    this.arena2 = PlayerStateFactory.create("arena2", wowEventListener);
-    this.arena3 = PlayerStateFactory.create("arena3", wowEventListener);
-
     this.pump = new Pump(() => this.getEnemies());
     this.alterTime = new AlterTime(() => this.getEnemies());
     this.shield = new Barrier();
@@ -131,20 +133,39 @@ export class Mage {
   }
 
   updateArenaUnitsIfChanged() {
-    const arena1Name = this.arena1 ? this.arena1.name : null;
-    const arena2Name = this.arena2 ? this.arena2.name : null;
-    const arena3Name = this.arena3 ? this.arena3.name : null;
+    const enemyGuids: string[] = ["arena1", "arena2", "arena3"].map((x) => UnitGUID(x as any));
 
-    if (GetUnitName("arena1", true) !== arena1Name) {
-      this.arena1 = PlayerStateFactory.create("arena1", this.wowEventListener);
+    const [playerFaction] = UnitFactionGroup("player");
+    let faction: PlayerFaction = PlayerFaction.Neutral;
+    if (playerFaction === "Alliance") {
+      faction = PlayerFaction.Alliance;
+    } else if (playerFaction === "Horde") {
+      faction = PlayerFaction.Horde;
     }
 
-    if (GetUnitName("arena2", true) !== arena2Name) {
-      this.arena2 = PlayerStateFactory.create("arena2", this.wowEventListener);
-    }
+    const bgUnits = GetBattlegroundPlayers(faction).map((x) => x.guid);
+    enemyGuids.push(...bgUnits);
 
-    if (GetUnitName("arena3", true) !== arena3Name) {
-      this.arena3 = PlayerStateFactory.create("arena3", this.wowEventListener);
+    for (const enemyGuid of enemyGuids) {
+      if (this.playerMap.has(enemyGuid)) {
+        if (this.playerMap.get(enemyGuid).guid() !== enemyGuid) {
+          const maybePlayerState = PlayerStateFactory.create(
+            SetMouseOver(enemyGuid) as any,
+            this.wowEventListener
+          );
+          if (maybePlayerState) {
+            this.playerMap.set(enemyGuid, maybePlayerState);
+          }
+        }
+      } else {
+        const maybePlayerState = PlayerStateFactory.create(
+          SetMouseOver(enemyGuid) as any,
+          this.wowEventListener
+        );
+        if (maybePlayerState) {
+          this.playerMap.set(enemyGuid, maybePlayerState);
+        }
+      }
     }
   }
 
@@ -227,12 +248,25 @@ export class Mage {
   }
 
   private getEnemies(los: boolean = true) {
-    return [this.arena1, this.arena2, this.arena3].filter(
-      (x) =>
-        x !== null &&
-        !UnitIsDead(x.unitId) &&
-        UnitIsPlayer(x.unitId) &&
-        (los ? WoWLua.IsUnitInOfLineOfSight("player", x.unitId) : true)
-    ) as PlayerState[];
+    // return [this.arena1, this.arena2, this.arena3].filter(
+    //   (x) =>
+    //     x !== null &&
+    //     !UnitIsDead(x.unitId) &&
+    //     UnitIsPlayer(x.unitId) &&
+    //     (los ? WoWLua.IsUnitInOfLineOfSight("player", x.unitId) : true)
+    // ) as PlayerState[];
+    const enemies = [];
+    for (const player of this.playerMap.values()) {
+      if (!UnitIsDead(player.unitId) && UnitIsPlayer(player.unitId) && IsGuid(player.guid())) {
+        if (los) {
+          if (WoWLua.IsUnitInOfLineOfSight("player", player.unitId)) {
+            enemies.push(player);
+          }
+        } else {
+          enemies.push(player);
+        }
+      }
+    }
+    return enemies;
   }
 }
