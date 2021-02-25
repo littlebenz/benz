@@ -29,13 +29,13 @@ export class WowEventListener {
     if (SpellNameToDiminishingReturnSchool.has(event.spellName)) {
       const drTracker = this.addOrGetDrTracker(event.destGUID);
       if (event.destName && IsGuid(event.destGUID)) {
-        const targetAuras = WoWLua.GetUnitAuras(SetMouseOver(event.destGUID) as any);
+        const targetAuras = WoWLua.GetUnitAurasCacheBusted(SetMouseOver(event.destGUID) as any);
         const maybeAura = targetAuras.find(
           (x) => x.spellId === event.spellId
           // && UnitGUID(x.source) === event.sourceGUID
         );
 
-        const drTime = WoWLua.GetAuraRemainingTime(maybeAura);
+        const drTime = WoWLua.GetAuraRemainingTimeCacheBusted(maybeAura);
 
         console.log(
           `spell success of: ${event.spellName} from ${event.sourceName} to ${event.destName} for duration: ${drTime}`
@@ -53,14 +53,14 @@ export class WowEventListener {
   }
 
   addOrGetDrTracker(unitGuid: string) {
-    if (!unitGuid) {
-      return new DRTracker();
+    if (unitGuid) {
+      const possibleDr = this.arenaNameMap.get(unitGuid);
+      if (possibleDr) {
+        return possibleDr;
+      }
     }
 
-    const possibleDr = this.arenaNameMap.get(unitGuid);
-    if (possibleDr) {
-      return possibleDr;
-    }
+    console.log("bad guid or not found");
     const newDr = new DRTracker();
     this.arenaNameMap.set(unitGuid, newDr);
     return newDr;

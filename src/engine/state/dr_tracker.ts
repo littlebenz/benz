@@ -1,84 +1,78 @@
 export class DRTracker {
-    private tracker: Map<DRType, DRTrackCount>;
+  private tracker: Map<DRType, DRTrackCount>;
 
-    constructor() {
-        this.tracker = new Map();
+  constructor() {
+    this.tracker = new Map();
 
-        this.tracker.set(DRType.Disorient, {
-            lastDR: 0,
-            drCount: 0,
-            timeRemaining: 0,
-        });
-        this.tracker.set(DRType.Incapacitate, {
-            lastDR: 0,
-            drCount: 0,
-            timeRemaining: 0,
-        });
-        this.tracker.set(DRType.Root, {
-            lastDR: 0,
-            drCount: 0,
-            timeRemaining: 0,
-        });
-        this.tracker.set(DRType.Silence, {
-            lastDR: 0,
-            drCount: 0,
-            timeRemaining: 0,
-        });
-        this.tracker.set(DRType.Stun, {
-            lastDR: 0,
-            drCount: 0,
-            timeRemaining: 0,
-        });
+    this.tracker.set(DRType.Disorient, {
+      lastDR: 0,
+      drCount: 0,
+      timeRemaining: 0,
+    });
+    this.tracker.set(DRType.Incapacitate, {
+      lastDR: 0,
+      drCount: 0,
+      timeRemaining: 0,
+    });
+    this.tracker.set(DRType.Root, {
+      lastDR: 0,
+      drCount: 0,
+      timeRemaining: 0,
+    });
+    this.tracker.set(DRType.Silence, {
+      lastDR: 0,
+      drCount: 0,
+      timeRemaining: 0,
+    });
+    this.tracker.set(DRType.Stun, {
+      lastDR: 0,
+      drCount: 0,
+      timeRemaining: 0,
+    });
+  }
+
+  addDiminishingReturn(diminishingReturn: DRType, drLength: number | undefined) {
+    const dr = this.tracker.get(diminishingReturn);
+
+    this.tracker.set(diminishingReturn, {
+      lastDR: drLength ? drLength + GetTime() : GetTime(),
+      drCount: dr ? dr.drCount + 1 : 1,
+      timeRemaining: 18 + (drLength ? drLength : 0),
+    });
+  }
+
+  getDiminishingReturns() {
+    const time = GetTime();
+
+    for (const [_, trackCount] of this.tracker) {
+      if (time - trackCount.lastDR >= 18) {
+        trackCount.lastDR = 0;
+        trackCount.drCount = 0;
+      }
+      trackCount.timeRemaining = 18 - (time - trackCount.lastDR);
     }
 
-    addDiminishingReturn(
-        diminishingReturn: DRType,
-        drLength: number | undefined
-    ) {
-        const dr = this.tracker.get(diminishingReturn);
-
-        this.tracker.set(diminishingReturn, {
-            lastDR: drLength ? drLength + GetTime() : GetTime(),
-            drCount: dr ? dr.drCount + 1 : 1,
-            timeRemaining: 18 + (drLength ? drLength : 0),
-        });
-    }
-
-    getDiminishingReturns() {
-        const time = GetTime();
-
-        for (const [_, trackCount] of this.tracker) {
-            if (time - trackCount.lastDR >= 18) {
-                trackCount.lastDR = 0;
-                trackCount.drCount = 0;
-            }
-            trackCount.timeRemaining = 18 - (time - trackCount.lastDR);
-        }
-
-        return this.tracker;
-    }
+    return this.tracker;
+  }
 }
 
 export interface DRTrackCount {
-    lastDR: number;
-    drCount: number;
-    timeRemaining: number;
+  lastDR: number;
+  drCount: number;
+  timeRemaining: number;
 }
 
 export enum DRType {
-    Root,
-    Stun,
-    Incapacitate,
-    Disorient,
-    Silence,
+  Root,
+  Stun,
+  Incapacitate,
+  Disorient,
+  Silence,
 }
 
 export const SpellNameToDiminishingReturnSchool = new Map<string, DRType>();
 SpellNameToDiminishingReturnSchool.set("Imprison", DRType.Incapacitate);
-SpellNameToDiminishingReturnSchool.set(
-    "Incapacitating Roar",
-    DRType.Incapacitate
-);
+SpellNameToDiminishingReturnSchool.set("Incapacitating Roar", DRType.Incapacitate);
 SpellNameToDiminishingReturnSchool.set("Freezing Trap", DRType.Incapacitate);
 SpellNameToDiminishingReturnSchool.set("Wyvern Sting", DRType.Incapacitate);
 SpellNameToDiminishingReturnSchool.set("Polymorph", DRType.Incapacitate);
@@ -88,10 +82,7 @@ SpellNameToDiminishingReturnSchool.set("Paralysis", DRType.Incapacitate);
 SpellNameToDiminishingReturnSchool.set("Ring of Peace", DRType.Incapacitate);
 SpellNameToDiminishingReturnSchool.set("Repentance", DRType.Incapacitate);
 SpellNameToDiminishingReturnSchool.set("Mind Control", DRType.Incapacitate);
-SpellNameToDiminishingReturnSchool.set(
-    "Holy Word: Chastise",
-    DRType.Incapacitate
-);
+SpellNameToDiminishingReturnSchool.set("Holy Word: Chastise", DRType.Incapacitate);
 SpellNameToDiminishingReturnSchool.set("Psychic Horror", DRType.Incapacitate);
 SpellNameToDiminishingReturnSchool.set("Shackle Undead", DRType.Incapacitate);
 SpellNameToDiminishingReturnSchool.set("Gouge", DRType.Incapacitate);

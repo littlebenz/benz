@@ -208,11 +208,9 @@ export class Mage {
       }
     }
 
-    console.log(blinkPositions.length);
     blinkPositions = blinkPositions
       .filter((x) => math.abs(playerZ - x.z) <= 2)
       .sort((a, b) => math.abs(20 - b.distance - a.distance));
-    console.log(blinkPositions.length);
 
     if (blinkPositions.length > 0) {
       // is this sort inplace? whatever, just reassign it anyways

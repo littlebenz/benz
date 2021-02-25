@@ -71,6 +71,7 @@ export class CC implements Car {
           if (poly.canCastSpell() && casting && casting.spell !== MageSpell.Polymorph) {
             this.stopCastIfNeeded();
           }
+          // console.log("trying to poly?: " + player.incapacitateDr().drCount);
           return poly;
         }
       }

@@ -49,18 +49,18 @@ export type PlayerSpell =
 
 export class MemoizedLua {
   GetUnitAuras = memoizeOne(this.getUnitAuras);
+  GetUnitAurasCacheBusted = memoizeOne(this.getUnitAuras, 0);
   GetObjects = memoizeOne(this.getObjects, 30);
   GetObjectByName = memoizeOne(this.getObjectByName);
   UnitMovingDirection = memoizeOne(this.unitMovingDirection);
   GetAuraRemainingTime = memoizeOne(this.getAuraRemainingTime);
+  GetAuraRemainingTimeCacheBusted = memoizeOne(this.getAuraRemainingTime, 0);
   IsSpellCastable = memoizeOne(this.isSpellCastable);
   UnitChannelInfoTyped = memoizeOne(this.unitChannelInfoTyped);
   IsSpellUsable = memoizeOne(this.isSpellUsable);
-  GetCurrentEventLogInfo = memoizeOne(this.getCurrentEventLogInfo);
   GetBags = memoizeOne(this.getBags);
   GetContainerItemInfoTyped = memoizeOne(this.getContainerItemInfoTyped);
   UnitIsMoving = memoizeOne(this.unitIsMoving);
-  GetCurrentSpellEventLogInfo = memoizeOne(this.getCurrentSpellEventLogInfo);
   UnitCastingInfoTyped = memoizeOne(this.unitCastingInfoTyped);
   IsPlayerMoving = memoizeOne(this.isPlayerMoving);
   IsUnitInOfLineOfSight = memoizeOne(this.isUnitInOfLineOfSight);
@@ -218,7 +218,7 @@ export class MemoizedLua {
     return castable.usable && (castable.duration === null || castable.duration === 0);
   }
 
-  private getCurrentEventLogInfo() {
+  GetCurrentEventLogInfo() {
     const [
       timestamp,
       eventName,
@@ -292,7 +292,7 @@ export class MemoizedLua {
     return speed > 0;
   }
 
-  private getCurrentSpellEventLogInfo() {
+  GetCurrentSpellEventLogInfo() {
     const [
       timestamp,
       eventName,
