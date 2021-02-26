@@ -7,7 +7,7 @@ Trash WoWAdvanced PVP CR
 
 ### TODO
 
-- [ ]Alter Time Logic
+- [ ] Alter Time Logic
 
 - [ ] Fake cast. Add in logic to count when the enemy team is trying to interrupt at what % and try to fake cast -10% minus that. 
 
