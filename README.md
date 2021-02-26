@@ -7,48 +7,48 @@ Trash WoWAdvanced PVP CR
 
 ### TODO
 
-[] Alter Time Logic
+- [ ]Alter Time Logic
 
-[] Fake cast. Add in logic to count when the enemy team is trying to interrupt at what % and try to fake cast -10% minus that. 
+- [ ] Fake cast. Add in logic to count when the enemy team is trying to interrupt at what % and try to fake cast -10% minus that. 
 
-[] Better time CC around goes
+- [ ] Better time CC around goes
 
-[] Interrupt Priority based on CDs available and your teammates CDs
+- [ ] Interrupt Priority based on CDs available and your teammates CDs
 
-[] Put large warning text on screen so that you can communicate to your teammates what the bot is doing.
+- [ ] Put large warning text on screen so that you can communicate to your teammates what the bot is doing.
 
-[] Add skip button to next action (separate buttons for cc/spellsteal/stomp/etc ...?) we want to take. (i.e., skip next poly if your hpal says he wants to hoj off instead of wasting time trying to poly a RE)
+- [ ] Add skip button to next action (separate buttons for cc/spellsteal/stomp/etc ...?) we want to take. (i.e., skip next poly if your hpal says he wants to hoj off instead of wasting time trying to poly a RE)
 
-[] Convenent Abilities
+- [ ] Convenent Abilities
 
-[] Defensively Ring of Frost (yourself or your partners)
+- [ ] Defensively Ring of Frost (yourself or your partners)
 
-[] Auto Trinket on pump when your healer is CC or healer doesn't have cleanse.
+- [ ] Auto Trinket on pump when your healer is CC or healer doesn't have cleanse.
 
-[] Rune of Power mini-go logic
+- [ ] Rune of Power mini-go logic
 
-[] Flamestrike to stop drink
+- [ ] Flamestrike to stop drink
 
-[] Add warning for when we think is a good block time (big goes, healer CC'd, no off heals, we think you're gonna die), maybe add setting to auto block logic?
+- [ ] Add warning for when we think is a good block time (big goes, healer CC'd, no off heals, we think you're gonna die), maybe add setting to auto block logic?
 
 ### Done-ish (Can still do more)
 
-[x] Save Fire Blast for pump
+- [x] Save Fire Blast for pump
 
-[x] Stomp totems, war banner, etc.
+- [x]  Stomp totems, war banner, etc.
 
-[x] Poly on DRs
+- [x]  Poly on DRs
 
-[x] Auto block
+- [x]  Auto block
 
-[x] Auto create food
+- [x]  Auto create food
 
-[x] Smart Spellsteal abilities based off priority
+- [x]  Smart Spellsteal abilities based off priority
 
-[x] Blink poly LOS
+- [x]  Blink poly LOS
 
-[x] Dumb Meteor
+- [x]  Dumb Meteor
 
-[x] Auto Decurse (dumb)
+- [x] Auto Decurse (dumb)
 
-[x] Counterspell (dumb)
+- [x]  Counterspell (dumb)
