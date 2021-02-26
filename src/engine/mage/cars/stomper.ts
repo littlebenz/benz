@@ -21,7 +21,10 @@ export class Stomper implements Car {
       }
     }
 
-    const objects = WoWLua.GetObjects().map((x) => ({ guid: x, name: ObjectName(x) }));
+    const objects = WoWLua.GetObjects()
+      .map((x) => ({ guid: x, name: ObjectName(x) }))
+      .filter((x) => WoWLua.IsUnitInOfLineOfSight("player", SetMouseOver(x.guid)));
+
     const maybeSpiritLinkTotem = objects.find((x) => x.name === "Spirit Link Totem");
     if (maybeSpiritLinkTotem) {
       const reaction = UnitReaction("player", maybeSpiritLinkTotem.guid);

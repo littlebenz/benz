@@ -5,6 +5,7 @@ import { UnitId } from "@wartoshika/wow-declarations";
 
 export abstract class Spell {
   abstract isOnGCD: boolean;
+  abstract isInstant: boolean;
   abstract spellName: MageSpell;
   abstract isSelfCast: boolean;
 

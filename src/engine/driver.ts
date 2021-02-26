@@ -31,9 +31,6 @@ export class Driver {
 
       const castingInfo = WoWLua.UnitCastingInfoTyped("player");
       if (castingInfo) {
-        if (castingInfo.spell === MageSpell.Polymorph && this.lastTargetGuid) {
-          this.mage.blinkPolyPosition(this.lastTargetGuid);
-        }
         this.waitUntilForNextAction = castingInfo.endTimeMS;
         if (
           castingInfo.spell === MageSpell.Polymorph &&

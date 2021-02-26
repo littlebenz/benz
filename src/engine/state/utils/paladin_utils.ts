@@ -15,4 +15,5 @@ export enum PaladinSpell {
   BlessingOfSanctuary = "Blessing of Sanctuary",
   BlindingLight = "Blinding Light",
   FlashOfLight = "Flash of Light",
+  Rebuke = "Rebuke",
 }

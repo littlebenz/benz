@@ -11,4 +11,6 @@ export enum HunterSpell {
   FreezingTrap = "Freezing Trap",
   Muzzle = "Muzzle",
   CounterShot = "Counter Shot",
+  Trueshot = "Trueshot",
+  BestialWrath = "Bestial Wrath",
 }

@@ -20,4 +20,6 @@ export enum DruidSpell {
   SolarBeam = "Solar Beam",
   Cyclone = "Cyclone",
   Regrowth = "Regrowth",
+  IncarnBoomkin = "Incarnation: Chosen of Elune",
+  IncarnFeral = "Incarnation: King of the Jungle",
 }

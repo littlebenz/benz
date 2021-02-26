@@ -6,6 +6,7 @@ export class Counterspell extends Spell {
   isOnGCD = false;
   spellName = MageSpell.Counterspell;
   isSelfCast = false;
+  isInstant = true;
 
   canCastSpell(): boolean {
     return WoWLua.IsSpellUsable(this.spellName);

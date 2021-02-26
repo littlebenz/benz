@@ -3,9 +3,32 @@ import { Defensive } from "./Defensive";
 import { GetUnitAura, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { WarlockAura, WarlockSpell } from "../utils/warlock_utils";
 import { WoWClass } from "./WoWClass";
+import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { TalentSpec } from "./TalentSpec";
 
 export class Warlock extends PlayerState {
   class = WoWClass.Warlock;
+  pumpSpells: PumpSpell[] = [
+    {
+      name: WarlockSpell.DarkSoulMisery,
+      cooldown: 120,
+      specs: [TalentSpec.Warlock_Afflication],
+    },
+    {
+      name: WarlockSpell.SummonDemonicTyrant,
+      cooldown: 90,
+      specs: [TalentSpec.Warlock_Demonology],
+    },
+    {
+      name: WarlockSpell.DarkSoulInstability,
+      cooldown: 120,
+      specs: [TalentSpec.Warlock_Destruction],
+    },
+  ];
+
+  // going to leave this empty until I figure out how to handle checking for pet
+  interruptSpells: InterruptSpell[] = [];
+
   canBeIncapacitated(): boolean {
     if (WoWLua.GetAuraRemainingTime(GetUnitAura(WarlockAura.NetherWard, this.unitId)) >= 1.5) {
       return false;
@@ -13,11 +36,8 @@ export class Warlock extends PlayerState {
 
     return super.canBeIncapacitated();
   }
-  canPump(): boolean {
-    return false;
-  }
   isPumping(): boolean {
-    if (UnitHasAura(WarlockAura.DarkSoul, this.unitId)) {
+    if (UnitHasAura(WarlockAura.DarkSoulInstability, this.unitId)) {
       return true;
     }
     return false;

@@ -56,7 +56,10 @@ declare function IsMouseButtonDown(
   button: "LeftButton" | "RightButton" | "MiddleButton" | "BUTTON4"
 ): boolean;
 
-declare function GetArenaOpponentSpec(unit: string): number | null;
+/**
+ * @tupleReturn
+ */
+declare function GetArenaOpponentSpec(unit: string): [number, number];
 
 /**
  * @tupleReturn

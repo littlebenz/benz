@@ -7,6 +7,7 @@ export class Meteor extends Spell {
   isOnGCD = true;
   spellName = MageSpell.Meteor;
   isSelfCast = false;
+  isInstant = true;
 
   cast() {
     // todo:: cancel current cast first?

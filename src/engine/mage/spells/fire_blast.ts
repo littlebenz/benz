@@ -10,6 +10,7 @@ export class FireBlast extends Spell {
   isOnGCD = false;
   spellName = MageSpell.FireBlast;
   isSelfCast = false;
+  isInstant = true;
 
   constructor(hardCast = false, target?: UnitId) {
     super(target);

@@ -47,6 +47,23 @@ export type PlayerSpell =
   | WarlockSpell
   | WarriorSpell;
 
+export interface CombatSpellInfo {
+  timestamp: number;
+  eventName: CombatEvent;
+  hideCaster: boolean;
+  sourceGUID: string;
+  sourceName: string;
+  sourceFlags: number;
+  sourceRaidFlags: number;
+  destGUID: string;
+  destName: string;
+  destFlags: number;
+  destRaidFlags: number;
+  spellId: number;
+  spellName: PlayerSpell;
+  spellSchool: string;
+}
+
 export class MemoizedLua {
   GetUnitAuras = memoizeOne(this.getUnitAuras);
   GetUnitAurasCacheBusted = memoizeOne(this.getUnitAuras, 0);
@@ -292,7 +309,7 @@ export class MemoizedLua {
     return speed > 0;
   }
 
-  GetCurrentSpellEventLogInfo() {
+  GetCurrentSpellEventLogInfo(): CombatSpellInfo {
     const [
       timestamp,
       eventName,
@@ -323,7 +340,7 @@ export class MemoizedLua {
       destFlags,
       destRaidFlags,
       spellId: spellId as number,
-      spellName: spellName as string,
+      spellName: spellName as PlayerSpell,
       spellSchool: spellSchool as string,
     };
   }
@@ -356,6 +373,7 @@ export class MemoizedLua {
       interruptable,
       spellId,
       castTimeRemaining: endTimeMS / 1000 - GetTime(),
+      timeSpentCasting: (GetTime() * 1000 - startTimeMS) / 1000,
       castType: "cast",
     };
   }

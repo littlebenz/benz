@@ -14,4 +14,6 @@ export enum WarriorSpell {
   Pummel = "Pummel",
   IntimidatingShout = "Intimidating Shout",
   Shockwave = "Shockwave",
+  Avatar = "Avatar",
+  Recklessness = "Recklessness",
 }

@@ -6,6 +6,7 @@ export class Combustion extends Spell {
   isOnGCD = false;
   spellName = MageSpell.Combustion;
   isSelfCast = true;
+  isInstant = true;
 
   canCastSpell(): boolean {
     return WoWLua.IsSpellUsable(this.spellName);

@@ -2,8 +2,9 @@ export enum WarlockAura {
   NetherWard = "Nether Ward",
   UnendingResolve = "Unending Resolve",
   Backdraft = "Backdraft",
-  DarkSoul = "Dark Soul: Instability",
+  DarkSoulInstability = "Dark Soul: Instability",
   Fear = "Fear",
+  DarkSoulMisery = "Dark Soul: Misery",
 }
 
 export enum WarlockSpell {
@@ -12,4 +13,7 @@ export enum WarlockSpell {
   Fear = "Fear",
   Shadowfury = "Shadowfury",
   ChaosBolt = "Chaos Bolt",
+  DarkSoulMisery = "Dark Soul: Misery",
+  DarkSoulInstability = "Dark Soul: Instability",
+  SummonDemonicTyrant = "Summon Demonic Tyrant",
 }

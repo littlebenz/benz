@@ -9,4 +9,6 @@ export enum DeathKnightSpell {
   Asphyxiate = "Asphyxiate",
   Strangulate = "Strangulate",
   MindFreeze = "Mind Freeze",
+  DarkTransformation = "Dark Transformation",
+  PillarOfFrost = "Pillar of Frost",
 }

@@ -1,14 +1,14 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
 import { WoWClass } from "./WoWClass";
+import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 
 export class NPC extends PlayerState {
   class = WoWClass.NPC;
+  pumpSpells: PumpSpell[] = [];
+  interruptSpells: InterruptSpell[] = [];
   canBeIncapacitated(): boolean {
     return true;
-  }
-  canPump(): boolean {
-    return false;
   }
   isPumping(): boolean {
     return false;

@@ -27,6 +27,8 @@ export enum MageSpell {
   SlowFall = "Slow Fall",
   ArcaneExplosion = "Arcane Explosion",
   Frostbolt = "Frostbolt",
+  IcyVeins = "Icy Veins",
+  ArcanePower = "Arcane Power",
   ConjureRefreshment = "Conjure Refreshment",
   ArcaneIntellect = "Arcane Intellect",
 }

@@ -9,6 +9,7 @@ export class RingOfFrost extends Spell {
   isOnGCD = true;
   spellName = MageSpell.RingOfFrost;
   isSelfCast = true;
+  isInstant = false;
 
   private getCoords() {
     let [x, y, z] = GetUnitPosition(this.targetGuid);

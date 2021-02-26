@@ -4,4 +4,5 @@ import { GCDSpell } from "./gcd_spell";
 export class FrostNova extends GCDSpell {
   spellName = MageSpell.FrostNova;
   isSelfCast = true;
+  isInstant = true;
 }

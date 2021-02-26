@@ -3,14 +3,33 @@ import { Defensive } from "./Defensive";
 import { UnitCastOrChannel, UnitHasAura } from "../../wowutils/wow_utils";
 import { PriestAura, PriestSpell } from "../utils/priest_utils";
 import { WoWClass } from "./WoWClass";
+import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { TalentSpec } from "./TalentSpec";
 
 export class Priest extends PlayerState {
   class = WoWClass.Priest;
+
+  // should we even try to juke this? maybe remove for now
+  interruptSpells: InterruptSpell[] = [
+    {
+      name: PriestSpell.Silence,
+      specs: [TalentSpec.Priest_Shadow],
+      cooldown: 45,
+      lockDuration: 4,
+      range: 30,
+    },
+  ];
+
+  pumpSpells: PumpSpell[] = [
+    {
+      name: PriestSpell.VoidEruption,
+      cooldown: 90,
+      specs: [TalentSpec.Priest_Shadow],
+    },
+  ];
+
   canBeIncapacitated(): boolean {
     return super.canBeIncapacitated();
-  }
-  canPump(): boolean {
-    return false;
   }
   isPumping(): boolean {
     if (UnitHasAura(PriestAura.Voidform, this.unitId)) {

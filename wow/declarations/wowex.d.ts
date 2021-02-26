@@ -3,7 +3,7 @@ type ReservedUnits = "player" | "target" | "mouseover" | "focus" | "arena1" | "a
 type Vararg<T extends unknown[]> = T & { __luaVararg?: never };
 
 declare function ReadFile(path: string): string;
-declare function WriteFile(path: string, contents: string): number;
+declare function WriteFile(path: string, contents: string, append?: boolean): number;
 declare const CallSecureFunction: <T>(func: string, ...rest: Vararg<any>) => T;
 declare function ObjectType<GUID extends string>(
   unit: GUID & (GUID extends ReservedUnits ? "Value is reserved!" : {})

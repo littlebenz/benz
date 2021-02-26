@@ -3,15 +3,31 @@ import { Defensive } from "./Defensive";
 import { TalentSpec } from "./TalentSpec";
 import { WoWClass } from "./WoWClass";
 import { UnitHasAura } from "../../wowutils/wow_utils";
-import { MonkAura } from "../utils/monk_utils";
+import { MonkAura, MonkSpell } from "../utils/monk_utils";
+import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 
 export class Monk extends PlayerState {
   class = WoWClass.Monk;
+
+  interruptSpells: InterruptSpell[] = [
+    {
+      name: MonkSpell.SpearHandStrike,
+      specs: [TalentSpec.Monk_Brewmaster, TalentSpec.Monk_Windwalker],
+      cooldown: 15,
+      lockDuration: 4,
+      range: 5,
+    },
+  ];
+  pumpSpells: PumpSpell[] = [
+    {
+      name: MonkSpell.Xuen,
+      cooldown: 120,
+      specs: [TalentSpec.Monk_Windwalker],
+    },
+  ];
+
   canBeIncapacitated(): boolean {
     return super.canBeIncapacitated();
-  }
-  canPump(): boolean {
-    return false;
   }
   isPumping(): boolean {
     // todo

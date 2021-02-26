@@ -3,9 +3,38 @@ import { Defensive } from "./Defensive";
 import { UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { DruidAura, DruidSpell } from "../utils/druid_utils";
 import { WoWClass } from "./WoWClass";
+import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { TalentSpec } from "./TalentSpec";
 
 export class Druid extends PlayerState {
   class = WoWClass.Druid;
+  interruptSpells: InterruptSpell[] = [
+    {
+      name: DruidSpell.SkullBash,
+      specs: [TalentSpec.Druid_Feral, TalentSpec.Druid_Guardian],
+      cooldown: 15,
+      lockDuration: 4,
+      range: 13,
+    },
+  ];
+
+  pumpSpells: PumpSpell[] = [
+    {
+      name: DruidSpell.ConvokeTheSpirits,
+      cooldown: 120,
+      specs: [TalentSpec.Druid_Balance, TalentSpec.Druid_Feral],
+    },
+    {
+      name: DruidSpell.IncarnBoomkin,
+      cooldown: 180,
+      specs: [TalentSpec.Druid_Balance],
+    },
+    {
+      name: DruidSpell.IncarnFeral,
+      cooldown: 180,
+      specs: [TalentSpec.Druid_Feral],
+    },
+  ];
 
   private beastBuffIds = [
     5487, //		 Bear
@@ -37,9 +66,6 @@ export class Druid extends PlayerState {
     return super.canBeIncapacitated();
   }
   shouldStomp(): boolean {
-    return false;
-  }
-  canPump(): boolean {
     return false;
   }
   isPumping(): boolean {

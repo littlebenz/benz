@@ -12,4 +12,7 @@ export enum ShamanSpell {
   HealingWave = "Healing Wave",
   HealingSurge = "Healing Surge",
   Hex = "Hex",
+  FeralSpirit = "Feral Spirit",
+  Ascendance = "Ascendance",
+  Stormkeeper = "Stormkeeper",
 }

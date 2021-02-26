@@ -3,6 +3,7 @@ import {
   GetSpellChargesTyped,
   PlayerHasAura,
   SpellCooldownRemainingSeconds,
+  StopCast,
   WoWLua,
 } from "../../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
@@ -85,6 +86,11 @@ export class Pump implements Car {
       ) {
         // cast frostbolt, it's actually decent damage plus it's in a spell book
         // we don't care about getting interrupted if they do kick it
+        const currentCast = WoWLua.UnitCastingInfoTyped("player");
+        if (currentCast && currentCast.spell === MageSpell.Fireball) {
+          StopCast();
+        }
+
         return new Frostbolt();
       } else {
         // we're fucking ready, let's go
@@ -138,11 +144,7 @@ export class Pump implements Car {
     const hotStreak = GetPlayerAura(MageAura.HotStreak);
     if (hotStreak) {
       return new Pyroblast();
-    } else if (
-      WoWLua.IsSpellUsable(MageSpell.Combustion) &&
-      !PlayerHasAura(MageAura.Combustion) &&
-      PlayerHasAura(MageAura.HotStreak)
-    ) {
+    } else if (WoWLua.IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
       return new Combustion();
     }
 

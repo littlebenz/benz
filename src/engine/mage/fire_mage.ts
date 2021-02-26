@@ -36,6 +36,7 @@ export class Mage {
   clickclickboom: ClickClickBoom;
 
   private wowEventListener: WowEventListener;
+  private canCastAt: number | null = null;
 
   arena1: PlayerState | null;
   arena2: PlayerState | null;
@@ -51,7 +52,12 @@ export class Mage {
     this.shield = new Barrier();
     this.cc = new CC(() => this.getEnemies());
     this.decurse = new Decurse();
-    this.fakeCast = new FakeCast();
+    this.fakeCast = new FakeCast(
+      (time: number) => {
+        this.canCastAt = time;
+      },
+      () => this.getEnemies(false)
+    );
     this.interrupt = new Interrupt(() => this.getEnemies());
     this.spellsteal = new Spellstealer(() => this.getEnemies(false));
     this.block = new Block();
@@ -110,6 +116,11 @@ export class Mage {
     const cc = this.cc.getNextSpell();
     if (this.shouldReturnSpell(cc)) {
       return cc;
+    }
+
+    const fakeCast = this.fakeCast.getNextSpell();
+    if (this.shouldReturnSpell(fakeCast)) {
+      return fakeCast;
     }
 
     const target = this.getEnemies().find((x) => UnitGUID("target") === x.guid());
@@ -223,7 +234,19 @@ export class Mage {
   }
 
   private shouldReturnSpell(spell: Spell | null) {
-    return spell && spell.canCastSpell();
+    if (!spell) {
+      return false;
+    }
+
+    if (!spell.canCastSpell()) {
+      return false;
+    }
+
+    if (this.canCastAt && !spell.isInstant && this.canCastAt > GetTime()) {
+      return false;
+    }
+
+    return true;
   }
 
   private getEnemies(los: boolean = true) {

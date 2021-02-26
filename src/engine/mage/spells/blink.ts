@@ -10,6 +10,7 @@ export class Blink extends Spell {
   isOnGCD = false;
   spellName = MageSpell.Blink;
   isSelfCast = true;
+  isInstant = true;
 
   private direction: number;
 

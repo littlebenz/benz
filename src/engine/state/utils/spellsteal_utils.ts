@@ -28,4 +28,5 @@ SpellstealPriorityMap.set(WarlockAura.NetherWard, SpellstealPriority.High);
 SpellstealPriorityMap.set(WarlockAura.Backdraft, SpellstealPriority.Low);
 SpellstealPriorityMap.set(ShamanAura.Heroism, SpellstealPriority.Medium);
 SpellstealPriorityMap.set(ShamanAura.Bloodlust, SpellstealPriority.Medium);
-SpellstealPriorityMap.set(WarlockAura.DarkSoul, SpellstealPriority.High);
+SpellstealPriorityMap.set(WarlockAura.DarkSoulInstability, SpellstealPriority.High);
+SpellstealPriorityMap.set(WarlockAura.DarkSoulMisery, SpellstealPriority.High);

@@ -5,6 +5,7 @@ export class IceBlock extends Spell {
   isOnGCD = true;
   spellName = MageSpell.IceBlock;
   isSelfCast = true;
+  isInstant = true;
 
   canCastSpell(): boolean {
     // TODO:: cancel cast

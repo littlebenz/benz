@@ -5,6 +5,7 @@ export class Polymorph extends Spell {
   isOnGCD = true;
   spellName = MageSpell.Polymorph;
   isSelfCast = false;
+  isInstant = false;
 
   canCastSpell(): boolean {
     if (!this.targetGuid) {

@@ -22,8 +22,10 @@ import { SpellstealPriorityMap } from "../utils/spellsteal_utils";
 import { NecrolordAura } from "../utils/necrolord_utils";
 import { DemonHunterAura } from "../utils/demon_hunter_utils";
 import { DeathKnightAura } from "../utils/death_knight_utils";
+import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 
 export abstract class PlayerState {
+  abstract interruptSpells: InterruptSpell[];
   isHealer() {
     const specInfo = this.getSpecInfo();
     if (
@@ -40,9 +42,59 @@ export abstract class PlayerState {
     return false;
   }
 
-  spellUsedAt: Map<PlayerSpell, number> = new Map();
-  abstract canPump(): boolean;
+  spellUsedAtMap(): Map<PlayerSpell, number> {
+    if (this.wowEventListener.enemiesSpellTracker.has(this.guid())) {
+      return this.wowEventListener.enemiesSpellTracker.get(this.guid());
+    }
+
+    return new Map<PlayerSpell, number>();
+  }
+
+  abstract pumpSpells: PumpSpell[];
+
+  canPump(): boolean {
+    const spec = this.getSpecInfo();
+    if (!spec) {
+      return false;
+    }
+
+    for (const pumpSpell of this.pumpSpells.filter((x) => x.specs.includes(spec))) {
+      if (this.spellUsedAtMap().has(pumpSpell.name)) {
+        const lastCastedAt = this.spellUsedAtMap().get(pumpSpell.name)!;
+        if (GetTime() - lastCastedAt + pumpSpell.cooldown >= 0) {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  interruptsAvailable(): InterruptSpell[] | null {
+    const spec = this.getSpecInfo();
+    if (!spec) {
+      return null;
+    }
+
+    const interrupts: InterruptSpell[] = [];
+    for (const interrupt of this.interruptSpells.filter((x) => x.specs.includes(spec))) {
+      if (this.spellUsedAtMap().has(interrupt.name)) {
+        const lastCastedAt = this.spellUsedAtMap().get(interrupt.name)!;
+        if (GetTime() - lastCastedAt + interrupt.cooldown >= 0) {
+          interrupts.push(interrupt);
+        }
+      } else {
+        interrupts.push(interrupt);
+      }
+    }
+
+    return interrupts.length > 0 ? interrupts : null;
+  }
+
   abstract isPumping(): boolean;
+
   canBeIncapacitated(): boolean {
     if (!UnitIsVisible(this.unitId)) {
       return false;
@@ -174,7 +226,7 @@ export abstract class PlayerState {
   }
 
   getSpecInfo() {
-    const specId = GetArenaOpponentSpec(this.unitId);
+    const [specId] = GetArenaOpponentSpec(this.unitId[this.unitId.length - 1]);
     if (specId && specId > 0) {
       const spec = GetSpecializationInfoByIDObject(specId);
       return spec.specID as TalentSpec;

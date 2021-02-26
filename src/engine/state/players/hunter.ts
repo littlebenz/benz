@@ -1,11 +1,42 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
 import { GetUnitAura, UnitCastOrChannel, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
-import { HunterAura } from "../utils/hunter_utils";
+import { HunterAura, HunterSpell } from "../utils/hunter_utils";
 import { WoWClass } from "./WoWClass";
+import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { TalentSpec } from "./TalentSpec";
 
 export class Hunter extends PlayerState {
   class = WoWClass.Hunter;
+
+  interruptSpells: InterruptSpell[] = [
+    {
+      name: HunterSpell.CounterShot,
+      specs: [TalentSpec.Hunter_BeastMastery, TalentSpec.Hunter_Marksmanship],
+      cooldown: 24,
+      lockDuration: 3,
+      range: 40,
+    },
+    {
+      name: HunterSpell.Muzzle,
+      specs: [TalentSpec.Hunter_Survival],
+      cooldown: 15,
+      lockDuration: 3,
+      range: 5,
+    },
+  ];
+  pumpSpells: PumpSpell[] = [
+    {
+      name: HunterSpell.Trueshot,
+      cooldown: 120,
+      specs: [TalentSpec.Hunter_Marksmanship],
+    },
+    {
+      name: HunterSpell.BestialWrath,
+      cooldown: 90,
+      specs: [TalentSpec.Hunter_BeastMastery],
+    },
+  ];
 
   canBeIncapacitated(): boolean {
     if (WoWLua.GetAuraRemainingTime(GetUnitAura(HunterAura.Deterrence, this.unitId)) >= 1.5) {
@@ -20,9 +51,6 @@ export class Hunter extends PlayerState {
     return super.canBeIncapacitated();
   }
   shouldStomp(): boolean {
-    return false;
-  }
-  canPump(): boolean {
     return false;
   }
   isPumping(): boolean {

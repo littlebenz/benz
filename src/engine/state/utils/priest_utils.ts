@@ -23,4 +23,5 @@ export enum PriestSpell {
   FlashHeal = "Flash Heal",
   DivineHymn = "Divine Hymn",
   Mindgames = "Mindgames",
+  VoidEruption = "Void Eruption",
 }

@@ -10,4 +10,6 @@ export enum MonkSpell {
   LegSweep = "Leg Sweep",
   RingOfPeace = "Ring of Peace",
   Paralysis = "Paralysis",
+  SpearHandStrike = "Spear Hand Strike",
+  Xuen = "Invoke Xuen, the White Tiger",
 }

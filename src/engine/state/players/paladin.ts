@@ -4,9 +4,28 @@ import { GetUnitAura, UnitCastOrChannel, UnitHasAura, WoWLua } from "../../wowut
 import { PaladinAura, PaladinSpell } from "../utils/paladin_utils";
 import { WoWClass } from "./WoWClass";
 import { TalentSpec } from "./TalentSpec";
+import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 
 export class Paladin extends PlayerState {
   class = WoWClass.Paladin;
+
+  interruptSpells: InterruptSpell[] = [
+    {
+      name: PaladinSpell.Rebuke,
+      specs: [TalentSpec.Paladin_Protection, TalentSpec.Paladin_Retribution],
+      cooldown: 15,
+      lockDuration: 4,
+      range: 5,
+    },
+  ];
+
+  pumpSpells: PumpSpell[] = [
+    {
+      name: PaladinSpell.AvengingWrath,
+      cooldown: 120,
+      specs: [TalentSpec.Paladin_Retribution],
+    },
+  ];
 
   canBeIncapacitated(): boolean {
     if (WoWLua.GetAuraRemainingTime(GetUnitAura(PaladinAura.DivineShield, this.unitId)) >= 1.5) {
@@ -24,9 +43,6 @@ export class Paladin extends PlayerState {
     }
 
     return super.canBeIncapacitated();
-  }
-  canPump(): boolean {
-    return false;
   }
 
   isPumping(): boolean {

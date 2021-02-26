@@ -3,15 +3,47 @@ import { Defensive } from "./Defensive";
 import { WoWLua, UnitCastOrChannel, UnitHasAura } from "../../wowutils/wow_utils";
 import { ShamanAura, ShamanSpell } from "../utils/shaman_utils";
 import { WoWClass } from "./WoWClass";
+import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { TalentSpec } from "./TalentSpec";
 
 export class Shaman extends PlayerState {
   class = WoWClass.Shaman;
+  interruptSpells: InterruptSpell[] = [
+    {
+      name: ShamanSpell.WindShear,
+      specs: [
+        TalentSpec.Shaman_Elemental,
+        TalentSpec.Shaman_Enhancement,
+        TalentSpec.Shaman_Restoration,
+      ],
+      cooldown: 12,
+      lockDuration: 3,
+      range: 30,
+    },
+  ];
+
+  pumpSpells: PumpSpell[] = [
+    {
+      name: ShamanSpell.FeralSpirit,
+      cooldown: 120,
+      specs: [TalentSpec.Shaman_Enhancement],
+    },
+    {
+      name: ShamanSpell.Ascendance,
+      cooldown: 180,
+      specs: [TalentSpec.Shaman_Enhancement],
+    },
+    {
+      name: ShamanSpell.Stormkeeper,
+      cooldown: 60,
+      specs: [TalentSpec.Shaman_Elemental],
+    },
+  ];
+
   canBeIncapacitated(): boolean {
     return super.canBeIncapacitated();
   }
-  canPump(): boolean {
-    return false;
-  }
+
   isPumping(): boolean {
     const objects = WoWLua.GetObjects().map((x) => ({ guid: x, name: ObjectName(x) }));
     const feralSpirit = objects.find((x) => x.name === "Feral Spirit");
