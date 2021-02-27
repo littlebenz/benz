@@ -3,8 +3,9 @@ import { Defensive } from "./Defensive";
 import { UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { DruidAura, DruidSpell } from "../utils/druid_utils";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
+import { PriorityAction } from "./SpellstealPriority";
 
 export class Druid extends PlayerState {
   class = WoWClass.Druid;
@@ -33,6 +34,32 @@ export class Druid extends PlayerState {
       name: DruidSpell.IncarnFeral,
       cooldown: 180,
       specs: [TalentSpec.Druid_Feral],
+    },
+  ];
+
+  spellToInterrupt: InterruptableSpell[] = [
+    {
+      name: DruidSpell.Cyclone,
+      cooldown: 0,
+      specs: [
+        TalentSpec.Druid_Balance,
+        TalentSpec.Druid_Feral,
+        TalentSpec.Druid_Guardian,
+        TalentSpec.Druid_Restoration,
+      ],
+      priority: PriorityAction.Medium,
+    },
+    {
+      name: DruidSpell.ConvokeTheSpirits,
+      cooldown: 120,
+      specs: [TalentSpec.Druid_Balance, TalentSpec.Druid_Feral],
+      priority: PriorityAction.Required,
+    },
+    {
+      name: DruidSpell.Regrowth,
+      cooldown: 0,
+      specs: [TalentSpec.Druid_Restoration],
+      priority: PriorityAction.High,
     },
   ];
 
@@ -85,18 +112,5 @@ export class Druid extends PlayerState {
   }
   isDefensive(): Defensive {
     return super.isDefensive();
-  }
-  shouldInterrupt(): boolean {
-    const casting = this.currentCastOrChannel();
-    if (casting) {
-      if (
-        casting.spell === DruidSpell.Cyclone ||
-        casting.spell === DruidSpell.ConvokeTheSpirits ||
-        casting.spell === DruidSpell.Regrowth
-      ) {
-        return true;
-      }
-    }
-    return false;
   }
 }

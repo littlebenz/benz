@@ -4,7 +4,8 @@ import { GetUnitAura, UnitCastOrChannel, UnitHasAura, WoWLua } from "../../wowut
 import { PaladinAura, PaladinSpell } from "../utils/paladin_utils";
 import { WoWClass } from "./WoWClass";
 import { TalentSpec } from "./TalentSpec";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { PriorityAction } from "./SpellstealPriority";
 
 export class Paladin extends PlayerState {
   class = WoWClass.Paladin;
@@ -24,6 +25,21 @@ export class Paladin extends PlayerState {
       name: PaladinSpell.AvengingWrath,
       cooldown: 120,
       specs: [TalentSpec.Paladin_Retribution],
+    },
+  ];
+
+  spellToInterrupt: InterruptableSpell[] = [
+    {
+      name: PaladinSpell.FlashOfLight,
+      cooldown: 0,
+      specs: [TalentSpec.Paladin_Holy],
+      priority: PriorityAction.High,
+    },
+    {
+      name: PaladinSpell.FlashOfLight,
+      cooldown: 0,
+      specs: [TalentSpec.Paladin_Retribution],
+      priority: PriorityAction.Low,
     },
   ];
 
@@ -62,15 +78,6 @@ export class Paladin extends PlayerState {
     return super.isDefensive();
   }
   shouldStomp(): boolean {
-    return false;
-  }
-  shouldInterrupt(): boolean {
-    const casting = this.currentCastOrChannel();
-    if (casting) {
-      if (casting.spell === PaladinSpell.FlashOfLight) {
-        return true;
-      }
-    }
     return false;
   }
 }

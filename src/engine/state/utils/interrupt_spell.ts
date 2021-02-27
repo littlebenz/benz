@@ -1,4 +1,5 @@
 import { PlayerSpell } from "../../wowutils/wow_utils";
+import { PriorityAction } from "../players/SpellstealPriority";
 import { TalentSpec } from "../players/TalentSpec";
 
 export interface InterruptSpell {
@@ -13,4 +14,11 @@ export interface PumpSpell {
   name: PlayerSpell;
   cooldown: number;
   specs: TalentSpec[];
+}
+
+export interface InterruptableSpell {
+  name: PlayerSpell;
+  cooldown: number;
+  specs: TalentSpec[];
+  priority: PriorityAction;
 }

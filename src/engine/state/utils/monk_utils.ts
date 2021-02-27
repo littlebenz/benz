@@ -12,4 +12,5 @@ export enum MonkSpell {
   Paralysis = "Paralysis",
   SpearHandStrike = "Spear Hand Strike",
   Xuen = "Invoke Xuen, the White Tiger",
+  Vivify = "Vivify",
 }

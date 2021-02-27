@@ -1,12 +1,13 @@
 import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 
 export class NPC extends PlayerState {
   class = WoWClass.NPC;
   pumpSpells: PumpSpell[] = [];
   interruptSpells: InterruptSpell[] = [];
+  spellToInterrupt: InterruptableSpell[] = [];
   canBeIncapacitated(): boolean {
     return true;
   }
@@ -17,9 +18,6 @@ export class NPC extends PlayerState {
     return Defensive.None;
   }
   shouldStomp(): boolean {
-    return false;
-  }
-  shouldInterrupt(): boolean {
     return false;
   }
 }

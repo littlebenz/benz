@@ -32,6 +32,7 @@ import { RingOfFrost } from "../spells/ring_of_frost";
 import { WoWClass } from "../../state/players/WoWClass";
 import { DRType } from "../../state/dr_tracker";
 import { UIStatusFrame } from "../../ui/status_frame";
+import { DragonsBreath } from "../spells/dragons_breath";
 
 export class CC implements Car {
   private getEnemies: () => PlayerState[];
@@ -53,6 +54,13 @@ export class CC implements Car {
       const rof = new RingOfFrost({ unitTarget: player.unitId });
       if (this.shouldRing(player) && rof.canCastSpell()) {
         return rof;
+      }
+    }
+
+    for (const player of validPlayers) {
+      const db = new DragonsBreath({ unitTarget: player.unitId });
+      if (this.shouldDB(player) && db.canCastSpell()) {
+        return db;
       }
     }
 
@@ -105,6 +113,32 @@ export class CC implements Car {
       StopCast();
       UIStatusFrame.addMessage("Stopping cast of " + playerCast.spell + " in order to cast poly");
     }
+  }
+
+  private shouldDB(playerState: PlayerState): boolean {
+    if (!playerState.isHealer()) {
+      return false;
+    }
+
+    const dr = playerState.incapacitateDr();
+    if (dr.drCount !== 0) {
+      return false;
+    }
+
+    if (!playerState.canBeIncapacitated()) {
+      return false;
+    }
+
+    const distance = WoWLua.DistanceFromUnit("player", playerState.unitId);
+    if (distance > 12) {
+      return false;
+    }
+
+    if (!WoWLua.IsUnitInOfLineOfSight("player", playerState.unitId)) {
+      return false;
+    }
+
+    return true;
   }
 
   private shouldRing(playerState: PlayerState): boolean {

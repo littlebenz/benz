@@ -1,4 +1,5 @@
-import { Pump, PumpingStatus } from "./cars/pump";
+import { Pump } from "./cars/pump";
+import { PumpingStatus } from "../state/utils/pumping_status";
 import { AutoAlterTime } from "./cars/alter_time";
 import { Barrier } from "./cars/barrier";
 import { CC } from "./cars/cc";
@@ -162,6 +163,9 @@ export class Mage {
     const arena2Name = this.arena2 ? this.arena2.name : null;
     const arena3Name = this.arena3 ? this.arena3.name : null;
 
+    const party1Name = this.party1 ? this.party1.name : null;
+    const party2Name = this.party2 ? this.party2.name : null;
+
     if (GetUnitName("arena1", true) !== arena1Name) {
       this.arena1 = PlayerStateFactory.create("arena1", this.wowEventListener);
     }
@@ -172,6 +176,14 @@ export class Mage {
 
     if (GetUnitName("arena3", true) !== arena3Name) {
       this.arena3 = PlayerStateFactory.create("arena3", this.wowEventListener);
+    }
+
+    if (GetUnitName("party1", true) !== party1Name) {
+      this.party1 = PlayerStateFactory.create("party1", this.wowEventListener);
+    }
+
+    if (GetUnitName("party2", true) !== party2Name) {
+      this.party2 = PlayerStateFactory.create("party2", this.wowEventListener);
     }
   }
 

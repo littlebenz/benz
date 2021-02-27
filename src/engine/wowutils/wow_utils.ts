@@ -16,6 +16,7 @@ import { WarriorAura, WarriorSpell } from "../state/utils/warrior_utils";
 import { NightFaeAura } from "../state/utils/night_fae_utils";
 import { NecrolordAura } from "../state/utils/necrolord_utils";
 import { memoizeOne } from "../../utils/memoize";
+import { CommonAura } from "../state/utils/common_utils";
 
 export type PlayerAura =
   | MageAura
@@ -31,7 +32,8 @@ export type PlayerAura =
   | WarlockAura
   | WarriorAura
   | NightFaeAura
-  | NecrolordAura;
+  | NecrolordAura
+  | CommonAura;
 
 export type PlayerSpell =
   | MageSpell

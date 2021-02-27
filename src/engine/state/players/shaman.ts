@@ -3,8 +3,9 @@ import { Defensive } from "./Defensive";
 import { WoWLua, UnitCastOrChannel, UnitHasAura } from "../../wowutils/wow_utils";
 import { ShamanAura, ShamanSpell } from "../utils/shaman_utils";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
+import { PriorityAction } from "./SpellstealPriority";
 
 export class Shaman extends PlayerState {
   class = WoWClass.Shaman;
@@ -40,6 +41,37 @@ export class Shaman extends PlayerState {
     },
   ];
 
+  spellToInterrupt: InterruptableSpell[] = [
+    {
+      name: ShamanSpell.LightningLasso,
+      cooldown: 30,
+      specs: [TalentSpec.Shaman_Elemental],
+      priority: PriorityAction.Medium,
+    },
+    {
+      name: ShamanSpell.HealingWave,
+      cooldown: 0,
+      specs: [TalentSpec.Shaman_Restoration],
+      priority: PriorityAction.High,
+    },
+    {
+      name: ShamanSpell.HealingSurge,
+      cooldown: 0,
+      specs: [TalentSpec.Shaman_Restoration],
+      priority: PriorityAction.High,
+    },
+    {
+      name: ShamanSpell.Hex,
+      cooldown: 0,
+      specs: [
+        TalentSpec.Shaman_Restoration,
+        TalentSpec.Shaman_Elemental,
+        TalentSpec.Shaman_Enhancement,
+      ],
+      priority: PriorityAction.High,
+    },
+  ];
+
   canBeIncapacitated(): boolean {
     return super.canBeIncapacitated();
   }
@@ -68,20 +100,7 @@ export class Shaman extends PlayerState {
 
     return super.isDefensive();
   }
-  shouldInterrupt(): boolean {
-    const casting = this.currentCastOrChannel();
-    if (casting) {
-      if (
-        casting.spell === ShamanSpell.LightningLasso ||
-        casting.spell === ShamanSpell.HealingWave ||
-        casting.spell === ShamanSpell.Hex ||
-        casting.spell === ShamanSpell.HealingSurge
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
+
   shouldStomp(): boolean {
     return false;
   }

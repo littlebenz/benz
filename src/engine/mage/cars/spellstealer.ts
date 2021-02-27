@@ -16,7 +16,7 @@ import { HunterAura } from "../../state/utils/hunter_utils";
 import { PriestAura } from "../../state/utils/priest_utils";
 import { DruidAura } from "../../state/utils/druid_utils";
 import { WarlockAura } from "../../state/utils/warlock_utils";
-import { SpellstealPriority } from "../../state/players/SpellstealPriority";
+import { PriorityAction } from "../../state/players/SpellstealPriority";
 
 export class Spellstealer implements Car {
   private getEnemies: () => PlayerState[];
@@ -53,7 +53,7 @@ export class Spellstealer implements Car {
 
     const maybeMage = this.getEnemies().find((x) => x.getSpecInfo() === TalentSpec.Mage_Fire);
     if (maybeMage) {
-      if (maybeMage.shouldSpellsteal() === SpellstealPriority.Required) {
+      if (maybeMage.shouldSpellsteal() === PriorityAction.Required) {
         this.lastKleptoCombust = GetTime();
         return new Spellsteal({ unitTarget: maybeMage.unitId, messageOnCast: "Klepto combust" });
       }
@@ -63,11 +63,11 @@ export class Spellstealer implements Car {
       for (const enemy of this.getEnemies()) {
         const spellstealPriority = enemy.shouldSpellsteal();
         if (
-          spellstealPriority === SpellstealPriority.Required ||
-          spellstealPriority === SpellstealPriority.High
+          spellstealPriority === PriorityAction.Required ||
+          spellstealPriority === PriorityAction.High
         ) {
           const spells = enemy
-            .spellStealAuras(SpellstealPriority.High)
+            .spellStealAuras(PriorityAction.High)
             .map((x) => x.name)
             .join(", ");
 
@@ -91,12 +91,12 @@ export class Spellstealer implements Car {
     for (const enemy of this.getEnemies()) {
       const spellstealPriority = enemy.shouldSpellsteal();
       if (
-        spellstealPriority === SpellstealPriority.Required ||
-        spellstealPriority === SpellstealPriority.High ||
-        spellstealPriority === SpellstealPriority.Medium
+        spellstealPriority === PriorityAction.Required ||
+        spellstealPriority === PriorityAction.High ||
+        spellstealPriority === PriorityAction.Medium
       ) {
         const spells = enemy
-          .spellStealAuras(SpellstealPriority.Medium)
+          .spellStealAuras(PriorityAction.Medium)
           .map((x) => x.name)
           .join(", ");
 

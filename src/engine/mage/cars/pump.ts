@@ -21,12 +21,8 @@ import { Frostbolt } from "../spells/frostbolt";
 import { PlayerState } from "../../state/players/player_state";
 import { Defensive } from "../../state/players/Defensive";
 import { DRType } from "../../state/dr_tracker";
-
-export enum PumpingStatus {
-  WarmingUp,
-  Pumping,
-  Dumped,
-}
+import { UIStatusFrame } from "../../ui/status_frame";
+import { PumpingStatus } from "../../state/utils/pumping_status";
 
 export class Pump implements Car {
   pumpingState;
@@ -46,14 +42,20 @@ export class Pump implements Car {
 
     if (PlayerHasAura(MageAura.Combustion)) {
       this.pumpingState = PumpingStatus.Pumping;
-    } else if (
-      WoWLua.IsSpellUsable(MageSpell.Combustion) &&
-      this.pumpingState === PumpingStatus.Dumped
-    ) {
-      this.pumpingState = PumpingStatus.WarmingUp;
     } else if (!WoWLua.IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
       this.pumpingState = PumpingStatus.Dumped;
+    } else if (WoWLua.IsSpellUsable(MageSpell.Combustion)) {
+      const fireBlastCharges = GetSpellChargesTyped(MageSpell.FireBlast);
+      const hotStreak = GetPlayerAura(MageAura.HotStreak);
+
+      if (hotStreak && fireBlastCharges.maxCharges === fireBlastCharges.currentCharges) {
+        this.pumpingState = PumpingStatus.Hot;
+      } else {
+        this.pumpingState = PumpingStatus.WarmingUp;
+      }
     }
+
+    UIStatusFrame.pumpStatus(this.pumpingState);
 
     if (WoWLua.IsUnitInOfLineOfSight("player", "target")) {
       if (this.pumpingState === PumpingStatus.WarmingUp) {
@@ -64,6 +66,9 @@ export class Pump implements Car {
       }
       if (this.pumpingState === PumpingStatus.Dumped) {
         return this.kite();
+      }
+      if (this.pumpingState === PumpingStatus.Hot) {
+        return this.hot();
       }
     }
 
@@ -79,24 +84,7 @@ export class Pump implements Car {
     const fireBlastCharges = GetSpellChargesTyped(MageSpell.FireBlast);
 
     if (hotStreak) {
-      if (
-        WoWLua.GetAuraRemainingTime(hotStreak) >= 7 ||
-        WoWLua.GetAuraRemainingTime(hotStreak) === 0
-        // fireBlastCharges.currentCharges !== fireBlastCharges.maxCharges
-      ) {
-        // cast frostbolt, it's actually decent damage plus it's in a spell book
-        // we don't care about getting interrupted if they do kick it
-        const currentCast = WoWLua.UnitCastingInfoTyped("player");
-        if (currentCast && currentCast.spell === MageSpell.Fireball) {
-          StopCast();
-        }
-
-        return new Frostbolt();
-      } else {
-        // we're fucking ready, let's go
-        this.pumpingState = PumpingStatus.Pumping;
-        return this.pump();
-      }
+      return new Frostbolt();
     } else if (heatingUp) {
       if (fireBlastCharges.currentCharges === fireBlastCharges.maxCharges) {
         return new FireBlast();
@@ -112,49 +100,15 @@ export class Pump implements Car {
   }
 
   pump() {
-    if (this.pumpingState === PumpingStatus.WarmingUp) {
-      for (const arena of this.getEnemies()) {
-        if (arena.isHealer()) {
-          const remainingCC = arena.remainingCC();
-          if (remainingCC.filter((x) => x.remaining >= 3).length === 0) {
-            return null;
-          }
-        }
-      }
+    const currentCast = WoWLua.UnitCastingInfoTyped("player");
+    if (currentCast && currentCast.spell === MageSpell.Frostbolt) {
+      StopCast();
     }
-
-    // const missleList = GetMissleList();
-
-    // only cast if target can't get out of nova
-    // if (IsSpellUsable(MageSpell.FrostNova) && IsSpellUsable(MageSpell.Meteor)) {
-    //   const [playerX, playerY] = GetUnitPosition("player");
-    //   const [targetX, targetY] = GetUnitPosition("target");
-
-    //   const distance = math.sqrt(math.pow(targetX - playerX, 2) + math.pow(targetY - playerY, 2));
-    //   if (distance <= 12) {
-    //     return new FrostNova();
-    //   }
-    // }
-
-    // is it worth casting meteor if they can just walk out of if? should we try to DB?
-    // if (IsSpellUsable(MageSpell.Meteor)) {
-    //   return new Meteor();
-    // }
 
     const hotStreak = GetPlayerAura(MageAura.HotStreak);
     if (hotStreak) {
       return new Pyroblast();
-    } else if (WoWLua.IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
-      return new Combustion({
-        messageOnCast: "FUCKING PUMPING BOYS. GET THOSE DOGS",
-      });
     }
-
-    // const heatingUp = GetPlayerAura(MageAura.HeatingUp);
-    // if (heatingUp) {
-    // if (missleList.filter((x) => x.spellId === 257541).length >= 1) {
-    //     return new Pyroblast();
-    // }
 
     if (WoWLua.IsSpellUsable(MageSpell.FireBlast) && !PlayerHasAura(MageAura.HotStreak)) {
       return new FireBlast({ hardCast: true });
@@ -163,14 +117,31 @@ export class Pump implements Car {
     if (WoWLua.IsSpellUsable(MageSpell.PhoenixFlames)) {
       return new PhoenixFlames();
     }
-    // }
-
-    const combustion = GetPlayerAura(MageAura.Combustion);
-    if (combustion === null) {
-      this.pumpingState = PumpingStatus.Dumped;
-    }
 
     return new Scorch();
+  }
+
+  hot() {
+    // TODO :: Surface this information better. Maybe make it optional to combust when healer CC
+    // if (this.pumpingState === PumpingStatus.WarmingUp) {
+    //   for (const arena of this.getEnemies()) {
+    //     if (arena.isHealer()) {
+    //       const remainingCC = arena.remainingCC();
+    //       if (remainingCC.filter((x) => x.remaining >= 3).length === 0) {
+    //         return null;
+    //       }
+    //     }
+    //   }
+    // }
+
+    // cast frostbolt, it's actually decent damage plus it's in a spell book
+    // we don't care about getting interrupted if they do kick it
+    const currentCast = WoWLua.UnitCastingInfoTyped("player");
+    if (currentCast && currentCast.spell === MageSpell.Fireball) {
+      StopCast();
+    }
+
+    return new Frostbolt();
   }
 
   kite() {

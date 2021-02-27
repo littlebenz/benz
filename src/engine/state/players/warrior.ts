@@ -3,8 +3,8 @@ import { Defensive } from "./Defensive";
 import { UnitHasAura } from "../../wowutils/wow_utils";
 import { WarriorAura, WarriorSpell } from "../utils/warrior_utils";
 import { WoWClass } from "./WoWClass";
-import { SpellstealPriority } from "./SpellstealPriority";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { PriorityAction } from "./SpellstealPriority";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
 
 export class Warrior extends PlayerState {
@@ -32,6 +32,7 @@ export class Warrior extends PlayerState {
       specs: [TalentSpec.Warrior_Fury],
     },
   ];
+  spellToInterrupt: InterruptableSpell[] = [];
 
   canBeIncapacitated(): boolean {
     if (UnitHasAura(WarriorAura.Bladestorm, this.unitId)) {
@@ -65,10 +66,6 @@ export class Warrior extends PlayerState {
     }
 
     return super.isDefensive();
-  }
-
-  shouldInterrupt(): boolean {
-    return false;
   }
   shouldStomp(): boolean {
     return UnitHasAura(WarriorAura.SpellReflection, this.unitId);

@@ -3,8 +3,9 @@ import { Defensive } from "./Defensive";
 import { UnitCastOrChannel, UnitHasAura } from "../../wowutils/wow_utils";
 import { DemonHunterAura, DemonHunterSpell } from "../utils/demon_hunter_utils";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
+import { PriorityAction } from "./SpellstealPriority";
 
 export class DemonHunter extends PlayerState {
   class = WoWClass.DemonHunter;
@@ -22,6 +23,14 @@ export class DemonHunter extends PlayerState {
       name: DemonHunterSpell.Metamorphosis,
       cooldown: 60,
       specs: [TalentSpec.DH_Havoc, TalentSpec.DH_Vengeance],
+    },
+  ];
+  spellToInterrupt: InterruptableSpell[] = [
+    {
+      name: DemonHunterSpell.EyeBeam,
+      cooldown: 30,
+      specs: [TalentSpec.DH_Havoc],
+      priority: PriorityAction.Low,
     },
   ];
 
@@ -43,16 +52,5 @@ export class DemonHunter extends PlayerState {
       return Defensive.CanStillDam;
     }
     return super.isDefensive();
-  }
-  shouldInterrupt(): boolean {
-    const casting = this.currentCastOrChannel();
-    if (
-      casting &&
-      casting.spell === DemonHunterSpell.EyeBeam &&
-      UnitHasAura(DemonHunterAura.Metamorphosis, this.unitId)
-    ) {
-      return true;
-    }
-    return false;
   }
 }

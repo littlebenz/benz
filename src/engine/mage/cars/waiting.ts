@@ -1,11 +1,16 @@
-import { WoWLua } from "../../wowutils/wow_utils";
+import { PlayerHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { Car } from "./car";
 import { ConjureRefreshment } from "../spells/conjure_refreshment";
 import { InteractUnit } from "../../wowutils/unlocked_functions";
+import { CommonAura } from "../../state/utils/common_utils";
 
 export class Waiting implements Car {
   lastInteractedWithTable: number = 0;
   getNextSpell() {
+    if (!PlayerHasAura(CommonAura.ArenaPrep)) {
+      return null;
+    }
+
     // conjure refreshment
     // click table
     // click soulwell?

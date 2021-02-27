@@ -3,8 +3,9 @@ import { PlayerState } from "./player_state";
 import { Defensive } from "./Defensive";
 import { MageAura, MageSpell } from "../utils/mage_utils";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
+import { PriorityAction } from "./SpellstealPriority";
 
 export class Mage extends PlayerState {
   class = WoWClass.Mage;
@@ -33,6 +34,14 @@ export class Mage extends PlayerState {
       name: MageSpell.ArcanePower,
       cooldown: 90,
       specs: [TalentSpec.Mage_Arcane],
+    },
+  ];
+  spellToInterrupt: InterruptableSpell[] = [
+    {
+      name: MageSpell.Polymorph,
+      cooldown: 0,
+      specs: [TalentSpec.Mage_Arcane, TalentSpec.Mage_Fire, TalentSpec.Mage_Frost],
+      priority: PriorityAction.Medium,
     },
   ];
 
@@ -69,14 +78,5 @@ export class Mage extends PlayerState {
     }
 
     return super.isDefensive();
-  }
-  shouldInterrupt(): boolean {
-    const casting = this.currentCastOrChannel();
-    if (casting) {
-      if (casting.spell === MageSpell.Polymorph) {
-        return true;
-      }
-    }
-    return false;
   }
 }

@@ -24,4 +24,5 @@ export enum PriestSpell {
   DivineHymn = "Divine Hymn",
   Mindgames = "Mindgames",
   VoidEruption = "Void Eruption",
+  VampiricTouch = "Vampiric Touch",
 }

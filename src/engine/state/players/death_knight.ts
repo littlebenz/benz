@@ -3,7 +3,7 @@ import { Defensive } from "./Defensive";
 import { DeathKnightAura, DeathKnightSpell } from "../utils/death_knight_utils";
 import { GetUnitAura, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
 
 export class DeathKnight extends PlayerState {
@@ -36,6 +36,7 @@ export class DeathKnight extends PlayerState {
       specs: [TalentSpec.DK_Frost],
     },
   ];
+  spellToInterrupt: InterruptableSpell[] = [];
 
   shouldStomp(): boolean {
     return false;
@@ -62,8 +63,5 @@ export class DeathKnight extends PlayerState {
   }
   isDefensive(): Defensive {
     return super.isDefensive();
-  }
-  shouldInterrupt(): boolean {
-    return false;
   }
 }

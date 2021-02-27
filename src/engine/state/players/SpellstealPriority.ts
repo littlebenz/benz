@@ -1,4 +1,4 @@
-export enum SpellstealPriority {
+export enum PriorityAction {
   Required = 1000,
   High = 100,
   Medium = 50,

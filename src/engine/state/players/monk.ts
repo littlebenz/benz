@@ -4,7 +4,8 @@ import { TalentSpec } from "./TalentSpec";
 import { WoWClass } from "./WoWClass";
 import { UnitHasAura } from "../../wowutils/wow_utils";
 import { MonkAura, MonkSpell } from "../utils/monk_utils";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { PriorityAction } from "./SpellstealPriority";
 
 export class Monk extends PlayerState {
   class = WoWClass.Monk;
@@ -23,6 +24,20 @@ export class Monk extends PlayerState {
       name: MonkSpell.Xuen,
       cooldown: 120,
       specs: [TalentSpec.Monk_Windwalker],
+    },
+  ];
+  spellToInterrupt: InterruptableSpell[] = [
+    {
+      name: MonkSpell.Vivify,
+      cooldown: 0,
+      specs: [TalentSpec.Monk_Windwalker],
+      priority: PriorityAction.Low,
+    },
+    {
+      name: MonkSpell.Vivify,
+      cooldown: 0,
+      specs: [TalentSpec.Monk_Mistweaver],
+      priority: PriorityAction.High,
     },
   ];
 
@@ -49,8 +64,5 @@ export class Monk extends PlayerState {
       return Defensive.CanStillDam;
     }
     return super.isDefensive();
-  }
-  shouldInterrupt(): boolean {
-    return false;
   }
 }

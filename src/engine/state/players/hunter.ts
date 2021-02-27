@@ -3,7 +3,7 @@ import { Defensive } from "./Defensive";
 import { GetUnitAura, UnitCastOrChannel, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { HunterAura, HunterSpell } from "../utils/hunter_utils";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
 
 export class Hunter extends PlayerState {
@@ -37,6 +37,7 @@ export class Hunter extends PlayerState {
       specs: [TalentSpec.Hunter_BeastMastery],
     },
   ];
+  spellToInterrupt: InterruptableSpell[] = [];
 
   canBeIncapacitated(): boolean {
     if (WoWLua.GetAuraRemainingTime(GetUnitAura(HunterAura.Deterrence, this.unitId)) >= 1.5) {
@@ -72,8 +73,5 @@ export class Hunter extends PlayerState {
       return Defensive.DoNotTouch;
     }
     return super.isDefensive();
-  }
-  shouldInterrupt(): boolean {
-    return false;
   }
 }

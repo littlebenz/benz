@@ -13,7 +13,11 @@ import { MageAura, MageSpell } from "../../state/utils/mage_utils";
 import { Barrier as BarrierSkill } from "../spells/barrier";
 import { Car } from "./car";
 import { ArcaneIntellect } from "../spells/arcane_intellect";
+import { CommonAura } from "../../state/utils/common_utils";
 
+declare namespace TimerTrackerTimer1 {
+  const time: number;
+}
 export class Barrier implements Car {
   getNextSpell() {
     const arcaneInt = GetPlayerAura(MageAura.ArcaneIntellect);
@@ -24,7 +28,9 @@ export class Barrier implements Car {
     }
 
     if (arcaneIntTimeLeft <= 10) {
-      return new ArcaneIntellect();
+      return new ArcaneIntellect({
+        unitTarget: "player",
+      });
     }
 
     // assuming fire mage only right now
@@ -35,8 +41,14 @@ export class Barrier implements Car {
       return null;
     }
 
-    if (barrierTimeLeft <= 7 && !PlayerHasAura(MageAura.AlterTime)) {
-      return new BarrierSkill();
+    if (PlayerHasAura(CommonAura.ArenaPrep)) {
+      if (TimerTrackerTimer1.time <= 20) {
+        return new BarrierSkill();
+      }
+    } else {
+      if (barrierTimeLeft <= 7 && !PlayerHasAura(MageAura.AlterTime)) {
+        return new BarrierSkill();
+      }
     }
 
     return null;

@@ -3,8 +3,9 @@ import { Defensive } from "./Defensive";
 import { UnitCastOrChannel, UnitHasAura } from "../../wowutils/wow_utils";
 import { PriestAura, PriestSpell } from "../utils/priest_utils";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
+import { PriorityAction } from "./SpellstealPriority";
 
 export class Priest extends PlayerState {
   class = WoWClass.Priest;
@@ -28,9 +29,49 @@ export class Priest extends PlayerState {
     },
   ];
 
+  /*
+          casting.spell === PriestSpell.Penance ||
+        casting.spell === PriestSpell.FlashHeal ||
+        casting.spell === PriestSpell.DivineHymn ||
+        casting.spell === PriestSpell.Mindgames 
+  */
+  spellToInterrupt: InterruptableSpell[] = [
+    {
+      name: PriestSpell.Penance,
+      cooldown: 9,
+      specs: [TalentSpec.Priest_Discipline],
+      priority: PriorityAction.High,
+    },
+    {
+      name: PriestSpell.FlashHeal,
+      cooldown: 0,
+      specs: [TalentSpec.Priest_Discipline, TalentSpec.Priest_Holy],
+      priority: PriorityAction.Low,
+    },
+    {
+      name: PriestSpell.DivineHymn,
+      cooldown: 180,
+      specs: [TalentSpec.Priest_Holy],
+      priority: PriorityAction.High,
+    },
+    {
+      name: PriestSpell.Mindgames,
+      cooldown: 45,
+      specs: [TalentSpec.Priest_Holy, TalentSpec.Priest_Discipline, TalentSpec.Priest_Shadow],
+      priority: PriorityAction.High,
+    },
+    {
+      name: PriestSpell.VampiricTouch,
+      cooldown: 0,
+      specs: [TalentSpec.Priest_Shadow],
+      priority: PriorityAction.Medium,
+    },
+  ];
+
   canBeIncapacitated(): boolean {
     return super.canBeIncapacitated();
   }
+
   isPumping(): boolean {
     if (UnitHasAura(PriestAura.Voidform, this.unitId)) {
       return true;
@@ -52,20 +93,6 @@ export class Priest extends PlayerState {
     return super.isDefensive();
   }
   shouldStomp(): boolean {
-    return false;
-  }
-  shouldInterrupt(): boolean {
-    const casting = this.currentCastOrChannel();
-    if (casting) {
-      if (
-        casting.spell === PriestSpell.Penance ||
-        casting.spell === PriestSpell.FlashHeal ||
-        casting.spell === PriestSpell.DivineHymn ||
-        casting.spell === PriestSpell.Mindgames
-      ) {
-        return true;
-      }
-    }
     return false;
   }
 }

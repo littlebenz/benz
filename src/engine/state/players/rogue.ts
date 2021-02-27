@@ -3,7 +3,7 @@ import { Defensive } from "./Defensive";
 import { GetUnitAura, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { RogueAura, RogueSpell } from "../utils/rogue_utils";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
 
 export class Rogue extends PlayerState {
@@ -36,6 +36,7 @@ export class Rogue extends PlayerState {
       specs: [TalentSpec.Rogue_Subtlety],
     },
   ];
+  spellToInterrupt: InterruptableSpell[] = [];
 
   canBeIncapacitated(): boolean {
     if (WoWLua.GetAuraRemainingTime(GetUnitAura(RogueAura.CloakOfShadows, this.unitId)) >= 1.5) {
@@ -55,9 +56,6 @@ export class Rogue extends PlayerState {
       return Defensive.DoNotTouch;
     }
     return super.isDefensive();
-  }
-  shouldInterrupt(): boolean {
-    return false;
   }
   shouldStomp(): boolean {
     return false;

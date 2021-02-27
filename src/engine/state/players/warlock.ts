@@ -3,8 +3,9 @@ import { Defensive } from "./Defensive";
 import { GetUnitAura, UnitHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { WarlockAura, WarlockSpell } from "../utils/warlock_utils";
 import { WoWClass } from "./WoWClass";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 import { TalentSpec } from "./TalentSpec";
+import { PriorityAction } from "./SpellstealPriority";
 
 export class Warlock extends PlayerState {
   class = WoWClass.Warlock;
@@ -29,6 +30,25 @@ export class Warlock extends PlayerState {
   // going to leave this empty until I figure out how to handle checking for pet
   interruptSpells: InterruptSpell[] = [];
 
+  spellToInterrupt: InterruptableSpell[] = [
+    {
+      name: WarlockSpell.Fear,
+      cooldown: 0,
+      specs: [
+        TalentSpec.Warlock_Afflication,
+        TalentSpec.Warlock_Demonology,
+        TalentSpec.Warlock_Destruction,
+      ],
+      priority: PriorityAction.Medium,
+    },
+    {
+      name: WarlockSpell.ChaosBolt,
+      cooldown: 0,
+      specs: [TalentSpec.Warlock_Destruction],
+      priority: PriorityAction.Medium,
+    },
+  ];
+
   canBeIncapacitated(): boolean {
     if (WoWLua.GetAuraRemainingTime(GetUnitAura(WarlockAura.NetherWard, this.unitId)) >= 1.5) {
       return false;
@@ -49,16 +69,6 @@ export class Warlock extends PlayerState {
     return super.isDefensive();
   }
 
-  shouldInterrupt(): boolean {
-    const casting = this.currentCastOrChannel();
-
-    if (casting) {
-      if (casting.spell === WarlockSpell.Fear || casting.spell === WarlockSpell.ChaosBolt) {
-        return true;
-      }
-    }
-    return false;
-  }
   shouldStomp(): boolean {
     return false;
   }

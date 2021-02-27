@@ -17,12 +17,12 @@ import { WarriorAura } from "../utils/warrior_utils";
 import { Defensive } from "./Defensive";
 import { WoWClass } from "./WoWClass";
 import { TalentSpec, TalentSpecToString } from "./TalentSpec";
-import { SpellstealPriority } from "./SpellstealPriority";
+import { PriorityAction } from "./SpellstealPriority";
 import { SpellstealPriorityMap } from "../utils/spellsteal_utils";
 import { NecrolordAura } from "../utils/necrolord_utils";
 import { DemonHunterAura } from "../utils/demon_hunter_utils";
 import { DeathKnightAura } from "../utils/death_knight_utils";
-import { InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
 
 export abstract class PlayerState {
   abstract interruptSpells: InterruptSpell[];
@@ -51,6 +51,23 @@ export abstract class PlayerState {
   }
 
   abstract pumpSpells: PumpSpell[];
+  abstract spellToInterrupt: InterruptableSpell[];
+
+  shouldInterrupt(): boolean {
+    const cast = UnitCastOrChannel(this.unitId);
+    if (cast) {
+      const interrupt = this.spellToInterrupt.find((x) => x.name === (cast.spell as PlayerSpell));
+      if (interrupt) {
+        if (this.isPumping()) {
+          return interrupt.priority > PriorityAction.Medium;
+        } else {
+          return interrupt.priority > PriorityAction.High;
+        }
+      }
+    }
+
+    return false;
+  }
 
   canPump(): boolean {
     const spec = this.getSpecInfo();
@@ -80,17 +97,25 @@ export abstract class PlayerState {
 
     const interrupts: InterruptSpell[] = [];
     for (const interrupt of this.interruptSpells.filter((x) => x.specs.includes(spec))) {
-      if (this.spellUsedAtMap().has(interrupt.name)) {
-        const lastCastedAt = this.spellUsedAtMap().get(interrupt.name)!;
-        if (GetTime() - lastCastedAt + interrupt.cooldown >= 0) {
-          interrupts.push(interrupt);
-        }
-      } else {
+      if (this.canCastSpell(interrupt.name, interrupt.cooldown)) {
         interrupts.push(interrupt);
       }
     }
 
     return interrupts.length > 0 ? interrupts : null;
+  }
+
+  canCastSpell(spell: PlayerSpell, cooldown: number): boolean {
+    if (this.spellUsedAtMap().has(spell)) {
+      const lastCastedAt = this.spellUsedAtMap().get(spell)!;
+      if (GetTime() - lastCastedAt + cooldown >= 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
   }
 
   abstract isPumping(): boolean;
@@ -147,13 +172,12 @@ export abstract class PlayerState {
     return Defensive.None;
   }
 
-  abstract shouldInterrupt(): boolean;
   abstract shouldStomp(): boolean;
   abstract class: WoWClass;
 
-  shouldSpellsteal(): SpellstealPriority {
+  shouldSpellsteal(): PriorityAction {
     const auras = WoWLua.GetUnitAuras(this.unitId).filter((x) =>
-      x.name === MageAura.Combustion ? WoWLua.GetAuraRemainingTime(x) >= 6 : true
+      x.name === MageAura.Combustion ? WoWLua.GetAuraRemainingTime(x) >= 8 : true
     );
     const highestPriority = auras
       .filter((x) => SpellstealPriorityMap.has(x.name as PlayerAura))
@@ -164,10 +188,10 @@ export abstract class PlayerState {
       return highestPriority[0];
     }
 
-    return SpellstealPriority.None;
+    return PriorityAction.None;
   }
 
-  spellStealAuras(minPriority: SpellstealPriority) {
+  spellStealAuras(minPriority: PriorityAction) {
     return WoWLua.GetUnitAuras(this.unitId)
       .filter((x) => (x.name === MageAura.Combustion ? WoWLua.GetAuraRemainingTime(x) >= 6 : true))
       .filter((x) => SpellstealPriorityMap.has(x.name as PlayerAura))
