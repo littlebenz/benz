@@ -5,11 +5,11 @@ Trash WoWAdvanced PVP CR
 
 ## Fire Mage
 
-### TODO
+### List of Features (not everything is included here)
 
 - [ ] Alter Time Logic
 
-- [ ] Fake cast. Add in logic to count when the enemy team is trying to interrupt at what % and try to fake cast -10% minus that. 
+- [x] Fake cast. Add in logic to count when the enemy team is trying to interrupt at what % and try to fake cast -10% minus that. 
 
 - [ ] Better time CC around goes
 
@@ -30,8 +30,6 @@ Trash WoWAdvanced PVP CR
 - [ ] Flamestrike to stop drink
 
 - [ ] Add warning for when we think is a good block time (big goes, healer CC'd, no off heals, we think you're gonna die), maybe add setting to auto block logic?
-
-### Done-ish (Can still do more)
 
 - [x] Save Fire Blast for pump
 
