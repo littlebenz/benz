@@ -3,6 +3,8 @@ WoW Fire Mage Arena Bot
 
 Trash WoWAdvanced PVP CR
 
+Discord: https://discord.gg/KPfg4Ky9rB
+
 ## Fire Mage
 
 ### List of Features (not everything is included here)
