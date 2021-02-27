@@ -27,7 +27,10 @@ export class ClickClickBoom implements Car {
         if (cc.aura.name !== WarlockAura.Fear && cc.aura.name !== PriestAura.PsychicScream) {
           if (cc.type === DRType.Disorient || cc.type === DRType.Incapacitate) {
             if (cc.remaining >= 2.7 && cc.remaining <= 4) {
-              return new Meteor("target");
+              return new Meteor({
+                messageOnCast:
+                  "Meteor on " + target.getSpecInfoEnglish() + " coming out of CC " + cc.aura.name,
+              });
             }
           }
           if (
@@ -35,7 +38,10 @@ export class ClickClickBoom implements Car {
             (cc.type === DRType.Root && target.class !== WoWClass.Druid)
           ) {
             if (cc.remaining >= 2.7) {
-              return new Meteor("target");
+              return new Meteor({
+                messageOnCast:
+                  "Meteor on " + target.getSpecInfoEnglish() + " in CC " + cc.aura.name,
+              });
             }
           }
         }

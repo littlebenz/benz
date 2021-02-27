@@ -1,5 +1,5 @@
 import { Pump, PumpingStatus } from "./cars/pump";
-import { AlterTime } from "./cars/alter_time";
+import { AutoAlterTime } from "./cars/alter_time";
 import { Barrier } from "./cars/barrier";
 import { CC } from "./cars/cc";
 import { Decurse } from "./cars/decurse";
@@ -30,7 +30,7 @@ import { NightFaeAura } from "../state/utils/night_fae_utils";
 
 export class Mage {
   pump: Pump;
-  alterTime: AlterTime;
+  alterTime: AutoAlterTime;
   shield: Barrier;
   spellsteal: Spellstealer;
   interrupt: Interrupt;
@@ -49,13 +49,22 @@ export class Mage {
   arena2: PlayerState | null;
   arena3: PlayerState | null;
 
+  party1: PlayerState | null;
+  party2: PlayerState | null;
+
   constructor(wowEventListener: WowEventListener) {
     this.arena1 = PlayerStateFactory.create("arena1", wowEventListener);
     this.arena2 = PlayerStateFactory.create("arena2", wowEventListener);
     this.arena3 = PlayerStateFactory.create("arena3", wowEventListener);
 
+    this.party1 = PlayerStateFactory.create("party1", wowEventListener);
+    this.party2 = PlayerStateFactory.create("party2", wowEventListener);
+
     this.pump = new Pump(() => this.getEnemies());
-    this.alterTime = new AlterTime(() => this.getEnemies());
+    this.alterTime = new AutoAlterTime(
+      () => this.getEnemies(),
+      () => this.getAllies()
+    );
     this.shield = new Barrier();
     this.cc = new CC(() => this.getEnemies());
     this.decurse = new Decurse();
@@ -234,7 +243,7 @@ export class Mage {
       // is this sort inplace? whatever, just reassign it anyways
 
       // todo find a blink position that is still in LOS of healer
-      return new Blink(blinkPositions[0].i);
+      return new Blink({ direction: blinkPositions[0].i });
     }
 
     return null;
@@ -263,6 +272,12 @@ export class Mage {
         !UnitIsDead(x.unitId) &&
         UnitIsPlayer(x.unitId) &&
         (los ? WoWLua.IsUnitInOfLineOfSight("player", x.unitId) : true)
+    ) as PlayerState[];
+  }
+
+  private getAllies() {
+    return [this.party1, this.party2].filter(
+      (x) => x !== null && !UnitIsDead(x.unitId) && UnitIsPlayer(x.unitId)
     ) as PlayerState[];
   }
 }

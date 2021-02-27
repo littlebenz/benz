@@ -1,6 +1,7 @@
 import { Libdraw } from "../wow/libdraw";
 import { Driver } from "./engine/driver";
 import { Blink } from "./engine/mage/spells/blink";
+import { UIStatusFrame } from "./engine/ui/status_frame";
 import { GetGroundZCoord } from "./engine/wowutils/wow_utils";
 
 export let ewtLoaded = false;
@@ -10,7 +11,13 @@ let printOnce = true;
 ToggleBenz = () => {
   console.log(`Benz ${!benz_rotation_enabled ? "Enabled" : "Disabled"}`);
   benz_rotation_enabled = !benz_rotation_enabled;
+  if (benz_rotation_enabled) {
+    UIStatusFrame.show();
+  } else {
+    UIStatusFrame.hide();
+  }
 };
+
 benz_rotation_enabled = false;
 
 const frame = CreateFrame("Frame");

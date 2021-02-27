@@ -31,7 +31,7 @@ import { NightFaeSpell } from "../../state/utils/night_fae_utils";
 import { RingOfFrost } from "../spells/ring_of_frost";
 import { WoWClass } from "../../state/players/WoWClass";
 import { DRType } from "../../state/dr_tracker";
-import { UnitType } from "../../wowutils/wow_helpers";
+import { UIStatusFrame } from "../../ui/status_frame";
 
 export class CC implements Car {
   private getEnemies: () => PlayerState[];
@@ -50,7 +50,7 @@ export class CC implements Car {
     );
 
     for (const player of validPlayers) {
-      const rof = new RingOfFrost(player.unitId);
+      const rof = new RingOfFrost({ unitTarget: player.unitId });
       if (this.shouldRing(player) && rof.canCastSpell()) {
         return rof;
       }
@@ -65,13 +65,14 @@ export class CC implements Car {
     const polyTargets = validPlayers.filter((player) => player.canBeIncapacitated());
     for (const shouldPolyFn of shouldPolyFuctions) {
       for (const player of polyTargets) {
-        if (shouldPolyFn(player)) {
-          const poly = new Polymorph(player.unitId);
+        const maybePoly = shouldPolyFn(player);
+        if (maybePoly) {
           const casting = UnitCastOrChannel("player");
-          if (poly.canCastSpell() && casting && casting.spell !== MageSpell.Polymorph) {
+          if (maybePoly.canCastSpell() && casting && casting.spell !== MageSpell.Polymorph) {
             this.stopCastIfNeeded(player, 1.5);
           }
-          return poly;
+
+          return maybePoly;
         }
       }
     }
@@ -102,6 +103,7 @@ export class CC implements Car {
       shouldStopCastBecauseWeWantToPoly
     ) {
       StopCast();
+      UIStatusFrame.addMessage("Stopping cast of " + playerCast.spell + " in order to cast poly");
     }
   }
 
@@ -139,43 +141,58 @@ export class CC implements Car {
     return false;
   }
 
-  private shouldPolyOnPump(playerState: PlayerState): boolean {
+  private shouldPolyOnPump(playerState: PlayerState): Polymorph | null {
     if (PlayerHasAura(MageAura.Combustion)) {
-      return false;
+      return null;
     }
 
     if (UnitHealthPercentage(playerState.unitId) <= 85) {
-      return false;
+      return null;
     }
 
-    if (playerState.isPumping()) {
-      return this.shouldPoly(playerState);
+    if (!playerState.isPumping()) {
+      return null;
     }
 
-    return false;
+    if (this.shouldPoly(playerState)) {
+      return new Polymorph({
+        unitTarget: playerState.unitId,
+        messageOnCast:
+          "Polying " + playerState.getSpecInfoEnglish() + " because they are pumping dam.",
+      });
+    }
+
+    return null;
   }
 
-  private shouldPolyHealer(playerState: PlayerState): boolean {
+  private shouldPolyHealer(playerState: PlayerState): Polymorph | null {
     if (!playerState.isHealer()) {
-      return false;
+      return null;
     }
 
     // if combust CD is less than 25 do not poly.
     const combustCastable = WoWLua.IsSpellCastable(MageSpell.Combustion);
 
     if (combustCastable.usableIn < 23 && combustCastable.usableIn > 0) {
-      return false;
+      return null;
     }
 
-    return this.shouldPoly(playerState);
+    if (this.shouldPoly(playerState)) {
+      return new Polymorph({
+        unitTarget: playerState.unitId,
+        messageOnCast: "Polying " + playerState.getSpecInfoEnglish() + " as healer.",
+      });
+    }
+
+    return null;
   }
 
-  private shouldPolyOffTarget(playerState: PlayerState): boolean {
+  private shouldPolyOffTarget(playerState: PlayerState): Polymorph | null {
     // we should have got this poly off before, this is a dumb check
     // we should actually check to see if we've pumped all our dam out first
     // so check to see if we have 0 fire blast?
     if (PlayerHasAura(MageAura.Combustion)) {
-      return false;
+      return null;
     }
 
     // // if I'm heating up and combust is off CD I don't want to now poly and ruin that
@@ -189,28 +206,36 @@ export class CC implements Car {
     // we don't want to waste poly DRs when they can pump big dam into us
     // save polys for when they're doing damage so we can negate as much dam as we can
     if (playerState.canPump()) {
-      return false;
+      return null;
     }
 
     if (UnitHealthPercentage(playerState.unitId) <= 85) {
-      return false;
+      return null;
     }
 
     if (UnitGUID(playerState.unitId) === UnitGUID("target")) {
-      return false;
+      return null;
     }
 
-    for (const teammate of ["party1", "party2", "party3"]) {
+    for (const teammate of ["party1", "party2", "party3"].map((x) => x + "target")) {
       if (UnitGUID(playerState.unitId) === UnitGUID(teammate as UnitId)) {
-        return false;
+        return null;
       }
     }
 
     if (playerState.isHealer()) {
-      return false;
+      return null;
     }
 
-    return this.shouldPoly(playerState);
+    if (this.shouldPoly(playerState)) {
+      return new Polymorph({
+        unitTarget: playerState.unitId,
+        messageOnCast:
+          "Polying " + playerState.getSpecInfoEnglish() + " as off target for cross CC.",
+      });
+    }
+
+    return null;
   }
 
   private shouldPoly(playerState: PlayerState): boolean {

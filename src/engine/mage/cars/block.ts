@@ -10,7 +10,9 @@ export class Block implements Car {
     const percentage = (currentHealth / healthMax) * 100;
 
     if (percentage <= 10 && WoWLua.IsSpellUsable(MageSpell.IceBlock)) {
-      return new IceBlock();
+      return new IceBlock({
+        messageOnCast: "Blocking because you're retarded and we got ourselves into this.",
+      });
     }
 
     return null;

@@ -9,7 +9,7 @@ import { TalentSpec } from "../../state/players/TalentSpec";
 import { Car } from "./car";
 import { Spellsteal } from "../spells/spellsteal";
 import { CancelUnitBuffUnlocked } from "../../wowutils/unlocked_functions";
-import { GetPlayerAura, PlayerAura } from "../../wowutils/wow_utils";
+import { GetPlayerAura, PlayerAura, WoWLua } from "../../wowutils/wow_utils";
 import { MageAura } from "../../state/utils/mage_utils";
 import { PaladinAura } from "../../state/utils/paladin_utils";
 import { HunterAura } from "../../state/utils/hunter_utils";
@@ -55,7 +55,7 @@ export class Spellstealer implements Car {
     if (maybeMage) {
       if (maybeMage.shouldSpellsteal() === SpellstealPriority.Required) {
         this.lastKleptoCombust = GetTime();
-        return new Spellsteal(maybeMage.unitId);
+        return new Spellsteal({ unitTarget: maybeMage.unitId, messageOnCast: "Klepto combust" });
       }
     }
 
@@ -66,7 +66,15 @@ export class Spellstealer implements Car {
           spellstealPriority === SpellstealPriority.Required ||
           spellstealPriority === SpellstealPriority.High
         ) {
-          return new Spellsteal(enemy.unitId);
+          const spells = enemy
+            .spellStealAuras(SpellstealPriority.High)
+            .map((x) => x.name)
+            .join(", ");
+
+          return new Spellsteal({
+            unitTarget: enemy.unitId,
+            messageOnCast: "Klepto " + spells + " from" + enemy.getSpecInfoEnglish(),
+          });
         }
       }
     }
@@ -87,7 +95,15 @@ export class Spellstealer implements Car {
         spellstealPriority === SpellstealPriority.High ||
         spellstealPriority === SpellstealPriority.Medium
       ) {
-        return new Spellsteal(enemy.unitId);
+        const spells = enemy
+          .spellStealAuras(SpellstealPriority.Medium)
+          .map((x) => x.name)
+          .join(", ");
+
+        return new Spellsteal({
+          unitTarget: enemy.unitId,
+          messageOnCast: "Spellstealing [" + spells + "] from" + enemy.getSpecInfoEnglish(),
+        });
       }
     }
 

@@ -154,10 +154,7 @@ declare function GetInventoryItemID(unit: string, slotId: number): number;
 declare function GetInventoryItemCount(unit: string, slotId: number): number;
 
 declare namespace C_SpecializationInfo {
-  /**
-   * @tupleReturn
-   */
-  function GetAllSelectedPvpTalentIDs(): [number, number, number];
+  function GetAllSelectedPvpTalentIDs(): number[];
 }
 
 declare function UnitPower(unit: string, powerType?: number): number;

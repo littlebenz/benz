@@ -8,7 +8,7 @@
  * Gate is closed and there's about 20 seconds left before it opens
  * Gate is closed and there's more than 45 seconds left
  */
-import { GetPlayerAura, WoWLua } from "../../wowutils/wow_utils";
+import { GetPlayerAura, PlayerHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
 import { Barrier as BarrierSkill } from "../spells/barrier";
 import { Car } from "./car";
@@ -35,7 +35,7 @@ export class Barrier implements Car {
       return null;
     }
 
-    if (barrierTimeLeft <= 7) {
+    if (barrierTimeLeft <= 7 && !PlayerHasAura(MageAura.AlterTime)) {
       return new BarrierSkill();
     }
 

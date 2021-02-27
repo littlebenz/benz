@@ -145,7 +145,9 @@ export class Pump implements Car {
     if (hotStreak) {
       return new Pyroblast();
     } else if (WoWLua.IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
-      return new Combustion();
+      return new Combustion({
+        messageOnCast: "FUCKING PUMPING BOYS. GET THOSE DOGS",
+      });
     }
 
     // const heatingUp = GetPlayerAura(MageAura.HeatingUp);
@@ -155,7 +157,7 @@ export class Pump implements Car {
     // }
 
     if (WoWLua.IsSpellUsable(MageSpell.FireBlast) && !PlayerHasAura(MageAura.HotStreak)) {
-      return new FireBlast(true);
+      return new FireBlast({ hardCast: true });
     }
 
     if (WoWLua.IsSpellUsable(MageSpell.PhoenixFlames)) {

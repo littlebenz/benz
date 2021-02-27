@@ -36,3 +36,41 @@ export enum TalentSpec {
   Warrior_Fury = 72,
   Warrior_Protection = 73,
 }
+
+export const TalentSpecToString = new Map<TalentSpec, string>();
+TalentSpecToString.set(TalentSpec.DK_Blood, "Blood DK");
+TalentSpecToString.set(TalentSpec.DK_Frost, "Frost DK");
+TalentSpecToString.set(TalentSpec.DK_Unholy, "Unholy DK");
+TalentSpecToString.set(TalentSpec.DH_Havoc, "Havoc DH");
+TalentSpecToString.set(TalentSpec.DH_Vengeance, "Vengeance DH");
+TalentSpecToString.set(TalentSpec.Druid_Balance, "Balance");
+TalentSpecToString.set(TalentSpec.Druid_Feral, "Feral");
+TalentSpecToString.set(TalentSpec.Druid_Guardian, "Boomkin");
+TalentSpecToString.set(TalentSpec.Druid_Restoration, "Resto");
+TalentSpecToString.set(TalentSpec.Hunter_BeastMastery, "BM");
+TalentSpecToString.set(TalentSpec.Hunter_Marksmanship, "Marksman");
+TalentSpecToString.set(TalentSpec.Hunter_Survival, "Surv");
+TalentSpecToString.set(TalentSpec.Mage_Arcane, "Arcane");
+TalentSpecToString.set(TalentSpec.Mage_Fire, "Fire");
+TalentSpecToString.set(TalentSpec.Mage_Frost, "Frost Mage");
+TalentSpecToString.set(TalentSpec.Monk_Brewmaster, "Brewmaster");
+TalentSpecToString.set(TalentSpec.Monk_Mistweaver, "Mistweaver");
+TalentSpecToString.set(TalentSpec.Monk_Windwalker, "WW");
+TalentSpecToString.set(TalentSpec.Paladin_Holy, "Holy Paladin");
+TalentSpecToString.set(TalentSpec.Paladin_Protection, "Prot Paladin");
+TalentSpecToString.set(TalentSpec.Paladin_Retribution, "Ret");
+TalentSpecToString.set(TalentSpec.Priest_Discipline, "Disc");
+TalentSpecToString.set(TalentSpec.Priest_Holy, "Holy Priest");
+TalentSpecToString.set(TalentSpec.Priest_Shadow, "Shadow Priest");
+TalentSpecToString.set(TalentSpec.Rogue_Assassination, "Asassination");
+TalentSpecToString.set(TalentSpec.Rogue_Outlaw, "Outlaw");
+TalentSpecToString.set(TalentSpec.Rogue_Subtlety, "Subtlety");
+TalentSpecToString.set(TalentSpec.Shaman_Elemental, "Elemental Shaman");
+TalentSpecToString.set(TalentSpec.Shaman_Enhancement, "Enh Shaman");
+TalentSpecToString.set(TalentSpec.Shaman_Restoration, "Resto Shaman");
+TalentSpecToString.set(TalentSpec.Warlock_Afflication, "Aff Lock");
+TalentSpecToString.set(TalentSpec.Warlock_Demonology, "Demo Lock");
+TalentSpecToString.set(TalentSpec.Warlock_Destruction, "Destro Lock");
+TalentSpecToString.set(TalentSpec.Warrior_Arms, "Arms War");
+TalentSpecToString.set(TalentSpec.Warrior_Fury, "Fury War");
+TalentSpecToString.set(TalentSpec.Warrior_Protection, "Prot War");

@@ -16,7 +16,7 @@ import { PaladinAura } from "../utils/paladin_utils";
 import { WarriorAura } from "../utils/warrior_utils";
 import { Defensive } from "./Defensive";
 import { WoWClass } from "./WoWClass";
-import { TalentSpec } from "./TalentSpec";
+import { TalentSpec, TalentSpecToString } from "./TalentSpec";
 import { SpellstealPriority } from "./SpellstealPriority";
 import { SpellstealPriorityMap } from "../utils/spellsteal_utils";
 import { NecrolordAura } from "../utils/necrolord_utils";
@@ -167,6 +167,13 @@ export abstract class PlayerState {
     return SpellstealPriority.None;
   }
 
+  spellStealAuras(minPriority: SpellstealPriority) {
+    return WoWLua.GetUnitAuras(this.unitId)
+      .filter((x) => (x.name === MageAura.Combustion ? WoWLua.GetAuraRemainingTime(x) >= 6 : true))
+      .filter((x) => SpellstealPriorityMap.has(x.name as PlayerAura))
+      .filter((x) => SpellstealPriorityMap.get(x.name as PlayerAura)! >= minPriority);
+  }
+
   incapacitateDr() {
     return this.wowEventListener
       .addOrGetDrTracker(UnitGUID(this.unitId))
@@ -232,6 +239,15 @@ export abstract class PlayerState {
     }
 
     return null;
+  }
+
+  getSpecInfoEnglish() {
+    const spec = this.getSpecInfo();
+    if (spec) {
+      TalentSpecToString.get(spec)!;
+    }
+
+    return this.name;
   }
 
   shouldDamage(): boolean {

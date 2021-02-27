@@ -2,6 +2,7 @@ import { UnitId } from "@wartoshika/wow-declarations";
 import { Mage } from "./mage/fire_mage";
 import { Blink } from "./mage/spells/blink";
 import { MageSpell } from "./state/utils/mage_utils";
+import { StatusFrame, UIStatusFrame } from "./ui/status_frame";
 import { FaceUnit, WoWLua } from "./wowutils/wow_utils";
 import { WowEventListener } from "./wow_event_listener";
 

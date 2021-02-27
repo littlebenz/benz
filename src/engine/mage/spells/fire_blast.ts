@@ -1,9 +1,13 @@
 import { FaceUnit, GetPlayerAura, PlayerHasAura, WoWLua } from "../../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
-import { Spell } from "./ispell";
+import { Spell, SpellParameters } from "./ispell";
 import { UnitId } from "@wartoshika/wow-declarations";
 
 let lastFireBlast: number = 0;
+
+export interface FireBlastParameters extends SpellParameters {
+  hardCast: boolean;
+}
 
 export class FireBlast extends Spell {
   private forceCast: boolean;
@@ -12,9 +16,14 @@ export class FireBlast extends Spell {
   isSelfCast = false;
   isInstant = true;
 
-  constructor(hardCast = false, target?: UnitId) {
-    super(target);
-    this.forceCast = hardCast;
+  constructor(parameters?: FireBlastParameters) {
+    super(parameters);
+
+    if (parameters) {
+      this.forceCast = parameters.hardCast;
+    } else {
+      this.forceCast = false;
+    }
   }
 
   canCastSpell(): boolean {

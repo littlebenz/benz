@@ -2,8 +2,14 @@ import { FaceUnit, GetSpellInfoTyped, WoWLua } from "../../wowutils/wow_utils";
 import { MageSpell } from "../../state/utils/mage_utils";
 import { CastSpellByName } from "../../wowutils/unlocked_functions";
 import { UnitId } from "@wartoshika/wow-declarations";
+import { StatusFrame, UIStatusFrame } from "../../ui/status_frame";
 
 let lastUpdatedDirection: number = 0;
+export interface SpellParameters {
+  unitTarget?: UnitId;
+  afterCast?: () => void;
+  messageOnCast?: string;
+}
 export abstract class Spell {
   abstract isOnGCD: boolean;
   abstract isInstant: boolean;
@@ -16,10 +22,18 @@ export abstract class Spell {
   }
 
   protected afterCast: () => void;
+  protected messageOnCast: string | undefined;
 
-  constructor(unitTarget?: UnitId, afterCast = () => {}) {
-    this.targetGuid = unitTarget ? UnitGUID(unitTarget) : UnitGUID("target");
+  constructor(parameters?: SpellParameters) {
+    if (!parameters) {
+      parameters = {};
+    }
+
+    const afterCast = parameters.afterCast ? parameters.afterCast : () => {};
+
+    this.targetGuid = parameters.unitTarget ? UnitGUID(parameters.unitTarget) : UnitGUID("target");
     this.afterCast = () => afterCast();
+    this.messageOnCast = parameters.messageOnCast;
   }
 
   cast() {
@@ -39,6 +53,9 @@ export abstract class Spell {
       CastSpellByName(this.spellName, this.targetGuid);
     }
 
+    if (this.messageOnCast) {
+      UIStatusFrame.addMessage(this.messageOnCast);
+    }
     this.afterCast();
   }
 

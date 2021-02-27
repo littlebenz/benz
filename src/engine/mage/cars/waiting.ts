@@ -14,7 +14,6 @@ export class Waiting implements Car {
       const table = WoWLua.GetObjectByName("Refreshment Table");
       if (table && GetTime() - this.lastInteractedWithTable >= 5) {
         this.lastInteractedWithTable = GetTime();
-        console.log("interacting with table");
         InteractUnit(table);
       } else {
         return new ConjureRefreshment();

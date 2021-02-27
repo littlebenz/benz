@@ -67,15 +67,20 @@ export class FakeCast implements Car {
       );
 
       if (targets.length > 0) {
-        return new Polymorph(targets[0].unitId, () => {
-          C_Timer.After(this.stopCastingAt, () => {
-            if (this.isFakeCastingPoly()) {
-              StopCast();
-              this.setCastAt(GetTime() + 0.4);
-            }
-          });
+        return new Polymorph({
+          unitTarget: targets[0].unitId,
+          afterCast: () => {
+            C_Timer.After(this.stopCastingAt, () => {
+              if (this.isFakeCastingPoly()) {
+                StopCast();
+                this.setCastAt(GetTime() + 0.4);
+              }
+            });
 
-          this.lastFakeCast = GetTime();
+            this.lastFakeCast = GetTime();
+          },
+          messageOnCast:
+            "Fake casting poly. Bait interrupt from |cFF8787dd" + targets[0].getSpecInfoEnglish(),
         });
       }
     }

@@ -29,11 +29,18 @@ export class Interrupt implements Car {
 
         if (casting.castType === "cast") {
           if (enemy.shouldInterrupt() && percentRemaining >= 90) {
-            return new Counterspell(enemy.unitId);
+            return new Counterspell({
+              unitTarget: enemy.unitId,
+              messageOnCast: "Interrupted " + casting.spell + " from " + enemy.getSpecInfoEnglish(),
+            });
           }
         } else {
           if (enemy.shouldInterrupt() && percentRemaining >= 5) {
-            return new Counterspell(enemy.unitId);
+            return new Counterspell({
+              unitTarget: enemy.unitId,
+              messageOnCast:
+                "Stopped channel " + casting.spell + " from " + enemy.getSpecInfoEnglish(),
+            });
           }
         }
       }

@@ -10,7 +10,10 @@ export class Decurse implements Car {
 
     for (const player of ["party1" as UnitId, "party2" as UnitId, "party3" as UnitId]) {
       if (UnitHasAura(ShamanAura.Hex, player)) {
-        return new RemoveCurse(player);
+        return new RemoveCurse({
+          unitTarget: player,
+          messageOnCast: "Decurse Hex from " + GetUnitName(player, false),
+        });
       }
     }
     return null;

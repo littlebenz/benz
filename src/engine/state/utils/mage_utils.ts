@@ -53,4 +53,5 @@ export enum MageAura {
   MeteorBurn = "Meteor Burn",
   IcyVeins = "Icy Veins",
   DB = "Dragon's Breath",
+  AlterTime = "Alter Time",
 }
