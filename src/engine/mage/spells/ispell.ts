@@ -1,8 +1,9 @@
-import { FaceUnit, UnitCastOrChannel, WoWLua } from "../../wowutils/wow_utils";
+import { FaceUnit, GetSpellInfoTyped, WoWLua } from "../../wowutils/wow_utils";
 import { MageSpell } from "../../state/utils/mage_utils";
-import { CastSpellByName, TargetUnit } from "../../wowutils/unlocked_functions";
+import { CastSpellByName } from "../../wowutils/unlocked_functions";
 import { UnitId } from "@wartoshika/wow-declarations";
 
+let lastUpdatedDirection: number = 0;
 export abstract class Spell {
   abstract isOnGCD: boolean;
   abstract isInstant: boolean;
@@ -10,6 +11,10 @@ export abstract class Spell {
   abstract isSelfCast: boolean;
 
   targetGuid: string;
+  protected castTime() {
+    return GetSpellInfoTyped(this.spellName).castTime;
+  }
+
   protected afterCast: () => void;
 
   constructor(unitTarget?: UnitId, afterCast = () => {}) {
@@ -18,7 +23,21 @@ export abstract class Spell {
   }
 
   cast() {
-    CastSpellByName(this.spellName, this.targetGuid);
+    if (GetTime() - lastUpdatedDirection > 0.5) {
+      lastUpdatedDirection = GetTime();
+      const direction = UnitFacing("player" as string);
+      UpdateMovement();
+      FaceUnit(this.targetGuid);
+      UpdateMovement();
+
+      CastSpellByName(this.spellName, this.targetGuid);
+
+      UpdateMovement();
+      FaceDirection(direction);
+      UpdateMovement();
+    } else {
+      CastSpellByName(this.spellName, this.targetGuid);
+    }
 
     this.afterCast();
   }

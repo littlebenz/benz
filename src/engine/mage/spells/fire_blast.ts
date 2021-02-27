@@ -38,10 +38,6 @@ export class FireBlast extends Spell {
   }
 
   cast() {
-    UpdateMovement();
-    FaceUnit(this.targetGuid);
-    UpdateMovement();
-
     lastFireBlast = GetTime();
     super.cast();
   }

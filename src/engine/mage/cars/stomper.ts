@@ -1,14 +1,27 @@
+import { Mage } from "../../state/players/mage";
 import { PlayerState } from "../../state/players/player_state";
 import { MageSpell } from "../../state/utils/mage_utils";
 import { UnitReaction } from "../../wowutils/unlocked_functions";
-import { WoWLua, StopCast } from "../../wowutils/wow_utils";
+import { WoWLua, StopCast, GetSpellChargesTyped } from "../../wowutils/wow_utils";
 import { FireBlast } from "../spells/fire_blast";
 import { PhoenixFlames } from "../spells/phoenix_flames";
 import { Scorch } from "../spells/scorch";
 import { Car } from "./car";
 
+enum StompObjects {
+  SpiritLink = "Spirit Link Totem",
+  Grounding = "Grounding Totem",
+  Capacitor = "Capacitor Totem",
+  WarBanner = "War Banner",
+}
 export class Stomper implements Car {
   private getEnemies: () => PlayerState[];
+  private objectsToStomp = [
+    StompObjects.Capacitor,
+    StompObjects.Grounding,
+    StompObjects.SpiritLink,
+    StompObjects.WarBanner,
+  ];
 
   constructor(getEnemies: () => PlayerState[]) {
     this.getEnemies = () => getEnemies();
@@ -22,10 +35,15 @@ export class Stomper implements Car {
     }
 
     const objects = WoWLua.GetObjects()
-      .map((x) => ({ guid: x, name: ObjectName(x) }))
-      .filter((x) => WoWLua.IsUnitInOfLineOfSight("player", SetMouseOver(x.guid)));
+      .map((x) => ({ guid: x, name: ObjectName(x) as StompObjects }))
+      .filter((x) => this.objectsToStomp.includes(x.name))
+      .filter((x) => WoWLua.IsUnitInOfLineOfSightNoMemoize("player", SetMouseOver(x.guid)));
 
-    const maybeSpiritLinkTotem = objects.find((x) => x.name === "Spirit Link Totem");
+    for (const obj of objects) {
+      console.log("found obj: " + obj.name);
+    }
+
+    const maybeSpiritLinkTotem = objects.find((x) => x.name === StompObjects.SpiritLink);
     if (maybeSpiritLinkTotem) {
       const reaction = UnitReaction("player", maybeSpiritLinkTotem.guid);
       if (reaction && reaction < 5 && !UnitIsDead(maybeSpiritLinkTotem.guid)) {
@@ -33,16 +51,18 @@ export class Stomper implements Car {
       }
     }
 
-    const maybeGroundingTotem = objects.find((x) => x.name === "Grounding Totem");
+    const maybeGroundingTotem = objects.find((x) => x.name === StompObjects.Grounding);
     if (maybeGroundingTotem) {
       const reaction = UnitReaction("player", maybeGroundingTotem.guid);
       if (reaction && reaction < 5 && !UnitIsDead(maybeGroundingTotem.guid)) {
-        StopCast();
+        if (GetSpellChargesTyped(MageSpell.FireBlast).currentCharges === 0) {
+          StopCast();
+        }
         return this.getSpellToCastAt(SetMouseOver(maybeGroundingTotem.guid));
       }
     }
 
-    const maybeCapTotem = objects.find((x) => x.name === "Capacitor Totem");
+    const maybeCapTotem = objects.find((x) => x.name === StompObjects.Capacitor);
     if (maybeCapTotem) {
       const reaction = UnitReaction("player", maybeCapTotem.guid);
       if (reaction && reaction < 5 && !UnitIsDead(maybeCapTotem.guid)) {
@@ -50,7 +70,7 @@ export class Stomper implements Car {
       }
     }
 
-    const maybeWarBanner = objects.find((x) => x.name === "War Banner");
+    const maybeWarBanner = objects.find((x) => x.name === StompObjects.WarBanner);
     if (maybeWarBanner) {
       const reaction = UnitReaction("player", maybeWarBanner.guid);
       if (reaction && reaction < 5 && !UnitIsDead(maybeWarBanner.guid)) {

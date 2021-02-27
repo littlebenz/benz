@@ -1,7 +1,7 @@
 export enum SpellstealPriority {
-  Required,
-  High,
-  Medium,
-  Low,
-  None,
+  Required = 1000,
+  High = 100,
+  Medium = 50,
+  Low = 10,
+  None = 0,
 }

@@ -161,18 +161,13 @@ export class CC implements Car {
     }
 
     // if combust CD is less than 25 do not poly.
-
     const combustCastable = WoWLua.IsSpellCastable(MageSpell.Combustion);
 
-    if (combustCastable.usableIn < 25) {
+    if (combustCastable.usableIn < 23 && combustCastable.usableIn > 0) {
       return false;
     }
 
-    if (combustCastable.duration === 0 && combustCastable.usable) {
-      return this.shouldPoly(playerState);
-    } else {
-      return false;
-    }
+    return this.shouldPoly(playerState);
   }
 
   private shouldPolyOffTarget(playerState: PlayerState): boolean {

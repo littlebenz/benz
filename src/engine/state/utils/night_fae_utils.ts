@@ -4,4 +4,5 @@ export enum NightFaeSpell {
 
 export enum NightFaeAura {
   Soulshape = "Soulshape",
+  Podtender = "Podtender",
 }

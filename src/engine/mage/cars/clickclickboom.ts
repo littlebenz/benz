@@ -6,6 +6,8 @@ import { MageAura, MageSpell } from "../../state/utils/mage_utils";
 import { Meteor } from "../spells/meteor";
 import { Car } from "./car";
 import { WoWLua } from "../../wowutils/wow_utils";
+import { WarlockAura } from "../../state/utils/warlock_utils";
+import { PriestAura } from "../../state/utils/priest_utils";
 
 export class ClickClickBoom implements Car {
   private getEnemies: () => PlayerState[];
@@ -22,17 +24,19 @@ export class ClickClickBoom implements Car {
     const target = this.getEnemies().find((player) => UnitGUID("target") === player.guid());
     if (target) {
       for (const cc of target.remainingCC()) {
-        if (cc.type === DRType.Disorient || cc.type === DRType.Incapacitate) {
-          if (cc.remaining >= 2.7 && cc.remaining <= 4) {
-            return new Meteor("target");
+        if (cc.aura.name !== WarlockAura.Fear && cc.aura.name !== PriestAura.PsychicScream) {
+          if (cc.type === DRType.Disorient || cc.type === DRType.Incapacitate) {
+            if (cc.remaining >= 2.7 && cc.remaining <= 4) {
+              return new Meteor("target");
+            }
           }
-        }
-        if (
-          cc.type === DRType.Stun ||
-          (cc.type === DRType.Root && target.class !== WoWClass.Druid)
-        ) {
-          if (cc.remaining >= 2.7) {
-            return new Meteor("target");
+          if (
+            cc.type === DRType.Stun ||
+            (cc.type === DRType.Root && target.class !== WoWClass.Druid)
+          ) {
+            if (cc.remaining >= 2.7) {
+              return new Meteor("target");
+            }
           }
         }
       }

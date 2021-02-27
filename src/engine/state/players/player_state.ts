@@ -228,8 +228,7 @@ export abstract class PlayerState {
   getSpecInfo() {
     const [specId] = GetArenaOpponentSpec(this.unitId[this.unitId.length - 1]);
     if (specId && specId > 0) {
-      const spec = GetSpecializationInfoByIDObject(specId);
-      return spec.specID as TalentSpec;
+      return specId as TalentSpec;
     }
 
     return null;

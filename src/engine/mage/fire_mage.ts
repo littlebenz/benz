@@ -9,7 +9,13 @@ import { Spellstealer } from "./cars/spellstealer";
 import { Block } from "./cars/block";
 import { Waiting } from "./cars/waiting";
 import { Car } from "./cars/car";
-import { DistanceFromPoints, GetGroundZCoord, GetPlayerAura, WoWLua } from "../wowutils/wow_utils";
+import {
+  DistanceFromPoints,
+  GetGroundZCoord,
+  GetPlayerAura,
+  PlayerHasAura,
+  WoWLua,
+} from "../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../state/utils/mage_utils";
 import { Meteor } from "./spells/meteor";
 import { PlayerState } from "../state/players/player_state";
@@ -20,6 +26,7 @@ import { Stomper } from "./cars/stomper";
 import { Blink } from "./spells/blink";
 import { ClickClickBoom } from "./cars/clickclickboom";
 import { UnitReaction } from "../wowutils/unlocked_functions";
+import { NightFaeAura } from "../state/utils/night_fae_utils";
 
 export class Mage {
   pump: Pump;
@@ -69,7 +76,7 @@ export class Mage {
   }
 
   getNextAction() {
-    if (WoWLua.GetAuraRemainingTime(GetPlayerAura(MageAura.Invisibility)) !== 0) {
+    if (PlayerHasAura(MageAura.Invisibility) || PlayerHasAura(NightFaeAura.Podtender)) {
       return null;
     }
 
