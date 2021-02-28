@@ -13,6 +13,7 @@ Discord: https://discord.gg/KPfg4Ky9rB
 - Log In
 - Go to Addon Keybinds and add a new keybind for benz toggle (gotta start that car bro)
 - Press the button
+- Also `/benz move` will unlock/lock the small UI frames that you see.
 
 ## Building from source 
 - Clone
