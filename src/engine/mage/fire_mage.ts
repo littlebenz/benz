@@ -1,5 +1,5 @@
 import { Pump } from "./cars/pump";
-import { PumpingStatus } from "../state/utils/pumping_status";
+import { GetPumpingState, PumpingStatus, SetPumpingState } from "../state/utils/pumping_status";
 import { AutoAlterTime } from "./cars/alter_time";
 import { Barrier } from "./cars/barrier";
 import { CC } from "./cars/cc";
@@ -28,6 +28,8 @@ import { Blink } from "./spells/blink";
 import { ClickClickBoom } from "./cars/clickclickboom";
 import { UnitReaction } from "../wowutils/unlocked_functions";
 import { NightFaeAura } from "../state/utils/night_fae_utils";
+import { UIStatusFrame } from "../ui/status_frame";
+import { DRType } from "../state/dr_tracker";
 
 export class Mage {
   pump: Pump;
@@ -53,6 +55,8 @@ export class Mage {
   party1: PlayerState | null;
   party2: PlayerState | null;
 
+  player: PlayerState;
+
   constructor(wowEventListener: WowEventListener) {
     this.arena1 = PlayerStateFactory.create("arena1", wowEventListener);
     this.arena2 = PlayerStateFactory.create("arena2", wowEventListener);
@@ -60,13 +64,14 @@ export class Mage {
 
     this.party1 = PlayerStateFactory.create("party1", wowEventListener);
     this.party2 = PlayerStateFactory.create("party2", wowEventListener);
+    this.player = PlayerStateFactory.create("player", wowEventListener)!;
 
     this.pump = new Pump(() => this.getEnemies());
     this.alterTime = new AutoAlterTime(
       () => this.getEnemies(),
       () => this.getAllies()
     );
-    this.shield = new Barrier();
+    this.shield = new Barrier(() => this.getAllies());
     this.cc = new CC(() => this.getEnemies());
     this.decurse = new Decurse();
     this.fakeCast = new FakeCast(
@@ -89,6 +94,8 @@ export class Mage {
     if (PlayerHasAura(MageAura.Invisibility) || PlayerHasAura(NightFaeAura.Podtender)) {
       return null;
     }
+
+    this.updatePumpingStatus();
 
     const blockSpell = this.block.getNextSpell();
     if (this.shouldReturnSpell(blockSpell)) {
@@ -291,5 +298,23 @@ export class Mage {
     return [this.party1, this.party2].filter(
       (x) => x !== null && !UnitIsDead(x.unitId) && UnitIsPlayer(x.unitId)
     ) as PlayerState[];
+  }
+
+  private updatePumpingStatus() {
+    if (PlayerHasAura(MageAura.Combustion)) {
+      SetPumpingState(PumpingStatus.Pumping);
+    } else if (!WoWLua.IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
+      SetPumpingState(PumpingStatus.Dumped);
+    } else if (WoWLua.IsSpellUsable(MageSpell.Combustion)) {
+      const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
+      const hotStreak = GetPlayerAura(MageAura.HotStreak);
+      if (hotStreak && fireBlastCharges.maxCharges === fireBlastCharges.currentCharges) {
+        SetPumpingState(PumpingStatus.Hot);
+      } else {
+        SetPumpingState(PumpingStatus.WarmingUp);
+      }
+    }
+
+    UIStatusFrame.pumpStatus(GetPumpingState());
   }
 }

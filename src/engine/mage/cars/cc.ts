@@ -33,6 +33,7 @@ import { WoWClass } from "../../state/players/WoWClass";
 import { DRType } from "../../state/dr_tracker";
 import { UIStatusFrame } from "../../ui/status_frame";
 import { DragonsBreath } from "../spells/dragons_breath";
+import { GetPumpingState, PumpingStatus } from "../../state/utils/pumping_status";
 
 export class CC implements Car {
   private getEnemies: () => PlayerState[];
@@ -204,11 +205,27 @@ export class CC implements Car {
       return null;
     }
 
+    if (playerState.guid() === UnitGUID("target")) {
+      return null;
+    }
+
     // if combust CD is less than 25 do not poly.
     const combustCastable = WoWLua.IsSpellCastable(MageSpell.Combustion);
 
     if (combustCastable.usableIn < 23 && combustCastable.usableIn > 0) {
       return null;
+    }
+
+    const pumpingState = GetPumpingState();
+    if (pumpingState === PumpingStatus.WarmingUp) {
+      return null;
+    }
+
+    if (pumpingState === PumpingStatus.Pumping) {
+      const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
+      if (fireBlastCharges.currentCharges !== 0) {
+        return null;
+      }
     }
 
     if (this.shouldPoly(playerState)) {

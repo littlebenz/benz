@@ -2,7 +2,7 @@ import { Mage } from "../../state/players/mage";
 import { PlayerState } from "../../state/players/player_state";
 import { MageSpell } from "../../state/utils/mage_utils";
 import { UnitReaction } from "../../wowutils/unlocked_functions";
-import { WoWLua, StopCast, GetSpellChargesTyped } from "../../wowutils/wow_utils";
+import { WoWLua, StopCast } from "../../wowutils/wow_utils";
 import { WowEventListener } from "../../wow_event_listener";
 import { FireBlast } from "../spells/fire_blast";
 import { PhoenixFlames } from "../spells/phoenix_flames";
@@ -61,7 +61,7 @@ export class Stomper implements Car {
     if (maybeGroundingTotem) {
       const reaction = UnitReaction("player", maybeGroundingTotem.guid);
       if (reaction && reaction < 5 && !UnitIsDead(maybeGroundingTotem.guid)) {
-        if (GetSpellChargesTyped(MageSpell.FireBlast).currentCharges === 0) {
+        if (WoWLua.GetSpellChargesTyped(MageSpell.FireBlast).currentCharges === 0) {
           StopCast();
         }
         return this.getSpellToCastAt(

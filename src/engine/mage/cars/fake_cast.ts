@@ -80,7 +80,7 @@ export class FakeCast implements Car {
             this.lastFakeCast = GetTime();
           },
           messageOnCast:
-            "Fake casting poly. Bait interrupt from |cFF8787dd" + targets[0].getSpecInfoEnglish(),
+            "Fake casting poly. Bait interrupt from " + targets[0].getSpecInfoEnglish(),
         });
       }
     }

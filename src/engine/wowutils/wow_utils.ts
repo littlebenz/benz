@@ -13,10 +13,11 @@ import { RogueAura, RogueSpell } from "../state/utils/rogue_utils";
 import { ShamanAura, ShamanSpell } from "../state/utils/shaman_utils";
 import { WarlockAura, WarlockSpell } from "../state/utils/warlock_utils";
 import { WarriorAura, WarriorSpell } from "../state/utils/warrior_utils";
-import { NightFaeAura } from "../state/utils/night_fae_utils";
+import { NightFaeAura, NightFaeSpell } from "../state/utils/night_fae_utils";
 import { NecrolordAura } from "../state/utils/necrolord_utils";
 import { memoizeOne } from "../../utils/memoize";
 import { CommonAura } from "../state/utils/common_utils";
+import { DRType, SpellNameToDiminishingReturnSchool } from "../state/dr_tracker";
 
 export type PlayerAura =
   | MageAura
@@ -47,7 +48,8 @@ export type PlayerSpell =
   | RogueSpell
   | ShamanSpell
   | WarlockSpell
-  | WarriorSpell;
+  | WarriorSpell
+  | NightFaeSpell;
 
 export interface CombatSpellInfo {
   timestamp: number;
@@ -87,6 +89,39 @@ export class MemoizedLua {
   IsPositionLineOfSight = memoizeOne(this.isPositionLineOfSight);
   DistanceFromUnit = memoizeOne(this.distanceFromUnit);
   IsUnitInOfLineOfSightNoMemoize = memoizeOne(this.isUnitInOfLineOfSight, 0);
+  GetSpellChargesTyped = memoizeOne(this.getSpellChargesTyped);
+  IsUnitCrowdControlled = memoizeOne(this.isUnitCrowdControlled);
+
+  private isUnitCrowdControlled(unit: UnitId, considerRoot = false) {
+    const auras = WoWLua.GetUnitAuras(unit);
+    for (const aura of auras) {
+      if (SpellNameToDiminishingReturnSchool.has(aura.name)) {
+        if (!considerRoot) {
+          return SpellNameToDiminishingReturnSchool.get(aura.name) !== DRType.Root;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private getSpellChargesTyped(spell: string | number) {
+    const [
+      currentCharges,
+      maxCharges,
+      cooldownStart,
+      cooldownDuration,
+      chargeModRate,
+    ] = GetSpellCharges(spell);
+
+    return {
+      currentCharges,
+      maxCharges,
+      cooldownStart,
+      cooldownDuration,
+      chargeModRate,
+    };
+  }
 
   private getUnitAuras(unit: WoWAPI.UnitId): Aura[] {
     const buffs: Aura[] = [];
@@ -216,7 +251,7 @@ export class MemoizedLua {
     }
 
     return {
-      spell,
+      spell: spell as PlayerSpell,
       text,
       texture,
       startTimeMS,
@@ -234,7 +269,11 @@ export class MemoizedLua {
       return false;
     }
 
-    return castable.usable && (castable.duration === null || castable.duration === 0);
+    return (
+      castable.usable &&
+      (castable.duration === null || castable.duration === 0) &&
+      !WoWLua.IsUnitCrowdControlled("player")
+    );
   }
 
   GetCurrentEventLogInfo() {
@@ -365,7 +404,7 @@ export class MemoizedLua {
     }
 
     return {
-      spell,
+      spell: spell as PlayerSpell,
       text,
       texture,
       startTimeMS,
@@ -393,7 +432,7 @@ export class MemoizedLua {
       return false;
     }
 
-    const losFlags = bit.bor(0x10, 0x100, 0x1);
+    const losFlags = 0x100030;
     const [hit] = TraceLine(ax, ay, az + 2.25, bx, by, bz + 2.25, losFlags);
     return hit === 0;
   }
@@ -442,8 +481,6 @@ export function ClickAtTarget() {
   const [targetX, targetY, targetZ] = GetUnitPosition("target");
   if (targetX && targetY && targetZ) {
     ClickPosition(targetX, targetY, targetZ);
-  } else {
-    console.log("failed to click");
   }
 }
 
@@ -456,7 +493,34 @@ export interface SpellCastable {
   usableIn: number;
 }
 
-export function UnitCastOrChannel(unit: string) {
+export interface PlayerCast {
+  spell: PlayerSpell;
+  text: string;
+  texture: string;
+  startTimeMS: number;
+  endTimeMS: number;
+  isTradeSkill: number;
+  castID: boolean;
+  interruptable: number;
+  spellId: boolean;
+  castTimeRemaining: number;
+  timeSpentCasting: number;
+  castType: string;
+}
+
+export interface PlayerChannel {
+  spell: PlayerSpell;
+  text: string;
+  texture: string;
+  startTimeMS: number;
+  endTimeMS: number;
+  isTradeSkill: boolean;
+  interruptable: boolean;
+  spellId: number;
+  castType: string;
+}
+
+export function UnitCastOrChannel(unit: string): PlayerCast | PlayerChannel | null {
   const cast = WoWLua.UnitCastingInfoTyped(unit);
   if (cast) {
     return cast;
@@ -590,24 +654,6 @@ export function DistanceFromPoints(
   z2: number
 ) {
   return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2) + math.pow(z2 - z1, 2));
-}
-
-export function GetSpellChargesTyped(spell: string | number) {
-  const [
-    currentCharges,
-    maxCharges,
-    cooldownStart,
-    cooldownDuration,
-    chargeModRate,
-  ] = GetSpellCharges(spell);
-
-  return {
-    currentCharges,
-    maxCharges,
-    cooldownStart,
-    cooldownDuration,
-    chargeModRate,
-  };
 }
 
 export function IsUnitDead(unit: UnitId): boolean {

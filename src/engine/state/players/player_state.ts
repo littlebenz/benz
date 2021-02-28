@@ -7,6 +7,8 @@ import {
   PlayerAura,
   WoWLua,
   PlayerSpell,
+  PlayerCast,
+  PlayerChannel,
 } from "../../wowutils/wow_utils";
 import { WowEventListener } from "../../wow_event_listener";
 import { DRTracker, DRType, SpellNameToDiminishingReturnSchool } from "../dr_tracker";
@@ -53,17 +55,23 @@ export abstract class PlayerState {
   abstract pumpSpells: PumpSpell[];
   abstract spellToInterrupt: InterruptableSpell[];
 
-  shouldInterrupt(): boolean {
-    const cast = UnitCastOrChannel(this.unitId);
+  shouldInterrupt(cast: PlayerCast | PlayerChannel): boolean {
+    // const spec = this.getSpecInfo();
+    // if (cast && spec) {
+    //   const interrupt = this.spellToInterrupt
+    //     .filter((x) => x.specs.includes(spec))
+    //     .find((x) => x.name === (cast.spell as PlayerSpell));
+    //   if (interrupt) {
+    //     if (this.isPumping()) {
+    //       return interrupt.priority >= PriorityAction.Medium;
+    //     } else {
+    //       return interrupt.priority >= PriorityAction.High;
+    //     }
+    //   }
+    // }
+
     if (cast) {
-      const interrupt = this.spellToInterrupt.find((x) => x.name === (cast.spell as PlayerSpell));
-      if (interrupt) {
-        if (this.isPumping()) {
-          return interrupt.priority > PriorityAction.Medium;
-        } else {
-          return interrupt.priority > PriorityAction.High;
-        }
-      }
+      return this.spellToInterrupt.map((x) => x.name).includes(cast.spell);
     }
 
     return false;
@@ -214,8 +222,7 @@ export abstract class PlayerState {
   }
 
   currentCastOrChannel() {
-    const currentCast = UnitCastOrChannel(this.unitId);
-    return currentCast;
+    return UnitCastOrChannel(this.unitId);
   }
 
   remainingCC() {
@@ -268,7 +275,7 @@ export abstract class PlayerState {
   getSpecInfoEnglish() {
     const spec = this.getSpecInfo();
     if (spec) {
-      TalentSpecToString.get(spec)!;
+      return TalentSpecToString.get(spec)!;
     }
 
     return this.name;

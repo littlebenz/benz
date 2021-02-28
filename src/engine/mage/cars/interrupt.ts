@@ -32,25 +32,20 @@ export class Interrupt implements Car {
       }
     }
 
-    if (listOfRequiredInterrupt.length > 0) {
-      console.log(listOfRequiredInterrupt[0]);
-    }
-
     // pretty dumb interrupts for now, we should save for certain abilities / when we're pumping...?
     for (const enemy of this.getEnemies()) {
       const casting = enemy.currentCastOrChannel();
       if (casting) {
-        if (
+        const canInterrupt =
           (listOfRequiredInterrupt.length > 0 &&
             listOfRequiredInterrupt.includes(casting.spell as PlayerSpell)) ||
-          listOfRequiredInterrupt.length === 0
-        ) {
+          listOfRequiredInterrupt.length === 0;
+        if (canInterrupt) {
           const percentRemaining =
             ((GetTime() * 1000 - casting.startTimeMS) / (casting.endTimeMS - casting.startTimeMS)) *
             100;
-
           if (casting.castType === "cast") {
-            if (enemy.shouldInterrupt() && percentRemaining >= 90) {
+            if (enemy.shouldInterrupt(casting) && percentRemaining >= 90) {
               return new Counterspell({
                 unitTarget: enemy.unitId,
                 messageOnCast:
@@ -58,7 +53,7 @@ export class Interrupt implements Car {
               });
             }
           } else {
-            if (enemy.shouldInterrupt() && percentRemaining >= 5) {
+            if (enemy.shouldInterrupt(casting) && percentRemaining >= 5) {
               return new Counterspell({
                 unitTarget: enemy.unitId,
                 messageOnCast:

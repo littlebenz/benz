@@ -12,11 +12,15 @@ export class StatusFrame {
   private messages: string[] = [];
   private lastMessage: string = "";
 
+  moving: boolean;
+
   constructor() {
     this.frame = CreateFrame("Frame", "BenzStatusFrame", UIParent, "BackdropTemplate");
     this.pumpFrame = CreateFrame("Frame", "BenzPumpFrame", UIParent, "BackdropTemplate");
     this.frame.SetPoint("CENTER", 0, 300);
     this.pumpFrame.SetPoint("CENTER", -300, 0);
+
+    this.moving = false;
 
     const frames = [this.frame, this.pumpFrame];
     for (const frame of frames) {
@@ -24,43 +28,7 @@ export class StatusFrame {
       frame.SetHeight(50);
 
       frame.SetPoint("CENTER", 0, 300);
-      frame.SetMovable(true);
-      frame.SetScript("OnMouseDown", () => {
-        // const [a1, , a2, x, y] = this.frame.GetPoint();
-        frame.StartMoving();
-      });
-
-      frame.SetScript("OnMouseUp", () => {
-        // const [a1, , a2, x, y] = this.frame.GetPoint();
-        frame.StopMovingOrSizing();
-      });
-
-      frame.SetScript("OnEnter", () => {
-        frame.SetBackdrop({
-          bgFile: "Interface/Tooltips/UI-Tooltip-Background",
-          tileSize: 256,
-          edgeFile: "Interface\\FriendsFrame\\UI-Toast-Border",
-          tile: true,
-          edgeSize: 3,
-          insets: {
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-          },
-        });
-      });
-
-      frame.SetScript("OnLeave", () => {
-        frame.SetBackdrop({
-          insets: {
-            top: 0,
-            right: 0,
-            left: 0,
-            bottom: 0,
-          },
-        });
-      });
+      frame.SetMovable(false);
     }
 
     this.fontString = this.frame.CreateFontString("BenzFontString", "ARTWORK");
@@ -86,20 +54,20 @@ export class StatusFrame {
   }
 
   addMessage(message: string) {
+    console.log(message);
     if (this.lastMessage === message) {
       return;
     }
 
     const messageWithTimestamp = message + "#" + GetTime();
     this.messages.push(messageWithTimestamp);
-    C_Timer.After(3.5, () => {
+    C_Timer.After(5, () => {
       this.messages = this.messages.filter((x) => x !== messageWithTimestamp);
       this.updateFrame();
     });
 
     this.updateFrame();
     this.lastMessage = message;
-    console.log(message);
   }
 
   pumpStatus(pumpStatus: PumpingStatus) {
@@ -115,7 +83,55 @@ export class StatusFrame {
       pumpStatusString = "|cffffae42Hot - Combust Now!";
     }
 
-    this.pumpFontString.SetText("Pumping Status: " + pumpStatusString);
+    this.pumpFontString.SetText(pumpStatusString);
+  }
+
+  toggleMovable() {
+    this.moving = !this.moving;
+
+    const frames = [this.frame, this.pumpFrame];
+    for (const frame of frames) {
+      if (this.moving) {
+        frame.SetMovable(true);
+        frame.SetBackdrop({
+          bgFile: "Interface/Tooltips/UI-Tooltip-Background",
+          tileSize: 256,
+          edgeFile: "Interface\\FriendsFrame\\UI-Toast-Border",
+          tile: true,
+          edgeSize: 3,
+          insets: {
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 0,
+          },
+        });
+
+        frame.SetScript("OnMouseDown", () => {
+          // const [a1, , a2, x, y] = this.frame.GetPoint();
+          frame.StartMoving();
+        });
+
+        frame.SetScript("OnMouseUp", () => {
+          // const [a1, , a2, x, y] = this.frame.GetPoint();
+          frame.StopMovingOrSizing();
+        });
+      } else {
+        frame.SetMovable(false);
+        frame.SetBackdrop({
+          insets: {
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 0,
+          },
+        });
+
+        frame.SetScript("OnMouseDown", () => {});
+
+        frame.SetScript("OnMouseUp", () => {});
+      }
+    }
   }
 
   private updateFrame() {

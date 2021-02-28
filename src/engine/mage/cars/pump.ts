@@ -1,6 +1,5 @@
 import {
   GetPlayerAura,
-  GetSpellChargesTyped,
   PlayerHasAura,
   SpellCooldownRemainingSeconds,
   StopCast,
@@ -22,15 +21,13 @@ import { PlayerState } from "../../state/players/player_state";
 import { Defensive } from "../../state/players/Defensive";
 import { DRType } from "../../state/dr_tracker";
 import { UIStatusFrame } from "../../ui/status_frame";
-import { PumpingStatus } from "../../state/utils/pumping_status";
+import { GetPumpingState, PumpingStatus } from "../../state/utils/pumping_status";
 
 export class Pump implements Car {
-  pumpingState;
   private getEnemies: () => PlayerState[];
 
   constructor(getEnemies: () => PlayerState[]) {
     this.getEnemies = () => getEnemies();
-    this.pumpingState = PumpingStatus.Dumped;
   }
 
   getNextSpell(): Spell | null {
@@ -40,34 +37,18 @@ export class Pump implements Car {
       return null;
     }
 
-    if (PlayerHasAura(MageAura.Combustion)) {
-      this.pumpingState = PumpingStatus.Pumping;
-    } else if (!WoWLua.IsSpellUsable(MageSpell.Combustion) && !PlayerHasAura(MageAura.Combustion)) {
-      this.pumpingState = PumpingStatus.Dumped;
-    } else if (WoWLua.IsSpellUsable(MageSpell.Combustion)) {
-      const fireBlastCharges = GetSpellChargesTyped(MageSpell.FireBlast);
-      const hotStreak = GetPlayerAura(MageAura.HotStreak);
-
-      if (hotStreak && fireBlastCharges.maxCharges === fireBlastCharges.currentCharges) {
-        this.pumpingState = PumpingStatus.Hot;
-      } else {
-        this.pumpingState = PumpingStatus.WarmingUp;
-      }
-    }
-
-    UIStatusFrame.pumpStatus(this.pumpingState);
-
+    const pumpingState = GetPumpingState();
     if (WoWLua.IsUnitInOfLineOfSight("player", "target")) {
-      if (this.pumpingState === PumpingStatus.WarmingUp) {
+      if (pumpingState === PumpingStatus.WarmingUp) {
         return this.warmUp();
       }
-      if (this.pumpingState === PumpingStatus.Pumping) {
+      if (pumpingState === PumpingStatus.Pumping) {
         return this.pump();
       }
-      if (this.pumpingState === PumpingStatus.Dumped) {
+      if (pumpingState === PumpingStatus.Dumped) {
         return this.kite();
       }
-      if (this.pumpingState === PumpingStatus.Hot) {
+      if (pumpingState === PumpingStatus.Hot) {
         return this.hot();
       }
     }
@@ -81,7 +62,7 @@ export class Pump implements Car {
   warmUp() {
     const hotStreak = GetPlayerAura(MageAura.HotStreak);
     const heatingUp = GetPlayerAura(MageAura.HeatingUp);
-    const fireBlastCharges = GetSpellChargesTyped(MageSpell.FireBlast);
+    const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
 
     if (hotStreak) {
       return new Frostbolt();
@@ -123,7 +104,7 @@ export class Pump implements Car {
 
   hot() {
     // TODO :: Surface this information better. Maybe make it optional to combust when healer CC
-    // if (this.pumpingState === PumpingStatus.WarmingUp) {
+    // if (pumpingState === PumpingStatus.WarmingUp) {
     //   for (const arena of this.getEnemies()) {
     //     if (arena.isHealer()) {
     //       const remainingCC = arena.remainingCC();
@@ -167,7 +148,7 @@ export class Pump implements Car {
       const combustion = WoWLua.IsSpellCastable(MageSpell.Combustion);
       // 9 seconds per 3 = 27
       if (combustion.duration !== 0 && SpellCooldownRemainingSeconds(combustion) >= 27) {
-        const fireBlastCharges = GetSpellChargesTyped(MageSpell.FireBlast);
+        const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
         if (fireBlastCharges.currentCharges >= 1) {
           return new FireBlast();
         }

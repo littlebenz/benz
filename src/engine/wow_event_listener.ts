@@ -33,7 +33,6 @@ export class WowEventListener {
         const spellCasting = UnitCastOrChannel(SetMouseOver(event.destGUID));
         if (spellCasting) {
           const interrupted = "" + (GetTime() * 1000 - spellCasting.startTimeMS) / 1000 + "\n";
-          console.log(event.destName + " interrupt at " + interrupted);
           WriteFile(GetExeDirectory() + "interrupt.txt", interrupted, true);
         }
       }
@@ -62,10 +61,6 @@ export class WowEventListener {
         const maybeAura = targetAuras.find((x) => x.spellId === event.spellId);
 
         const drTime = WoWLua.GetAuraRemainingTimeCacheBusted(maybeAura);
-
-        console.log(
-          `spell aura applied of: ${event.spellName} from ${event.sourceName} to ${event.destName} for duration: ${drTime}`
-        );
         drTracker.addDiminishingReturn(
           SpellNameToDiminishingReturnSchool.get(event.spellName)!,
           drTime
@@ -86,7 +81,6 @@ export class WowEventListener {
       }
     }
 
-    console.log("bad guid or not found");
     const newDr = new DRTracker();
     this.enemiesDrTracker.set(unitGuid, newDr);
     return newDr;

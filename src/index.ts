@@ -5,8 +5,19 @@ import { UIStatusFrame } from "./engine/ui/status_frame";
 import { GetGroundZCoord } from "./engine/wowutils/wow_utils";
 
 export let ewtLoaded = false;
-
 let printOnce = true;
+
+// Slash commands
+declare let SLASH_BENZ1: string;
+SLASH_BENZ1 = "/benz";
+declare const SlashCmdList: any;
+
+const benz = "BENZ" as any;
+SlashCmdList[benz] = function (message: string, editbox: any) {
+  if (message === "move") {
+    UIStatusFrame.toggleMovable();
+  }
+};
 
 ToggleBenz = () => {
   console.log(`Benz ${!benz_rotation_enabled ? "Enabled" : "Disabled"}`);
@@ -18,7 +29,7 @@ ToggleBenz = () => {
   }
 };
 
-benz_rotation_enabled = false;
+benz_rotation_enabled = true;
 
 const frame = CreateFrame("Frame");
 frame.SetScript("OnUpdate", () => {
@@ -26,13 +37,12 @@ frame.SetScript("OnUpdate", () => {
     ewtLoaded = true;
     if (printOnce) {
       printOnce = false;
-      console.log("started benz. this a baby benz -- a class");
+      console.log("started benz. we've been upgraded to a c class");
 
       const driver = new Driver();
       driver.start();
 
       const party: WoWAPI.UnitId[] = ["party1", "party2", "party2", "party3", "party4"];
-      const losFlags = bit.bor(0x10, 0x100, 0x1, 0x2, 0x20, 0x100000);
 
       const libdraw = new Libdraw();
       libdraw.sync(() => {
