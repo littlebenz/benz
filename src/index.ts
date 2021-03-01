@@ -4,8 +4,8 @@ import { Blink } from "./engine/mage/spells/blink";
 import { UIStatusFrame } from "./engine/ui/status_frame";
 import { GetGroundZCoord } from "./engine/wowutils/wow_utils";
 
-export let ewtLoaded = false;
-let printOnce = true;
+let needToLoadBenz = true;
+Benz_KillTarget = "target";
 
 // Slash commands
 declare let SLASH_BENZ1: string;
@@ -19,24 +19,23 @@ SlashCmdList[benz] = function (message: string, editbox: any) {
   }
 };
 
-ToggleBenz = () => {
-  console.log(`Benz ${!benz_rotation_enabled ? "Enabled" : "Disabled"}`);
-  benz_rotation_enabled = !benz_rotation_enabled;
-  if (benz_rotation_enabled) {
+Benz_Toggle = () => {
+  console.log(`Benz ${!Benz_Enabled ? "Enabled" : "Disabled"}`);
+  Benz_Enabled = !Benz_Enabled;
+  if (Benz_Enabled) {
     UIStatusFrame.show();
   } else {
     UIStatusFrame.hide();
   }
 };
 
-benz_rotation_enabled = true;
+Benz_Enabled = true;
 
 const frame = CreateFrame("Frame");
 frame.SetScript("OnUpdate", () => {
   if (CallSecureFunction !== null) {
-    ewtLoaded = true;
-    if (printOnce) {
-      printOnce = false;
+    if (needToLoadBenz) {
+      needToLoadBenz = false;
       console.log("started benz. we've been upgraded to a c class");
 
       const driver = new Driver();

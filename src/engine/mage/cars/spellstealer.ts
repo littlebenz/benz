@@ -84,7 +84,7 @@ export class Spellstealer implements Car {
     const mana = UnitPower("player");
 
     // check to see if we have enough mana + some buffer
-    if (mana <= 11000) {
+    if (mana <= 16000) {
       return null;
     }
 

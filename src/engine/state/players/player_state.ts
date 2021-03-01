@@ -9,6 +9,7 @@ import {
   PlayerSpell,
   PlayerCast,
   PlayerChannel,
+  DistanceFromPoints,
 } from "../../wowutils/wow_utils";
 import { WowEventListener } from "../../wow_event_listener";
 import { DRTracker, DRType, SpellNameToDiminishingReturnSchool } from "../dr_tracker";
@@ -25,6 +26,7 @@ import { NecrolordAura } from "../utils/necrolord_utils";
 import { DemonHunterAura } from "../utils/demon_hunter_utils";
 import { DeathKnightAura } from "../utils/death_knight_utils";
 import { InterruptableSpell, InterruptSpell, PumpSpell } from "../utils/interrupt_spell";
+import { UnitId } from "@wartoshika/wow-declarations";
 
 export abstract class PlayerState {
   abstract interruptSpells: InterruptSpell[];
@@ -52,6 +54,43 @@ export abstract class PlayerState {
     return new Map<PlayerSpell, number>();
   }
 
+  isKillTarget() {
+    return UnitGUID(Benz_KillTarget as UnitId) === this.guid();
+  }
+
+  statusToString() {
+    if (this.isKillTarget()) {
+      return "Kill Target";
+    }
+
+    const remainingCC = this.remainingCC();
+
+    let result = "";
+
+    if (this.isPumping()) {
+      result += "PUMPING! ";
+    }
+
+    if (this.isDefensive()) {
+      result += "Defensive. ";
+    }
+
+    if (remainingCC.length > 0) {
+      const longestCC = remainingCC.sort((a, b) => b.remaining - a.remaining)[0];
+      result += longestCC.type + ": " + longestCC.remaining + ". ";
+    }
+
+    if (result === "") {
+      if (this.isHealer()) {
+        result += "Healer";
+      } else {
+        result += "Damage";
+      }
+    }
+
+    return result;
+  }
+
   abstract pumpSpells: PumpSpell[];
   abstract spellToInterrupt: InterruptableSpell[];
 
@@ -77,13 +116,18 @@ export abstract class PlayerState {
     return false;
   }
 
-  canPump(): boolean {
+  canPump(big = false): boolean {
     const spec = this.getSpecInfo();
     if (!spec) {
       return false;
     }
 
-    for (const pumpSpell of this.pumpSpells.filter((x) => x.specs.includes(spec))) {
+    let pumpSpellsForSpec = this.pumpSpells.filter((x) => x.specs.includes(spec));
+    if (big) {
+      pumpSpellsForSpec = pumpSpellsForSpec.filter((x) => x.cooldown >= 100);
+    }
+
+    for (const pumpSpell of pumpSpellsForSpec) {
       if (this.spellUsedAtMap().has(pumpSpell.name)) {
         const lastCastedAt = this.spellUsedAtMap().get(pumpSpell.name)!;
         if (GetTime() - lastCastedAt + pumpSpell.cooldown >= 0) {
@@ -223,6 +267,10 @@ export abstract class PlayerState {
 
   currentCastOrChannel() {
     return UnitCastOrChannel(this.unitId);
+  }
+
+  distanceFromPlayer() {
+    return WoWLua.DistanceFromUnit("player", this.unitId);
   }
 
   remainingCC() {

@@ -256,7 +256,7 @@ export class CC implements Car {
 
     // we don't want to waste poly DRs when they can pump big dam into us
     // save polys for when they're doing damage so we can negate as much dam as we can
-    if (playerState.canPump()) {
+    if (playerState.canPump(true)) {
       return null;
     }
 

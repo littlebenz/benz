@@ -9,7 +9,6 @@ import { Interrupt } from "./cars/interrupt";
 import { Spellstealer } from "./cars/spellstealer";
 import { Block } from "./cars/block";
 import { Waiting } from "./cars/waiting";
-import { Car } from "./cars/car";
 import {
   DistanceFromPoints,
   GetGroundZCoord,
@@ -18,7 +17,6 @@ import {
   WoWLua,
 } from "../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../state/utils/mage_utils";
-import { Meteor } from "./spells/meteor";
 import { PlayerState } from "../state/players/player_state";
 import { PlayerStateFactory } from "../state/players/player_state_factory";
 import { WowEventListener } from "../wow_event_listener";
@@ -29,7 +27,6 @@ import { ClickClickBoom } from "./cars/clickclickboom";
 import { UnitReaction } from "../wowutils/unlocked_functions";
 import { NightFaeAura } from "../state/utils/night_fae_utils";
 import { UIStatusFrame } from "../ui/status_frame";
-import { DRType } from "../state/dr_tracker";
 
 export class Mage {
   pump: Pump;
@@ -91,11 +88,11 @@ export class Mage {
   }
 
   getNextAction() {
+    this.updatePumpingStatus();
+
     if (PlayerHasAura(MageAura.Invisibility) || PlayerHasAura(NightFaeAura.Podtender)) {
       return null;
     }
-
-    this.updatePumpingStatus();
 
     const blockSpell = this.block.getNextSpell();
     if (this.shouldReturnSpell(blockSpell)) {
@@ -316,5 +313,6 @@ export class Mage {
     }
 
     UIStatusFrame.pumpStatus(GetPumpingState());
+    UIStatusFrame.arenaStatus(this.getEnemies(false));
   }
 }

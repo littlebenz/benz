@@ -20,6 +20,7 @@
  */
 import { PlayerState } from "../../state/players/player_state";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
+import { PaladinAura } from "../../state/utils/paladin_utils";
 import { PlayerHasAura, StopCast, UnitCastOrChannel, WoWLua } from "../../wowutils/wow_utils";
 import { Polymorph } from "../spells/polymorph";
 import { Car } from "./car";
@@ -39,6 +40,10 @@ export class FakeCast implements Car {
 
   getNextSpell() {
     if (PlayerHasAura(MageAura.Combustion) || GetTime() - this.lastFakeCast < 5) {
+      return null;
+    }
+
+    if (PlayerHasAura(PaladinAura.AuraMastery)) {
       return null;
     }
 

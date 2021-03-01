@@ -83,6 +83,7 @@ export class MemoizedLua {
   GetContainerItemInfoTyped = memoizeOne(this.getContainerItemInfoTyped);
   UnitIsMoving = memoizeOne(this.unitIsMoving);
   UnitCastingInfoTyped = memoizeOne(this.unitCastingInfoTyped);
+  UnitCastingInfoTypedCacheBusted = memoizeOne(this.unitCastingInfoTyped, 0);
   IsPlayerMoving = memoizeOne(this.isPlayerMoving);
   IsUnitInOfLineOfSight = memoizeOne(this.isUnitInOfLineOfSight);
   TargetHasAuraFromSource = memoizeOne(this.targetHasAuraFromSource);

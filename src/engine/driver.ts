@@ -23,9 +23,10 @@ export class Driver {
   start() {
     const actionFrame = CreateFrame("Frame", "ActionFrame");
     actionFrame.SetScript("OnUpdate", () => {
-      if (!benz_rotation_enabled) {
+      if (!Benz_Enabled) {
         return;
       }
+
       benzFrameNumber++;
 
       this.mage.updateArenaUnitsIfChanged();
@@ -78,6 +79,7 @@ export class Driver {
     arenaLoadFrame.SetScript("OnEvent", (frame, eventName, ...args: any[]) => {
       if (eventName === "ADDON_LOADED" && args[0] === "Blizzard_ArenaUI") {
         this.mage = new Mage(this.wowEventListener);
+        Benz_KillTarget = "target";
       }
     });
   }

@@ -21,7 +21,8 @@ export class ClickClickBoom implements Car {
     if (combustCD.usableIn <= 45 && combustCD.usableIn !== 0) {
       return null;
     }
-    const target = this.getEnemies().find((player) => UnitGUID("target") === player.guid());
+
+    const target = this.getEnemies().find((x) => x.isKillTarget());
     if (target) {
       for (const cc of target.remainingCC()) {
         if (cc.aura.name !== WarlockAura.Fear && cc.aura.name !== PriestAura.PsychicScream) {

@@ -180,3 +180,11 @@ declare function GetSpellInfo(
 declare function UnitIsVisible(unit: string): boolean;
 
 declare function IsSpellInRange(spell: string | number, unit: string): number;
+
+/**
+ * @tupleReturn
+ */
+declare function GetTalentTierInfo(
+  row: number,
+  uselessValueThatAlwaysNeedsToBeOne: number
+): [boolean, number, number];

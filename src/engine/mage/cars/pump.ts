@@ -3,31 +3,31 @@ import {
   PlayerHasAura,
   SpellCooldownRemainingSeconds,
   StopCast,
+  UnitHealthPercentage,
   WoWLua,
 } from "../../wowutils/wow_utils";
 import { MageAura, MageSpell } from "../../state/utils/mage_utils";
-import { Combustion } from "../spells/combustion";
 import { Fireball } from "../spells/fireball";
 import { FireBlast } from "../spells/fire_blast";
 import { Spell } from "../spells/ispell";
-import { Meteor } from "../spells/meteor";
 import { PhoenixFlames } from "../spells/phoenix_flames";
 import { Pyroblast } from "../spells/pyroblast";
 import { Scorch } from "../spells/scorch";
 import { Car } from "./car";
-import { FrostNova } from "../spells/frost_nova";
 import { Frostbolt } from "../spells/frostbolt";
 import { PlayerState } from "../../state/players/player_state";
-import { Defensive } from "../../state/players/Defensive";
 import { DRType } from "../../state/dr_tracker";
-import { UIStatusFrame } from "../../ui/status_frame";
 import { GetPumpingState, PumpingStatus } from "../../state/utils/pumping_status";
+import { GetKillTarget } from "../../state/utils/kill_target_utils";
 
 export class Pump implements Car {
   private getEnemies: () => PlayerState[];
+  private firestarter: boolean;
 
   constructor(getEnemies: () => PlayerState[]) {
     this.getEnemies = () => getEnemies();
+    const [, talentColumn] = GetTalentTierInfo(1, 1);
+    this.firestarter = talentColumn === 1;
   }
 
   getNextSpell(): Spell | null {
@@ -65,15 +65,69 @@ export class Pump implements Car {
     const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
 
     if (hotStreak) {
+      if (WoWLua.GetAuraRemainingTime(hotStreak) <= 1) {
+        return new Pyroblast();
+      }
       return new Frostbolt();
+    }
+
+    if (this.firestarter) {
+      const enemiesAbove90 = this.getEnemies()
+        .filter((x) => x.shouldDamage() && UnitHealthPercentage(x.unitId) >= 90)
+        .sort((a, b) => b.distanceFromPlayer() - a.distanceFromPlayer());
+
+      if (enemiesAbove90.length > 0) {
+        if (heatingUp) {
+          if (WoWLua.GetAuraRemainingTime(heatingUp) >= 2.5) {
+            return new Fireball({
+              unitTarget: enemiesAbove90[0].unitId,
+              shouldStopCasting: () => {
+                const cast = WoWLua.UnitCastingInfoTypedCacheBusted("player");
+                if (cast) {
+                  const percentRemaining =
+                    ((GetTime() * 1000 - cast.startTimeMS) / (cast.endTimeMS - cast.startTimeMS)) *
+                    100;
+                  if (
+                    UnitHealthPercentage(enemiesAbove90[0].unitId) < 90 &&
+                    percentRemaining >= 90 &&
+                    !PlayerHasAura(MageAura.HotStreak)
+                  ) {
+                    const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
+                    if (fireBlastCharges.currentCharges === fireBlastCharges.maxCharges) {
+                      new FireBlast({
+                        unitTarget: enemiesAbove90[0].unitId,
+                        hardCast: false,
+                      }).cast();
+                    } else {
+                      // stop casting when we're casting a non crit and we dont have full fire blast charges
+                      return true;
+                    }
+                  }
+                }
+
+                return false;
+              },
+            });
+          } else if (fireBlastCharges.currentCharges === fireBlastCharges.maxCharges) {
+            return new FireBlast();
+          }
+        } else {
+          return new Fireball({
+            unitTarget: enemiesAbove90[0].unitId,
+          });
+        }
+      }
     } else if (heatingUp) {
       if (fireBlastCharges.currentCharges === fireBlastCharges.maxCharges) {
         return new FireBlast();
       }
     }
 
-    // we have nothing, let's get heating up
-    if (!WoWLua.IsPlayerMoving()) {
+    if (heatingUp) {
+      if (fireBlastCharges.currentCharges === fireBlastCharges.maxCharges) {
+        return new FireBlast();
+      }
+    } else if (!WoWLua.IsPlayerMoving() && !heatingUp) {
       return new Fireball();
     }
 
@@ -81,6 +135,8 @@ export class Pump implements Car {
   }
 
   pump() {
+    const killTarget = GetKillTarget(this.getEnemies());
+    const killTargetUnitId = killTarget ? killTarget.unitId : "target";
     const currentCast = WoWLua.UnitCastingInfoTyped("player");
     if (currentCast && currentCast.spell === MageSpell.Frostbolt) {
       StopCast();
@@ -88,18 +144,21 @@ export class Pump implements Car {
 
     const hotStreak = GetPlayerAura(MageAura.HotStreak);
     if (hotStreak) {
-      return new Pyroblast();
+      return new Pyroblast({
+        unitTarget: killTargetUnitId,
+      });
     }
 
     if (WoWLua.IsSpellUsable(MageSpell.FireBlast) && !PlayerHasAura(MageAura.HotStreak)) {
-      return new FireBlast({ hardCast: true });
+      return new FireBlast({ hardCast: true, unitTarget: killTargetUnitId });
     }
 
+    // todo:: dont break CC
     if (WoWLua.IsSpellUsable(MageSpell.PhoenixFlames)) {
-      return new PhoenixFlames();
+      return new PhoenixFlames({ unitTarget: killTargetUnitId });
     }
 
-    return new Scorch();
+    return new Scorch({ unitTarget: killTargetUnitId });
   }
 
   hot() {
@@ -120,6 +179,14 @@ export class Pump implements Car {
     const currentCast = WoWLua.UnitCastingInfoTyped("player");
     if (currentCast && currentCast.spell === MageSpell.Fireball) {
       StopCast();
+    }
+
+    const hotStreak = GetPlayerAura(MageAura.HotStreak);
+    if (hotStreak && WoWLua.GetAuraRemainingTime(hotStreak) <= 1) {
+      if (currentCast && currentCast.spell === MageSpell.Frostbolt) {
+        StopCast();
+      }
+      return new Pyroblast();
     }
 
     return new Frostbolt();

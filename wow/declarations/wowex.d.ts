@@ -42,6 +42,3 @@ declare function UpdateMovement(): void;
 /** @tupleReturn **/
 declare function WorldToScreen(x: number, y: number, z: number): [number, number];
 declare function IsWindowActive(): boolean;
-
-// not real
-declare function GetMissileCount(): number;

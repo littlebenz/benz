@@ -63,11 +63,11 @@ export interface DRTrackCount {
 }
 
 export enum DRType {
-  Root,
-  Stun,
-  Incapacitate,
-  Disorient,
-  Silence,
+  Root = "Root",
+  Stun = "Stun",
+  Incapacitate = "Incap",
+  Disorient = "Disorient",
+  Silence = "Silence",
 }
 
 export const SpellNameToDiminishingReturnSchool = new Map<string, DRType>();
