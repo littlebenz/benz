@@ -86,7 +86,6 @@ export class StatusFrame {
   }
 
   addMessage(message: string) {
-    console.log(message);
     if (this.lastMessage === message) {
       return;
     }
@@ -207,7 +206,6 @@ export class StatusFrame {
       })
       .map((x) => x.x + "," + x.y)
       .join("\n");
-    console.log(coords);
     WriteFile(GetExeDirectory() + "coords.txt", coords, false);
   }
 }
