@@ -101,70 +101,70 @@ export class Mage {
       });
     }
 
-    // const blockSpell = this.block.getNextSpell();
-    // if (this.shouldReturnSpell(blockSpell)) {
-    //   return blockSpell;
-    // }
+    const blockSpell = this.block.getNextSpell();
+    if (this.shouldReturnSpell(blockSpell)) {
+      return blockSpell;
+    }
 
-    // const interruptSpell = this.interrupt.getNextSpell();
-    // if (interruptSpell) {
-    //   return interruptSpell;
-    // }
+    const interruptSpell = this.interrupt.getNextSpell();
+    if (interruptSpell) {
+      return interruptSpell;
+    }
 
-    // const spellSteal = this.spellsteal.getNextSpell();
-    // if (this.shouldReturnSpell(spellSteal)) {
-    //   return spellSteal;
-    // }
+    const spellSteal = this.spellsteal.getNextSpell();
+    if (this.shouldReturnSpell(spellSteal)) {
+      return spellSteal;
+    }
 
-    // const alterTime = this.alterTime.getNextSpell();
-    // if (this.shouldReturnSpell(alterTime)) {
-    //   return alterTime;
-    // }
+    const alterTime = this.alterTime.getNextSpell();
+    if (this.shouldReturnSpell(alterTime)) {
+      return alterTime;
+    }
 
-    // const stomper = this.stomper.getNextSpell();
-    // if (this.shouldReturnSpell(stomper)) {
-    //   return stomper;
-    // }
+    const stomper = this.stomper.getNextSpell();
+    if (this.shouldReturnSpell(stomper)) {
+      return stomper;
+    }
 
-    // const shield = this.shield.getNextSpell();
-    // if (this.shouldReturnSpell(shield)) {
-    //   return shield;
-    // }
+    const shield = this.shield.getNextSpell();
+    if (this.shouldReturnSpell(shield)) {
+      return shield;
+    }
 
-    // const decurse = this.decurse.getNextSpell();
-    // if (this.shouldReturnSpell(decurse)) {
-    //   return decurse;
-    // }
+    const decurse = this.decurse.getNextSpell();
+    if (this.shouldReturnSpell(decurse)) {
+      return decurse;
+    }
 
-    // const ccb = this.clickclickboom.getNextSpell();
-    // if (this.shouldReturnSpell(ccb)) {
-    //   return ccb;
-    // }
+    const ccb = this.clickclickboom.getNextSpell();
+    if (this.shouldReturnSpell(ccb)) {
+      return ccb;
+    }
 
-    // const cc = this.cc.getNextSpell();
-    // if (this.shouldReturnSpell(cc)) {
-    //   return cc;
-    // }
+    const cc = this.cc.getNextSpell();
+    if (this.shouldReturnSpell(cc)) {
+      return cc;
+    }
 
-    // const fakeCast = this.fakeCast.getNextSpell();
-    // if (this.shouldReturnSpell(fakeCast)) {
-    //   return fakeCast;
-    // }
+    const fakeCast = this.fakeCast.getNextSpell();
+    if (this.shouldReturnSpell(fakeCast)) {
+      return fakeCast;
+    }
 
-    // const target = this.getEnemies().find((x) => UnitGUID("target") === x.guid());
-    // const reaction = UnitReaction("player", "target");
+    const target = this.getEnemies().find((x) => UnitGUID("target") === x.guid());
+    const reaction = UnitReaction("player", "target");
 
-    // if ((!target || target.shouldDamage()) && reaction && reaction < 5) {
-    //   const pump = this.pump.getNextSpell();
-    //   if (this.shouldReturnSpell(pump)) {
-    //     return pump;
-    //   }
-    // }
+    if ((!target || target.shouldDamage()) && reaction && reaction < 5) {
+      const pump = this.pump.getNextSpell();
+      if (this.shouldReturnSpell(pump)) {
+        return pump;
+      }
+    }
 
-    // const waiting = this.waiting.getNextSpell();
-    // if (this.shouldReturnSpell(waiting)) {
-    //   return waiting;
-    // }
+    const waiting = this.waiting.getNextSpell();
+    if (this.shouldReturnSpell(waiting)) {
+      return waiting;
+    }
 
     return null;
   }
