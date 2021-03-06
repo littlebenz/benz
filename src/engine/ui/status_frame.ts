@@ -34,7 +34,11 @@ export class StatusFrame {
   moving: boolean;
 
   constructor() {
-    const points = ReadFile(GetExeDirectory() + "coords.txt")
+    let maybePoints = ReadFile(GetExeDirectory() + "coords.txt");
+    if (maybePoints === "" || maybePoints === null) {
+      maybePoints = "5,-161\n12.000218391418,-46.000003814697\n-366,-115";
+    }
+    const points = maybePoints
       .split("\n")
       .map((c) => new Point(parseInt(c.split(",")[0]), parseInt(c.split(",")[1])));
     this.frame = CreateFrame("Frame", "BenzStatusFrame", UIParent, "BackdropTemplate");
@@ -123,7 +127,8 @@ export class StatusFrame {
       }
     } else if (pumpStatus === PumpingStatus.Hot) {
       const hotstreak = GetPlayerAura(MageAura.HotStreak);
-      pumpStatusString = "|cffffae42Hot for " + math.ceil(WoWLua.GetAuraRemainingTime(hotstreak));
+      pumpStatusString =
+        "|cffffae42Hot for " + math.floor(WoWLua.GetAuraRemainingTime(hotstreak) - 1);
     }
 
     this.pumpFontString.SetText(pumpStatusString);

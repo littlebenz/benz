@@ -94,7 +94,7 @@ export class FakeCast implements Car {
   }
 
   private isFakeCastingPoly(): boolean {
-    const currentCast = WoWLua.UnitCastingInfoTyped("player");
+    const currentCast = WoWLua.UnitCastingInfoTypedCacheBusted("player");
     if (!currentCast) {
       return false;
     }
@@ -104,7 +104,7 @@ export class FakeCast implements Car {
     }
 
     // check to see if the current cast is the fake cast we started, with some tolerance
-    if (math.abs(GetTime() - (this.lastFakeCast + currentCast.timeSpentCasting)) <= 0.1) {
+    if (GetTime() >= this.lastFakeCast + currentCast.timeSpentCasting) {
       return true;
     }
 

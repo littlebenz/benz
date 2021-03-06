@@ -1,6 +1,6 @@
 import { UnitId } from "@wartoshika/wow-declarations";
 import { Aura, UnitType } from "./wow_helpers";
-import { SpellStopCasting } from "./unlocked_functions";
+import { SpellStopCasting, UnitReaction } from "./unlocked_functions";
 import { MageAura, MageSpell } from "../state/utils/mage_utils";
 import { DemonHunterAura, DemonHunterSpell } from "../state/utils/demon_hunter_utils";
 import { DeathKnightAura, DeathKnightSpell } from "../state/utils/death_knight_utils";
@@ -92,6 +92,74 @@ export class MemoizedLua {
   IsUnitInOfLineOfSightNoMemoize = memoizeOne(this.isUnitInOfLineOfSight, 0);
   GetSpellChargesTyped = memoizeOne(this.getSpellChargesTyped);
   IsUnitCrowdControlled = memoizeOne(this.isUnitCrowdControlled);
+  FindBestMeteorSpot = memoizeOne(this.findBestMeteorSpot, 30);
+
+  private findBestMeteorSpot(targetGuid: string) {
+    const [px, py, pz] = GetUnitPosition("player");
+    const [tx, ty, tz] = GetUnitPosition(targetGuid);
+    if (!px || !tx) {
+      return null;
+    }
+
+    // Archimedean spiral points
+    const lps = 5;
+    let r = 0.0;
+    const ai = 0.5;
+    const ri = 0.1;
+
+    let a = 0.0;
+    let x = 0;
+    let y = 0;
+    const as = lps * 2 * Math.PI;
+
+    const possiblePoints = [];
+    for (let i = 1; i < as / ai; i++) {
+      (x = r * Math.cos(a)), (y = r * Math.sin(a));
+      if (WoWLua.IsPositionLineOfSight(px, py, pz, x + tx, y + ty, tz)) {
+        possiblePoints.push({
+          x: x + tx,
+          y: y + ty,
+          z: tz,
+        });
+      }
+      r += ri;
+      a += ai;
+    }
+
+    const viablePoints = [];
+    for (const possiblePoint of possiblePoints) {
+      let badPosition = false;
+      for (const enemy of WoWLua.GetObjects().filter((x) => x !== targetGuid)) {
+        const [ex, ey, ez] = GetUnitPosition(enemy);
+        const type = ObjectType(enemy);
+        const reaction = UnitReaction("player", SetMouseOver(enemy));
+
+        if (
+          (type === 5 || type === 6) &&
+          reaction &&
+          reaction < 5 &&
+          ex !== null &&
+          DistanceFromPoints(ex, ey, ez, possiblePoint.x, possiblePoint.y, possiblePoint.z) <= 8
+        ) {
+          badPosition = true;
+        }
+      }
+
+      if (!badPosition) {
+        viablePoints.push(possiblePoint);
+      }
+    }
+
+    if (viablePoints.length > 0) {
+      return viablePoints.sort(
+        (a, b) =>
+          DistanceFromPoints(tx, ty, tz, a.x, a.y, a.z) -
+          DistanceFromPoints(tx, ty, tz, b.x, b.y, b.z)
+      )[0];
+    }
+
+    return null;
+  }
 
   private isUnitCrowdControlled(unit: UnitId, considerRoot = false) {
     const auras = WoWLua.GetUnitAuras(unit);
@@ -552,6 +620,7 @@ export enum CombatEvent {
   SpellCastSuccess = "SPELL_CAST_SUCCESS",
   SpellCastFailed = "SPELL_CAST_FAILED",
   SpellAuraApplied = "SPELL_AURA_APPLIED",
+  SpellAuraRefreshed = "SPELL_AURA_REFRESH",
 }
 
 // export function GetMissleList() {

@@ -233,4 +233,6 @@ export class Pump implements Car {
 
     return new Fireball();
   }
+
+  private findBestFireballTarget() {}
 }

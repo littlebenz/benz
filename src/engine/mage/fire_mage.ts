@@ -27,6 +27,7 @@ import { ClickClickBoom } from "./cars/clickclickboom";
 import { UnitReaction } from "../wowutils/unlocked_functions";
 import { NightFaeAura } from "../state/utils/night_fae_utils";
 import { UIStatusFrame } from "../ui/status_frame";
+import { Meteor } from "./spells/meteor";
 
 export class Mage {
   pump: Pump;
@@ -94,70 +95,76 @@ export class Mage {
       return null;
     }
 
-    const blockSpell = this.block.getNextSpell();
-    if (this.shouldReturnSpell(blockSpell)) {
-      return blockSpell;
+    if (UnitGUID("target") !== null) {
+      return new Meteor({
+        unitTarget: "target",
+      });
     }
 
-    const interruptSpell = this.interrupt.getNextSpell();
-    if (interruptSpell) {
-      return interruptSpell;
-    }
+    // const blockSpell = this.block.getNextSpell();
+    // if (this.shouldReturnSpell(blockSpell)) {
+    //   return blockSpell;
+    // }
 
-    const spellSteal = this.spellsteal.getNextSpell();
-    if (this.shouldReturnSpell(spellSteal)) {
-      return spellSteal;
-    }
+    // const interruptSpell = this.interrupt.getNextSpell();
+    // if (interruptSpell) {
+    //   return interruptSpell;
+    // }
 
-    const alterTime = this.alterTime.getNextSpell();
-    if (this.shouldReturnSpell(alterTime)) {
-      return alterTime;
-    }
+    // const spellSteal = this.spellsteal.getNextSpell();
+    // if (this.shouldReturnSpell(spellSteal)) {
+    //   return spellSteal;
+    // }
 
-    const stomper = this.stomper.getNextSpell();
-    if (this.shouldReturnSpell(stomper)) {
-      return stomper;
-    }
+    // const alterTime = this.alterTime.getNextSpell();
+    // if (this.shouldReturnSpell(alterTime)) {
+    //   return alterTime;
+    // }
 
-    const shield = this.shield.getNextSpell();
-    if (this.shouldReturnSpell(shield)) {
-      return shield;
-    }
+    // const stomper = this.stomper.getNextSpell();
+    // if (this.shouldReturnSpell(stomper)) {
+    //   return stomper;
+    // }
 
-    const decurse = this.decurse.getNextSpell();
-    if (this.shouldReturnSpell(decurse)) {
-      return decurse;
-    }
+    // const shield = this.shield.getNextSpell();
+    // if (this.shouldReturnSpell(shield)) {
+    //   return shield;
+    // }
 
-    const ccb = this.clickclickboom.getNextSpell();
-    if (this.shouldReturnSpell(ccb)) {
-      return ccb;
-    }
+    // const decurse = this.decurse.getNextSpell();
+    // if (this.shouldReturnSpell(decurse)) {
+    //   return decurse;
+    // }
 
-    const cc = this.cc.getNextSpell();
-    if (this.shouldReturnSpell(cc)) {
-      return cc;
-    }
+    // const ccb = this.clickclickboom.getNextSpell();
+    // if (this.shouldReturnSpell(ccb)) {
+    //   return ccb;
+    // }
 
-    const fakeCast = this.fakeCast.getNextSpell();
-    if (this.shouldReturnSpell(fakeCast)) {
-      return fakeCast;
-    }
+    // const cc = this.cc.getNextSpell();
+    // if (this.shouldReturnSpell(cc)) {
+    //   return cc;
+    // }
 
-    const target = this.getEnemies().find((x) => UnitGUID("target") === x.guid());
-    const reaction = UnitReaction("player", "target");
+    // const fakeCast = this.fakeCast.getNextSpell();
+    // if (this.shouldReturnSpell(fakeCast)) {
+    //   return fakeCast;
+    // }
 
-    if ((!target || target.shouldDamage()) && reaction && reaction < 5) {
-      const pump = this.pump.getNextSpell();
-      if (this.shouldReturnSpell(pump)) {
-        return pump;
-      }
-    }
+    // const target = this.getEnemies().find((x) => UnitGUID("target") === x.guid());
+    // const reaction = UnitReaction("player", "target");
 
-    const waiting = this.waiting.getNextSpell();
-    if (this.shouldReturnSpell(waiting)) {
-      return waiting;
-    }
+    // if ((!target || target.shouldDamage()) && reaction && reaction < 5) {
+    //   const pump = this.pump.getNextSpell();
+    //   if (this.shouldReturnSpell(pump)) {
+    //     return pump;
+    //   }
+    // }
+
+    // const waiting = this.waiting.getNextSpell();
+    // if (this.shouldReturnSpell(waiting)) {
+    //   return waiting;
+    // }
 
     return null;
   }

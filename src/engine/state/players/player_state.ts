@@ -172,7 +172,7 @@ export abstract class PlayerState {
 
   abstract isPumping(): boolean;
 
-  canBeIncapacitated(): boolean {
+  canBeCC(): boolean {
     if (!UnitIsVisible(this.unitId)) {
       return false;
     }
@@ -193,6 +193,22 @@ export abstract class PlayerState {
     const remainingCCList = this.remainingCC().sort((a, b) => a.remaining - b.remaining);
     const remainingCC = remainingCCList[remainingCCList.length - 1];
     if (remainingCC && remainingCC.remaining >= 1.9) {
+      return false;
+    }
+
+    return true;
+  }
+
+  canBeDisorientated(): boolean {
+    if (!this.canBeCC()) {
+      return false;
+    }
+
+    return this.disorientDr().drCount === 0;
+  }
+
+  canBeIncapacitated(): boolean {
+    if (!this.canBeCC()) {
       return false;
     }
 

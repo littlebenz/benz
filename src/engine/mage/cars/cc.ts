@@ -121,12 +121,7 @@ export class CC implements Car {
       return false;
     }
 
-    const dr = playerState.incapacitateDr();
-    if (dr.drCount !== 0) {
-      return false;
-    }
-
-    if (!playerState.canBeIncapacitated()) {
+    if (!playerState.canBeDisorientated()) {
       return false;
     }
 

@@ -12,7 +12,10 @@ export class WowEventListener {
   parse(combatEvent: BaseWowCombatEvent) {
     if (combatEvent.eventName === CombatEvent.SpellCastStart) {
       this.parseSpellCastStart();
-    } else if (combatEvent.eventName === CombatEvent.SpellAuraApplied) {
+    } else if (
+      combatEvent.eventName === CombatEvent.SpellAuraApplied ||
+      combatEvent.eventName === CombatEvent.SpellAuraRefreshed
+    ) {
       this.parseSpellAuraApplied();
     } else if (combatEvent.eventName === CombatEvent.SpellCastFailed) {
       this.parseSpellCastFailed();

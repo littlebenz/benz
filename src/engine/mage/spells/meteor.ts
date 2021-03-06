@@ -1,7 +1,8 @@
-import { ClickAtTarget } from "../../wowutils/wow_utils";
+import { ClickAtTarget, DistanceFromPoints, WoWLua } from "../../wowutils/wow_utils";
 import { MageSpell } from "../../state/utils/mage_utils";
-import { Spell } from "./ispell";
-import { CastSpellByName, TargetUnit } from "../../wowutils/unlocked_functions";
+import { Spell, SpellParameters } from "./ispell";
+import { CastSpellByName, TargetUnit, UnitReaction } from "../../wowutils/unlocked_functions";
+import { PlayerState } from "../../state/players/player_state";
 
 export class Meteor extends Spell {
   isOnGCD = true;
@@ -10,44 +11,12 @@ export class Meteor extends Spell {
   isInstant = true;
 
   cast() {
-    // todo:: cancel current cast first?
-    // const isLeftDown = IsMouseButtonDown("LeftButton");
-    // const isRightDown = IsMouseButtonDown("RightButton");
-
-    // if (isLeftDown) {
-    //     SendClick(0x04);
-    // }
-
-    // if (isRightDown) {
-    //     SendClick(0x10);
-    // }
-
-    CastSpellByName(MageSpell.Meteor, this.targetGuid);
-
-    ClickAtTarget();
-
-    // if (isLeftDown) {
-    //     SendClick(0x02);
-    // }
-
-    // if (isRightDown) {
-    //     SendClick(0x8);
-    // }
+    if (this.canCastSpell()) {
+      const point = WoWLua.FindBestMeteorSpot(this.targetGuid);
+      if (point) {
+        CastSpellByName(MageSpell.Meteor);
+        ClickPosition(point.x, point.y, point.z);
+      }
+    }
   }
-
-  // canCastSpell(): boolean {
-  //   if (!this.isSelfCast) {
-  //     if (!IsUnitInOfLineOfSight("player", SetMouseOver(this.targetGuid))) {
-  //       return false;
-  //     }
-
-  //     if (IsSpellInRange(this.spellName, SetMouseOver(this.targetGuid)) === 0) {
-  //       return false;
-  //     }
-  //   }
-
-  //   const spellUsable = IsSpellUsable(this.spellName);
-
-  //   return spellUsable;
-  // }
 }

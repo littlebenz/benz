@@ -90,6 +90,7 @@ export class RingOfFrost extends Spell {
       MageSpell.RingOfFrost as any,
       BOOKTYPE_SPELL
     );
-    return this.getCoords() !== null;
+
+    return this.getCoords() !== null && start !== 0 && duration !== 0;
   }
 }

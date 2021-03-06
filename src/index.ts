@@ -2,7 +2,9 @@ import { Libdraw } from "../wow/libdraw";
 import { Driver } from "./engine/driver";
 import { Blink } from "./engine/mage/spells/blink";
 import { UIStatusFrame } from "./engine/ui/status_frame";
-import { GetGroundZCoord } from "./engine/wowutils/wow_utils";
+import { UnitReaction } from "./engine/wowutils/unlocked_functions";
+import { UnitType } from "./engine/wowutils/wow_helpers";
+import { DistanceFromPoints, GetGroundZCoord, WoWLua } from "./engine/wowutils/wow_utils";
 
 let needToLoadBenz = true;
 Benz_KillTarget = "target";
