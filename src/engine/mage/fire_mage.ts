@@ -95,12 +95,6 @@ export class Mage {
       return null;
     }
 
-    if (UnitGUID("target") !== null) {
-      return new Meteor({
-        unitTarget: "target",
-      });
-    }
-
     const blockSpell = this.block.getNextSpell();
     if (this.shouldReturnSpell(blockSpell)) {
       return blockSpell;
