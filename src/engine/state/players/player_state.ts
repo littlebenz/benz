@@ -30,6 +30,8 @@ import { UnitId } from "@wartoshika/wow-declarations";
 
 export abstract class PlayerState {
   abstract interruptSpells: InterruptSpell[];
+  abstract minimumRange(): number;
+
   isHealer() {
     const specInfo = this.getSpecInfo();
     if (

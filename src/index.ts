@@ -1,4 +1,5 @@
 import { Libdraw } from "../wow/libdraw";
+import { ChauffeurPoint } from "./engine/bg_bot/chauffeur";
 import { Driver } from "./engine/driver";
 import { Blink } from "./engine/mage/spells/blink";
 import { UIStatusFrame } from "./engine/ui/status_frame";
@@ -78,19 +79,27 @@ frame.SetScript("OnUpdate", () => {
         //   }
         // }
 
-        const player = GetUnitName("player", false);
+        // const player = GetUnitName("player", false);
 
         libdraw.setColorRaw(0, 1, 0, 1);
 
-        for (const partyMember of party) {
-          const arena1 = GetUnitName(partyMember, false);
-          if (arena1 && arena1 !== player) {
-            const [targetX, targetY, targetZ] = GetUnitPosition(partyMember);
-            if (targetX && targetY && targetZ) {
-              libdraw.line(playerX, playerY, playerZ, targetX, targetY, targetZ);
-            }
+        const activeNodes = GetActiveNodeCount();
+        if (activeNodes > 1 && UnitInBattleground("player") !== null) {
+          for (let i = 1; i <= activeNodes; i++) {
+            const [x, y, z] = GetActiveNodeByIndex(i);
+            libdraw.circle(x, y, z, 1);
           }
         }
+
+        // for (const partyMember of party) {
+        //   const arena1 = GetUnitName(partyMember, false);
+        //   if (arena1 && arena1 !== player) {
+        //     const [targetX, targetY, targetZ] = GetUnitPosition(partyMember);
+        //     if (targetX && targetY && targetZ) {
+        //       libdraw.line(playerX, playerY, playerZ, targetX, targetY, targetZ);
+        //     }
+        //   }
+        // }
       });
       libdraw.enable(0.01);
     }

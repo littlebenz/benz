@@ -8,7 +8,6 @@ import { TalentSpec } from "./TalentSpec";
 
 export class Hunter extends PlayerState {
   class = WoWClass.Hunter;
-
   interruptSpells: InterruptSpell[] = [
     {
       name: HunterSpell.CounterShot,
@@ -50,6 +49,9 @@ export class Hunter extends PlayerState {
     }
 
     return super.canBeIncapacitated();
+  }
+  minimumRange() {
+    return 25;
   }
   shouldStomp(): boolean {
     return false;

@@ -41,6 +41,9 @@ export class DeathKnight extends PlayerState {
   shouldStomp(): boolean {
     return false;
   }
+  minimumRange() {
+    return 3;
+  }
   canBeIncapacitated(): boolean {
     if (
       WoWLua.GetAuraRemainingTime(GetUnitAura(DeathKnightAura.AntiMagicShell, this.unitId)) >= 1.5

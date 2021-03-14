@@ -72,49 +72,19 @@ export class Pump implements Car {
     }
 
     if (this.firestarter) {
-      const enemiesAbove90 = this.getEnemies()
-        .filter((x) => x.shouldDamage() && UnitHealthPercentage(x.unitId) >= 90)
-        .sort((a, b) => b.distanceFromPlayer() - a.distanceFromPlayer());
-
-      if (enemiesAbove90.length > 0) {
-        if (heatingUp) {
-          if (WoWLua.GetAuraRemainingTime(heatingUp) >= 2.5) {
-            return new Fireball({
-              unitTarget: enemiesAbove90[0].unitId,
-              shouldStopCasting: () => {
-                const cast = WoWLua.UnitCastingInfoTypedCacheBusted("player");
-                if (cast) {
-                  const percentRemaining =
-                    ((GetTime() * 1000 - cast.startTimeMS) / (cast.endTimeMS - cast.startTimeMS)) *
-                    100;
-                  if (
-                    UnitHealthPercentage(enemiesAbove90[0].unitId) < 90 &&
-                    percentRemaining >= 90 &&
-                    !PlayerHasAura(MageAura.HotStreak)
-                  ) {
-                    const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
-                    if (fireBlastCharges.currentCharges === fireBlastCharges.maxCharges) {
-                      new FireBlast({
-                        unitTarget: enemiesAbove90[0].unitId,
-                        hardCast: false,
-                      }).cast();
-                    } else {
-                      // stop casting when we're casting a non crit and we dont have full fire blast charges
-                      return true;
-                    }
-                  }
-                }
-
-                return false;
-              },
-            });
-          } else if (fireBlastCharges.currentCharges === fireBlastCharges.maxCharges) {
-            return new FireBlast();
+      if (heatingUp) {
+        if (WoWLua.GetAuraRemainingTime(heatingUp) >= 2.5) {
+          const fireball = this.getFirestarterFireball(true);
+          if (fireball) {
+            return fireball;
           }
-        } else {
-          return new Fireball({
-            unitTarget: enemiesAbove90[0].unitId,
-          });
+        } else if (fireBlastCharges.currentCharges === fireBlastCharges.maxCharges) {
+          return new FireBlast();
+        }
+      } else {
+        const fireball = this.getFirestarterFireball(false);
+        if (fireball) {
+          return fireball;
         }
       }
     } else if (heatingUp) {
@@ -128,6 +98,11 @@ export class Pump implements Car {
         return new FireBlast();
       }
     } else if (!WoWLua.IsPlayerMoving() && !heatingUp) {
+      const fireball = this.getFirestarterFireball(false);
+      if (fireball) {
+        return fireball;
+      }
+
       return new Fireball();
     }
 
@@ -162,18 +137,6 @@ export class Pump implements Car {
   }
 
   hot() {
-    // TODO :: Surface this information better. Maybe make it optional to combust when healer CC
-    // if (pumpingState === PumpingStatus.WarmingUp) {
-    //   for (const arena of this.getEnemies()) {
-    //     if (arena.isHealer()) {
-    //       const remainingCC = arena.remainingCC();
-    //       if (remainingCC.filter((x) => x.remaining >= 3).length === 0) {
-    //         return null;
-    //       }
-    //     }
-    //   }
-    // }
-
     // cast frostbolt, it's actually decent damage plus it's in a spell book
     // we don't care about getting interrupted if they do kick it
     const currentCast = WoWLua.UnitCastingInfoTyped("player");
@@ -212,10 +175,18 @@ export class Pump implements Car {
 
     const heatingUp = GetPlayerAura(MageAura.HeatingUp);
     if (heatingUp) {
+      const fireball = this.getFirestarterFireball(true);
+      if (fireball) {
+        return fireball;
+      }
+
       const combustion = WoWLua.IsSpellCastable(MageSpell.Combustion);
-      // 9 seconds per 3 = 27
-      if (combustion.duration !== 0 && SpellCooldownRemainingSeconds(combustion) >= 27) {
-        const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
+      const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
+      const timeUntilFull = 9 + (fireBlastCharges.maxCharges - fireBlastCharges.currentCharges) * 9;
+      if (
+        combustion.duration !== 0 &&
+        SpellCooldownRemainingSeconds(combustion) - timeUntilFull >= 0
+      ) {
         if (fireBlastCharges.currentCharges >= 1) {
           return new FireBlast();
         }
@@ -231,8 +202,52 @@ export class Pump implements Car {
       // return new Scorch();
     }
 
+    const fireball = this.getFirestarterFireball(false);
+    if (fireball) {
+      return fireball;
+    }
+
     return new Fireball();
   }
 
-  private findBestFireballTarget() {}
+  private getFirestarterFireball(shouldStopCast: boolean) {
+    const enemiesAbove90 = this.getEnemies()
+      .filter((x) => x.shouldDamage() && UnitHealthPercentage(x.unitId) >= 90)
+      .sort((a, b) => b.distanceFromPlayer() - a.distanceFromPlayer());
+
+    if (enemiesAbove90.length === 0) {
+      return null;
+    }
+
+    const stopCast = () => {
+      const cast = WoWLua.UnitCastingInfoTypedCacheBusted("player");
+      if (cast) {
+        const percentRemaining =
+          ((GetTime() * 1000 - cast.startTimeMS) / (cast.endTimeMS - cast.startTimeMS)) * 100;
+        if (
+          UnitHealthPercentage(enemiesAbove90[0].unitId) < 90 &&
+          percentRemaining >= 90 &&
+          !PlayerHasAura(MageAura.HotStreak)
+        ) {
+          const fireBlastCharges = WoWLua.GetSpellChargesTyped(MageSpell.FireBlast);
+          if (fireBlastCharges.currentCharges === fireBlastCharges.maxCharges) {
+            new FireBlast({
+              unitTarget: enemiesAbove90[0].unitId,
+              hardCast: false,
+            }).cast();
+          } else {
+            // stop casting when we're casting a non crit and we dont have full fire blast charges
+            return true;
+          }
+        }
+      }
+
+      return false;
+    };
+
+    return new Fireball({
+      unitTarget: enemiesAbove90[0].unitId,
+      shouldStopCasting: shouldStopCast ? stopCast : undefined,
+    });
+  }
 }

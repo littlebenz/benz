@@ -57,7 +57,7 @@ export class FakeCast implements Car {
           // and interrupt is off CD
           if (
             WoWLua.IsUnitInOfLineOfSight("player", enemy.unitId) &&
-            WoWLua.DistanceFromUnit("player", enemy.unitId) <= interrupt.range + 1.5
+            WoWLua.DistanceFromUnit("player", enemy.unitId) <= interrupt.range
           ) {
             canBeInterrupted = true;
             break;

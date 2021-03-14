@@ -3,7 +3,7 @@
  */
 declare function SpellStopCasting(): void;
 
-declare function CastSpellByID<T>(id: number, target?: T): void;
+// declare function CastSpellByID<T>(id: number, target?: T): void;
 // declare function CastSpellByName(spell: string): void;
 
 /**
@@ -102,6 +102,7 @@ declare const WorldFrame: any;
 declare namespace bit {
   function bor(...num: number[]): number;
   function band(x: number, y: number): number;
+  function lshift(x: number, y: number): number;
 }
 
 /**
@@ -188,3 +189,45 @@ declare function GetTalentTierInfo(
   row: number,
   uselessValueThatAlwaysNeedsToBeOne: number
 ): [boolean, number, number];
+
+/** @tupleReturn */
+declare function GetInstanceInfo(): [
+  string,
+  string,
+  number,
+  string,
+  number,
+  number,
+  boolean,
+  number,
+  number,
+  number
+];
+declare function GetNumGroupMembers(): number;
+declare function UnitInBattleground(unit: string): number | null;
+declare function random(): number;
+declare function UnitIsDeadOrGhost(unit: string): boolean;
+declare function UnitAffectingCombat(unit: string): boolean;
+
+declare namespace C_MountJournal {
+  /** @tupleReturn **/
+  function GetMountInfoByID(
+    index: number
+  ): [
+    string,
+    number,
+    number,
+    boolean,
+    boolean,
+    number,
+    boolean,
+    boolean,
+    boolean,
+    number,
+    boolean,
+    boolean,
+    number
+  ];
+}
+
+declare function RepopMe(): void;

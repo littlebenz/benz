@@ -48,7 +48,9 @@ export class Warlock extends PlayerState {
       priority: PriorityAction.Medium,
     },
   ];
-
+  minimumRange() {
+    return 25;
+  }
   canBeIncapacitated(): boolean {
     if (WoWLua.GetAuraRemainingTime(GetUnitAura(WarlockAura.NetherWard, this.unitId)) >= 1.5) {
       return false;

@@ -45,6 +45,9 @@ export class Rogue extends PlayerState {
 
     return super.canBeIncapacitated();
   }
+  minimumRange() {
+    return 3;
+  }
   isPumping(): boolean {
     if (UnitHasAura(RogueAura.ShadowBlades, this.unitId)) {
       return true;

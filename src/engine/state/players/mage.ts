@@ -52,7 +52,9 @@ export class Mage extends PlayerState {
 
     return super.canBeIncapacitated();
   }
-
+  minimumRange() {
+    return 40;
+  }
   isPumping(): boolean {
     if (UnitHasAura(MageAura.Combustion, this.unitId)) {
       return true;

@@ -71,7 +71,9 @@ export class Priest extends PlayerState {
   canBeIncapacitated(): boolean {
     return super.canBeIncapacitated();
   }
-
+  minimumRange() {
+    return 25;
+  }
   isPumping(): boolean {
     if (UnitHasAura(PriestAura.Voidform, this.unitId)) {
       return true;

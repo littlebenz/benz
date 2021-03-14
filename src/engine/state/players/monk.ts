@@ -40,7 +40,13 @@ export class Monk extends PlayerState {
       priority: PriorityAction.High,
     },
   ];
-
+  minimumRange() {
+    const spec = this.getSpecInfo();
+    if (spec === TalentSpec.Monk_Mistweaver) {
+      return 25;
+    }
+    return 3;
+  }
   canBeIncapacitated(): boolean {
     return super.canBeIncapacitated();
   }

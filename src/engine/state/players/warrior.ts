@@ -52,6 +52,9 @@ export class Warrior extends PlayerState {
 
     return false;
   }
+  minimumRange() {
+    return 3;
+  }
   isDefensive(): Defensive {
     if (UnitHasAura(WarriorAura.ShieldWall, this.unitId)) {
       return Defensive.CanStillDam;

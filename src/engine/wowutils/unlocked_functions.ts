@@ -23,3 +23,11 @@ export const InteractUnit = (unit: string): void => CallSecureFunction("Interact
 
 export const CancelUnitBuffUnlocked = (unit: string, buffIndex: number) =>
   CallSecureFunction("CancelUnitBuff", unit, buffIndex);
+
+export const ClearTarget = (): void => CallSecureFunction("ClearTarget");
+
+export const JoinBattlefield = (index: number, asGroup?: boolean): void =>
+  CallSecureFunction("JoinBattlefield", index, asGroup);
+
+export const AcceptBattlefieldPort = (index: number, accept: boolean): void =>
+  CallSecureFunction("AcceptBattlefieldPort", index, accept);

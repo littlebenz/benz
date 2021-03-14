@@ -18,6 +18,8 @@ import { NecrolordAura } from "../state/utils/necrolord_utils";
 import { memoizeOne } from "../../utils/memoize";
 import { CommonAura } from "../state/utils/common_utils";
 import { DRType, SpellNameToDiminishingReturnSchool } from "../state/dr_tracker";
+import { dbscan } from "../../utils/dbscan";
+import { Point } from "../state/utils/point";
 
 export type PlayerAura =
   | MageAura
@@ -93,6 +95,94 @@ export class MemoizedLua {
   GetSpellChargesTyped = memoizeOne(this.getSpellChargesTyped);
   IsUnitCrowdControlled = memoizeOne(this.isUnitCrowdControlled);
   FindBestMeteorSpot = memoizeOne(this.findBestMeteorSpot, 30);
+  FindPlayerClusters = memoizeOne(this.findPlayerClusters, 60);
+
+  private findPlayerClusters() {
+    let players = [];
+    for (let i = 1; i <= GetNumGroupMembers(); i++) {
+      players.push("raid" + i);
+    }
+
+    const playerPositions = players
+      .filter((x) => !UnitIsDeadOrGhost(x))
+      .map((x) => GetUnitPosition(x))
+      .filter((x) => x[0] !== null && x[1] !== null)
+      .map((x) => new Point(x[0], x[1], x[2]));
+
+    const clusters = dbscan(playerPositions, 35, 2);
+
+    const playerPositonByCluster = new Map<number, Point[]>();
+    for (let i = 0; i < clusters.length; i++) {
+      const cluster = clusters[i];
+      if (!playerPositonByCluster.has(cluster) && cluster !== -1) {
+        playerPositonByCluster.set(cluster, []);
+      }
+
+      console.log(
+        "index: ",
+        cluster,
+        playerPositions[i].x,
+        playerPositions[i].y,
+        playerPositions[i].z
+      );
+      if (cluster !== -1) {
+        playerPositonByCluster.get(cluster)!.push(playerPositions[i]);
+      }
+    }
+
+    let largestSize = 0;
+    let clusterIndex = 0;
+
+    for (const [cluster, points] of playerPositonByCluster) {
+      if (points.length > largestSize) {
+        clusterIndex = cluster;
+        largestSize = points.length;
+      }
+    }
+
+    // let bestPlayers: number[][] = [];
+
+    // for (let i = 0; i < playerPositions.length; i++) {
+    //   let under30Yards = [];
+    //   for (let j = 0; j < playerPositions.length; j++) {
+    //     const playerA = playerPositions[i];
+    //     const playerB = playerPositions[j];
+    //     if (
+    //       DistanceFromPoints(playerA.x, playerA.y, playerA.z, playerB.x, playerB.y, playerB.z) <= 30
+    //     ) {
+    //       under30Yards.push([playerB.x, playerB.y, playerB.z]);
+    //     }
+    //   }
+
+    //   if (under30Yards.length > bestPlayers.length) {
+    //     bestPlayers = under30Yards;
+    //   }
+    // }
+
+    let centerX = 0;
+    let centerY = 0;
+    let centerZ = 0;
+    const bestPlayers = playerPositonByCluster.get(clusterIndex);
+    if (bestPlayers === undefined || bestPlayers === null) {
+      const [x, y, z] = GetUnitPosition("player");
+      return {
+        x,
+        y,
+        z,
+      };
+    }
+    for (let i = 0; i < bestPlayers.length; i++) {
+      centerX += bestPlayers[i].x;
+      centerY += bestPlayers[i].y;
+      centerZ += bestPlayers[i].z;
+    }
+
+    return {
+      x: centerX / bestPlayers.length,
+      y: centerY / bestPlayers.length,
+      z: centerZ / bestPlayers.length,
+    };
+  }
 
   private findBestMeteorSpot(targetGuid: string) {
     const [px, py, pz] = GetUnitPosition("player");
@@ -804,4 +894,31 @@ export function GetGroundZCoord(x: number, y: number) {
   }
 
   return 0;
+}
+
+export function GetInstanceInfoTyped() {
+  const [
+    name,
+    instanceType,
+    difficultyID,
+    difficultyName,
+    maxPlayers,
+    dynamicDifficulty,
+    isDynamic,
+    instanceID,
+    instanceGroupSize,
+    LfgDungeonID,
+  ] = GetInstanceInfo();
+  return {
+    name,
+    instanceType,
+    difficultyID,
+    difficultyName,
+    maxPlayers,
+    dynamicDifficulty,
+    isDynamic,
+    instanceID,
+    instanceGroupSize,
+    LfgDungeonID,
+  };
 }

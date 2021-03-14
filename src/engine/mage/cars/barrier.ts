@@ -27,6 +27,11 @@ export class Barrier implements Car {
   }
 
   getNextSpell() {
+    const [speed] = GetUnitSpeed("player");
+    if (speed > 7) {
+      return null;
+    }
+
     const arcaneInt = GetPlayerAura(MageAura.ArcaneIntellect);
     const arcaneIntTimeLeft = WoWLua.GetAuraRemainingTime(arcaneInt);
 

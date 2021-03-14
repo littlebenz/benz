@@ -42,3 +42,20 @@ declare function UpdateMovement(): void;
 /** @tupleReturn **/
 declare function WorldToScreen(x: number, y: number, z: number): [number, number];
 declare function IsWindowActive(): boolean;
+declare function FindPath(
+  instance: number,
+  startX: number,
+  startY: number,
+  startZ: number,
+  endX: number,
+  endY: number,
+  endZ: number,
+  toSmoothPath?: boolean,
+  toUsePpp?: boolean
+): void;
+
+/** @tupleReturn **/
+declare function GetActiveNodeByIndex(index: number): [number, number, number];
+declare function GetActiveNodeCount(): number;
+declare function MoveTo(x: number, y: number, z: number): void;
+declare function ResetHardwareAction(): void;

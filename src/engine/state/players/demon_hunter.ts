@@ -40,6 +40,9 @@ export class DemonHunter extends PlayerState {
   canBeIncapacitated(): boolean {
     return super.canBeIncapacitated();
   }
+  minimumRange() {
+    return 3;
+  }
   isPumping(): boolean {
     if (UnitHasAura(DemonHunterAura.Metamorphosis, this.unitId)) {
       return true;

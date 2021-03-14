@@ -92,6 +92,14 @@ export class Druid extends PlayerState {
 
     return super.canBeIncapacitated();
   }
+  minimumRange() {
+    const spec = this.getSpecInfo();
+    if (spec === TalentSpec.Druid_Balance || spec === TalentSpec.Druid_Restoration) {
+      return 25;
+    }
+
+    return 3;
+  }
   shouldStomp(): boolean {
     return false;
   }

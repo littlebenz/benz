@@ -19,4 +19,8 @@ export class Meteor extends Spell {
       }
     }
   }
+
+  canCastSpell() {
+    return WoWLua.IsSpellUsable(this.spellName);
+  }
 }

@@ -11,6 +11,9 @@ export class NPC extends PlayerState {
   canBeIncapacitated(): boolean {
     return true;
   }
+  minimumRange() {
+    return 3;
+  }
   isPumping(): boolean {
     return false;
   }

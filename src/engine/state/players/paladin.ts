@@ -61,6 +61,13 @@ export class Paladin extends PlayerState {
     return super.canBeIncapacitated();
   }
 
+  minimumRange() {
+    const spec = this.getSpecInfo();
+    if (spec === TalentSpec.Paladin_Holy) {
+      return 25;
+    }
+    return 3;
+  }
   isPumping(): boolean {
     if (
       UnitHasAura(PaladinAura.AvengingWrath, this.unitId) &&

@@ -75,7 +75,14 @@ export class Shaman extends PlayerState {
   canBeIncapacitated(): boolean {
     return super.canBeIncapacitated();
   }
+  minimumRange() {
+    const spec = this.getSpecInfo();
+    if (spec === TalentSpec.Shaman_Enhancement) {
+      return 3;
+    }
 
+    return 25;
+  }
   isPumping(): boolean {
     const objects = WoWLua.GetObjects().map((x) => ({ guid: x, name: ObjectName(x) }));
     const feralSpirit = objects.find((x) => x.name === "Feral Spirit");

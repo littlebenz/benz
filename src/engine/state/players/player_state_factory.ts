@@ -8,6 +8,7 @@ import { Mage } from "./mage";
 import { Monk } from "./monk";
 import { NPC } from "./npc";
 import { Paladin } from "./paladin";
+import { PlayerState } from "./player_state";
 import { Priest } from "./priest";
 import { Rogue } from "./rogue";
 import { Shaman } from "./shaman";
@@ -16,7 +17,7 @@ import { Warrior } from "./warrior";
 import { WoWClass } from "./WoWClass";
 
 export class PlayerStateFactory {
-  static create(unit: UnitId, wowEventListener: WowEventListener) {
+  static create(unit: UnitId, wowEventListener: WowEventListener): PlayerState | null {
     const [classId] = UnitClass(unit);
 
     if (classId === WoWClass.Warrior) {
